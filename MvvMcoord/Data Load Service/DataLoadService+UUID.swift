@@ -16,46 +16,40 @@ extension DataLoadService {
     internal func saveNewUIDs(_ uids: [UidModel]?) {
         guard let _uids = uids
             else { return }
-        // self.dbDeleteData("NewUidPersistent") // old
-        DispatchQueue.global(qos: .userInitiated).async {[weak self] in
-            
-            guard let `self` = self else { return }
-            self.dbDeleteData("NewUidPersistent") // add
-            self.appDelegate.moc.performAndWait {
-                var uidsDB = [NewUidPersistent]()
-                for element in _uids {
-                    let uidDB = NewUidPersistent(entity: NewUidPersistent.entity(), insertInto: self.appDelegate.moc)
-                    uidDB.setup(uidModel: element)
-                    uidsDB.append(uidDB)
-                }
-                self.appDelegate.saveContext()
-                self.compare()
+        self.dbDeleteData("NewUidPersistent") // add
+        self.appDelegate.moc.performAndWait {
+            var uidsDB = [NewUidPersistent]()
+            for element in _uids {
+                let uidDB = NewUidPersistent(entity: NewUidPersistent.entity(), insertInto: self.appDelegate.moc)
+                uidDB.setup(uidModel: element)
+                uidsDB.append(uidDB)
             }
+           // print("saveNewUIDs")
+            self.appDelegate.saveContext()
+            self.compare()
         }
     }
     
     internal func saveLastUIDs(_ uids: [NewUidPersistent]) {
-      //print("saveLastUIDs")
-       // DispatchQueue.global(qos: .userInitiated).async {[weak self] in
-          //  guard let `self` = self else { return }
-            appDelegate.moc.performAndWait {
-                var uidsDB = [LastUidPersistent]()
-                for element in uids {
-                    let uidDB = LastUidPersistent(entity: LastUidPersistent.entity(), insertInto: self.appDelegate.moc)
-                    uidDB.setup(newUID: element)
-                    uidsDB.append(uidDB)
-                }
-                self.appDelegate.saveContext()
-                self.checkCrossRefresh()
-                self.clearOldPrefetch()
-                self.clearOldCatalog()
+        appDelegate.moc.performAndWait {
+            var uidsDB = [LastUidPersistent]()
+            for element in uids {
+                let uidDB = LastUidPersistent(entity: LastUidPersistent.entity(), insertInto: self.appDelegate.moc)
+                uidDB.setup(newUID: element)
+                uidsDB.append(uidDB)
             }
-      //  }
+          //  print("saveLastUIDs")
+            self.appDelegate.saveContext()
+            self.checkCrossRefresh()
+            self.clearOldPrefetch()
+            self.clearOldCatalog()
+        }
     }
     
     internal func toRefresh(last: LastUidPersistent, newUid: String){
         last.needRefresh = true
         last.uid = newUid
+        //print("toRefresh")
         self.appDelegate.saveContext()
     }
     
@@ -64,11 +58,12 @@ extension DataLoadService {
         guard let newUids = dbLoadNewUIDs() else { return }
         guard let lastUids = dbLoadLastUIDs(),
             lastUids.count > 0
-            else {
-                saveLastUIDs(newUids)
-                return
+        else {
+            saveLastUIDs(newUids)
+            return
         }
-        var absent = [NewUidPersistent]()
+        
+        var needToSave = [NewUidPersistent]()
         
         for new in newUids {
             if new.cross {
@@ -77,7 +72,7 @@ extension DataLoadService {
                         toRefresh(last: last, newUid: new.uid)
                     }
                 } else {
-                    absent.append(new)
+                    needToSave.append(new)
                 }
                 
             } else {
@@ -86,11 +81,11 @@ extension DataLoadService {
                         toRefresh(last: last, newUid: new.uid)
                     }
                 } else {
-                    absent.append(new)
+                    needToSave.append(new)
                 }
             }
         }
-        saveLastUIDs(absent)
+        saveLastUIDs(needToSave)
     }
     
     

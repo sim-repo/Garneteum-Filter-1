@@ -16,6 +16,7 @@ extension DataLoadService {
             dbDeleteEntity(0, clazz: PrefetchPersistent.self, entity: "PrefetchPersistent", fetchBatchSize: 0, sql: "categoryId == \(Int(uid.categoryId))")
             uid.needRefresh = false
         }
+       // print("clearOldPrefetch")
         self.appDelegate.saveContext()
     }
     
@@ -59,6 +60,7 @@ extension DataLoadService {
                     row.setup(model: model)
                     db.append(row)
                 }
+                //print("dbSavePrefetch")
                 self.appDelegate.saveContext()
                 var res = netItems.compactMap({CatalogModel(catalogModel1: $0)})
                 res.append(contentsOf: dbFoundItems)

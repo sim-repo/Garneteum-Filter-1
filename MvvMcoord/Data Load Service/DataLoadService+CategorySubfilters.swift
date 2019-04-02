@@ -29,6 +29,7 @@ extension DataLoadService {
         for uid in _uids {
             uid.needRefresh = false
         }
+      //  print("categoryRefreshDone")
         self.appDelegate.saveContext()
         self.emitCategorySubfilters(sql: "categoryId == \(categoryId)")
         self.emitCategoryFilters(sql: "categoryId == \(categoryId)")
@@ -74,6 +75,7 @@ extension DataLoadService {
                     subfilterDB.setup(subfilterModel: element)
                     subfiltersDB.append(subfilterDB)
                 }
+              //  print("categorySave")
                 self.appDelegate.saveContext()
                 self.categoryRefreshDone(categoryId: categoryId)
             }
@@ -95,6 +97,7 @@ extension DataLoadService {
         for element in _res2 {
             self.appDelegate.moc.delete(element)
         }
+       // print("categoryDelete")
         appDelegate.saveContext()
     }
     

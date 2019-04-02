@@ -501,32 +501,20 @@ extension CatalogVM : FilterActionDelegate {
         getDataLoadService().getCrossSubfilters()
             .filter({$0.count > 0})
             .subscribe(onNext: { [weak self] res in
-                guard let `self` = self else { return }
-                
-                let subFilters = res
-                
-                //self.subfiltersByFilter.removeAll()
-                subFilters.forEach{ subf in
-                    if self.subfiltersByFilter[subf.filterId] == nil {
-                        self.subfiltersByFilter[subf.filterId] = []
-                    }
-                    if self.subfiltersByFilter[subf.filterId]?.contains(subf.id) == false  {
-                        self.subfiltersByFilter[subf.filterId]?.append(subf.id)
-                        self.subFilters[subf.id] = subf
-                    }
-                }
+                fillSubfiltersTask(subFilters: res)
             })
             .disposed(by: bag)
-        
         
         getDataLoadService().getCategorySubfilters()
             .filter({$0.count > 0})
             .subscribe(onNext: { [weak self] res in
-                guard let `self` = self else { return }
-                
-                let subFilters = res
-                
-                //self.subfiltersByFilter.removeAll()
+                fillSubfiltersTask(subFilters: res)
+            })
+            .disposed(by: bag)
+        
+        
+        func fillSubfiltersTask(subFilters: [SubfilterModel]){
+            let completion = {
                 subFilters.forEach{ subf in
                     if self.subfiltersByFilter[subf.filterId] == nil {
                         self.subfiltersByFilter[subf.filterId] = []
@@ -536,10 +524,13 @@ extension CatalogVM : FilterActionDelegate {
                         self.subFilters[subf.id] = subf
                     }
                 }
-            })
-            .disposed(by: bag)
+            }
+            operationQueues[0]!.addOperation {
+                    completion()
+            }
+        }
         
-        
+
         
         getDataLoadService().getMidTotal()
             .subscribe(onNext: {[weak self] count in
@@ -568,7 +559,7 @@ extension CatalogVM : FilterActionDelegate {
             .subscribe(onNext: {[weak self] _ in
                 DispatchQueue.global(qos: .background).async {[weak self] in
                     guard let `self` = self else { return }
-                    getDataLoadService().screenHandle(eventString: "ShowCatalog", self.categoryId)
+                    getDataLoadService().screenHandle(dataTaskEnum: .willCatalogShow, self.categoryId)
                 }
             })
             .disposed(by: bag)

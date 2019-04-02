@@ -97,6 +97,10 @@ class CatalogVM : BaseVM {
     internal var outShowWarning = PublishSubject<Void>()
     internal var outReloadSubFilterVCEvent = PublishSubject<Void>()
     
+    
+    internal var operationQueues: [Int: OperationQueue] = [:]
+    
+    
     internal init(categoryId: Int, fetchLimit: Int, currentPage: Int, totalPages: Int, totalItems: Int){
         self.categoryId = categoryId
         self.fetchLimit = fetchLimit
@@ -104,12 +108,15 @@ class CatalogVM : BaseVM {
         self.totalPages = totalPages
         self.totalItems = totalItems
         super.init()
+        addOperation()
         wait().onNext((.prefetchCatalog, true))
         emitStartEvent()
         handlePrefetchEvent()
         handleDelegate()
         handleStartEvent()
         bindUserActivities()
+        
+        
         
         CatalogModel.localTitle(categoryId: categoryId)
             .bind(to: outTitle)
@@ -118,7 +125,11 @@ class CatalogVM : BaseVM {
     }
     
     
-    
+    private func addOperation() {
+        let queue = OperationQueue()
+        queue.maxConcurrentOperationCount = 1
+        operationQueues[0] = queue
+    }
     
     public func realloc(){
         
@@ -170,11 +181,12 @@ class CatalogVM : BaseVM {
 
     
     private func emitStartEvent(){
-        getDataLoadService().screenHandle(eventString: "StartCatalogFetch", categoryId)
+        getDataLoadService().screenHandle(dataTaskEnum: .willStartPrefetch, categoryId)
     }
    
     private func handleStartEvent(){
         getDataLoadService().getCatalogTotalEvent()
+            .observeOn(MainScheduler.asyncInstance)
             .filter({[weak self] res in
                      res.0 == self?.categoryId &&
                      res.1.count > 0})
@@ -204,13 +216,14 @@ class CatalogVM : BaseVM {
         
         if itemIds.count >= from {
             let nextItemIds = itemIds[from...to]
-            getDataLoadService().screenHandle(eventString: "Prefetch", categoryId, Set(nextItemIds))
+            getDataLoadService().screenHandle(dataTaskEnum: .willPrefetch, categoryId, Set(nextItemIds))
         }
     }
     
     
     private func handlePrefetchEvent(){
         inPrefetchEvent
+        .observeOn(MainScheduler.asyncInstance)
         .subscribe(onNext: {[weak self] res in
             switch self?.currentPage {
                 case 1: self?.catalog = res

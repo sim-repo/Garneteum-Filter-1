@@ -15,12 +15,12 @@ extension DataLoadService {
         for uid in _uids {
             uid.needRefresh = false
         }
+       // print("applyRefreshDone")
         self.appDelegate.saveContext()
         self.setupApplyFromDB(sql: "categoryId == \(categoryId)")
     }
     
     internal func applySave(categoryId: CategoryId, subfiltersByItem: SubfiltersByItem?, priceByItemId: PriceByItemId?) {
-       // print("applySave: \(categoryId)")
         guard let _subfiltersByItem = subfiltersByItem,
             let _priceByItemId = priceByItemId
             else { return }
@@ -45,6 +45,7 @@ extension DataLoadService {
                     row.setup(categoryId: categoryId, itemId: element.key, price: element.value)
                     db2.append(row)
                 }
+              //  print("applySave")
                 self.appDelegate.saveContext()
                 self.applyRefreshDone(categoryId: categoryId)
             }
@@ -96,6 +97,7 @@ extension DataLoadService {
         for element in _res2 {
             self.appDelegate.moc.delete(element)
         }
+       // print("applyDelete")
         appDelegate.saveContext()
     }
     

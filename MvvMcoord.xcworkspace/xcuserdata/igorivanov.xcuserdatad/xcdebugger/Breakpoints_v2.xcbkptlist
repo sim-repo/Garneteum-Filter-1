@@ -1,0 +1,1241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   type = "0"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.300616"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "385"
+            endingLineNumber = "385"
+            landmarkName = "applyBeforeEnter(_:_:_:_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.300699"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "483"
+            endingLineNumber = "483"
+            landmarkName = "getSubFilters(by:_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MvvMcoord.FilterApplyLogic.(getSubFilters in _8A4C8186BDDCB47F239EC88FAEC0FF8A)(by: Swift.Set&lt;Swift.Int&gt;, _: inout Swift.Dictionary&lt;Swift.Int, Swift.Int&gt;) -&gt; Swift.Array&lt;Swift.Int&gt;"
+                  moduleName = "MvvMcoord"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/igorivanov/Downloads/Garneteum%20Filter/MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+                  timestampString = "575050682.486599"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "483"
+                  endingLineNumber = "483"
+                  offsetFromSymbolStart = "637">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 (Swift.Int) -&gt; () in MvvMcoord.FilterApplyLogic.(getSubFilters in _8A4C8186BDDCB47F239EC88FAEC0FF8A)(by: Swift.Set&lt;Swift.Int&gt;, _: inout Swift.Dictionary&lt;Swift.Int, Swift.Int&gt;) -&gt; Swift.Array&lt;Swift.Int&gt;"
+                  moduleName = "MvvMcoord"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/igorivanov/Downloads/Garneteum%20Filter/MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+                  timestampString = "575050682.4881051"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "484"
+                  endingLineNumber = "484"
+                  offsetFromSymbolStart = "67">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.300754"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "415"
+            endingLineNumber = "415"
+            landmarkName = "applyBeforeEnter(_:_:_:_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.300802"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "416"
+            endingLineNumber = "416"
+            landmarkName = "applyBeforeEnter(_:_:_:_:_:_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MvvMcoord.FilterApplyLogic.(applyBeforeEnter in _8A4C8186BDDCB47F239EC88FAEC0FF8A)(inout Swift.Set&lt;Swift.Int&gt;, Swift.Int, inout Swift.Dictionary&lt;Swift.Int, Swift.Bool&gt;, inout Swift.Dictionary&lt;Swift.Int, Swift.Bool&gt;, inout Swift.Dictionary&lt;Swift.Int, Swift.Int&gt;, MvvMcoord.RangePrice) -&gt; ()"
+                  moduleName = "MvvMcoord"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/igorivanov/Downloads/Garneteum%20Filter/MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+                  timestampString = "574975091.1481479"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "416"
+                  endingLineNumber = "416"
+                  offsetFromSymbolStart = "1328">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Int) -&gt; () in MvvMcoord.FilterApplyLogic.(applyBeforeEnter in _8A4C8186BDDCB47F239EC88FAEC0FF8A)(inout Swift.Set&lt;Swift.Int&gt;, Swift.Int, inout Swift.Dictionary&lt;Swift.Int, Swift.Bool&gt;, inout Swift.Dictionary&lt;Swift.Int, Swift.Bool&gt;, inout Swift.Dictionary&lt;Swift.Int, Swift.Int&gt;, MvvMcoord.RangePrice) -&gt; ()"
+                  moduleName = "MvvMcoord"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/igorivanov/Downloads/Garneteum%20Filter/MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+                  timestampString = "574975091.149579"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "417"
+                  endingLineNumber = "417"
+                  offsetFromSymbolStart = "63">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Script Upload/FirebaseCreator.swift"
+            timestampString = "575899791.300853"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "19"
+            endingLineNumber = "19"
+            landmarkName = "uploadCrossFilters()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Script Upload/FirebaseCreator.swift"
+            timestampString = "575899791.300894"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "71"
+            endingLineNumber = "71"
+            landmarkName = "uploadFilters(categoryId:totalItems:minPrice:maxPrice:biege:white:blue:yellow:green:brown:red:orange:pink:gray:darkblue:violet:black:filters:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Script Upload/FirebaseTemplate.swift"
+            timestampString = "575923867.717906"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "449"
+            endingLineNumber = "449"
+            landmarkName = "uploadSubfiltersByItem(categoryId:colorByItem:subfiltersFilter:multiFilter:brandsSubfilters:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.300963"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "414"
+            endingLineNumber = "414"
+            landmarkName = "applyBeforeEnter(_:_:_:_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.3010091"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "797"
+            endingLineNumber = "797"
+            landmarkName = "doLoadSubFilters(_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.301054"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "790"
+            endingLineNumber = "790"
+            landmarkName = "doLoadSubFilters(_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.301098"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "490"
+            endingLineNumber = "490"
+            landmarkName = "getSubFilters(by:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.301146"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "418"
+            endingLineNumber = "418"
+            landmarkName = "applyBeforeEnter(_:_:_:_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VMs/CatalogVM+FilterActionDelegate.swift"
+            timestampString = "575923867.718004"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "383"
+            endingLineNumber = "383"
+            landmarkName = "handleDelegate()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VMs/CatalogVM.swift"
+            timestampString = "575923867.7180459"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "467"
+            endingLineNumber = "467"
+            landmarkName = "enableSubFilters(ids:countBySubfilterId:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VMs/CatalogVM.swift"
+            timestampString = "575923867.718335"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "473"
+            endingLineNumber = "473"
+            landmarkName = "enableSubFilters(ids:countBySubfilterId:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Data Load Service/DataLoadService.swift"
+            timestampString = "575923867.718539"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "75"
+            endingLineNumber = "75"
+            landmarkName = "DataLoadService"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Network Service/HeavyClientFCF.swift"
+            timestampString = "575892700.636808"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "292"
+            endingLineNumber = "292">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VMs/CatalogVM+FilterActionDelegate.swift"
+            timestampString = "575923867.7186"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "503"
+            endingLineNumber = "503"
+            landmarkName = "handleDelegate()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VMs/CatalogVM+FilterActionDelegate.swift"
+            timestampString = "575923867.718639"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "465"
+            endingLineNumber = "465"
+            landmarkName = "handleDelegate()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Network Service/HeavyClientFCF.swift"
+            timestampString = "575892700.637092"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "292"
+            endingLineNumber = "292">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Network Service/HeavyClientFCF.swift"
+            timestampString = "575892700.637284"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "292"
+            endingLineNumber = "292">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Network Service/HeavyClientFCF.swift"
+            timestampString = "575892700.637476"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "292"
+            endingLineNumber = "292">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Network Service/HeavyClientFCF.swift"
+            timestampString = "575892700.637689"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "292"
+            endingLineNumber = "292">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Network Service/HeavyClientFCF.swift"
+            timestampString = "575892700.637895"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "292"
+            endingLineNumber = "292">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Network Service/HeavyClientFCF.swift"
+            timestampString = "575892700.638079"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "292"
+            endingLineNumber = "292">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MvvMcoord.HeavyClientFCF.(runCategoryApply in _11C9F17F0EDAFA14D6EF237229C4229B)(taskCode: Swift.Int, taskIdx: Swift.Int, categoryId: Swift.Int, completion: Swift.Optional&lt;(Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, Swift.Array&lt;Swift.Int&gt;&gt;&gt;, Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, CoreGraphics.CGFloat&gt;&gt;) -&gt; ()&gt;) -&gt; ()"
+                  moduleName = "MvvMcoord"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/igorivanov/Downloads/Garneteum%20Filter/MvvMcoord/Network%20Service/HeavyClientFCF.swift"
+                  timestampString = "575189224.591454"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "650"
+                  endingLineNumber = "650"
+                  offsetFromSymbolStart = "254">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in MvvMcoord.HeavyClientFCF.(runCategoryApply in _11C9F17F0EDAFA14D6EF237229C4229B)(taskCode: Swift.Int, taskIdx: Swift.Int, categoryId: Swift.Int, completion: Swift.Optional&lt;(Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, Swift.Array&lt;Swift.Int&gt;&gt;&gt;, Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, CoreGraphics.CGFloat&gt;&gt;) -&gt; ()&gt;) -&gt; ()"
+                  moduleName = "MvvMcoord"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/igorivanov/Downloads/Garneteum%20Filter/MvvMcoord/Network%20Service/HeavyClientFCF.swift"
+                  timestampString = "575189224.592975"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "651"
+                  endingLineNumber = "651"
+                  offsetFromSymbolStart = "55">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Data Load Service/DataLoadService+CategoryApplyData.swift"
+            timestampString = "575899791.301862"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "34"
+            endingLineNumber = "34"
+            landmarkName = "applySave(categoryId:subfiltersByItem:priceByItemId:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Data Load Service/DataLoadService+CategoryApplyData.swift"
+            timestampString = "575899791.301904"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "57"
+            endingLineNumber = "57"
+            landmarkName = "dbLoadSubfiltersItems(sql:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Data Load Service/DataLoadService+CategoryApplyData.swift"
+            timestampString = "575899791.301941"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "32"
+            endingLineNumber = "32"
+            landmarkName = "applySave(categoryId:subfiltersByItem:priceByItemId:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in MvvMcoord.DataLoadService.applySave(categoryId: Swift.Int, subfiltersByItem: Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, Swift.Array&lt;Swift.Int&gt;&gt;&gt;, priceByItemId: Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, CoreGraphics.CGFloat&gt;&gt;) -&gt; ()"
+                  moduleName = "MvvMcoord"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/igorivanov/Downloads/Garneteum%20Filter/MvvMcoord/Data%20Load%20Service/DataLoadService+CategoryApplyData.swift"
+                  timestampString = "575190141.4876111"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "29"
+                  endingLineNumber = "29"
+                  offsetFromSymbolStart = "234">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in closure #1 () -&gt; () in MvvMcoord.DataLoadService.applySave(categoryId: Swift.Int, subfiltersByItem: Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, Swift.Array&lt;Swift.Int&gt;&gt;&gt;, priceByItemId: Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, CoreGraphics.CGFloat&gt;&gt;) -&gt; ()"
+                  moduleName = "MvvMcoord"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/igorivanov/Downloads/Garneteum%20Filter/MvvMcoord/Data%20Load%20Service/DataLoadService+CategoryApplyData.swift"
+                  timestampString = "575190141.489133"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "30"
+                  endingLineNumber = "30"
+                  offsetFromSymbolStart = "120">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Data Load Service/DataLoadService+CategorySubfilters.swift"
+            timestampString = "575899791.30198"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "24"
+            endingLineNumber = "24"
+            landmarkName = "DataLoadService"
+            landmarkType = "21">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Data Load Service/DataLoadService+Catalog.swift"
+            timestampString = "575922173.64106"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "fireCatalogTotal(_:_:_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VMs/CatalogVM.swift"
+            timestampString = "575923867.718783"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "193"
+            endingLineNumber = "193"
+            landmarkName = "handleStartEvent()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Model/CatalogModel.swift"
+            timestampString = "575305914.340803"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "16"
+            endingLineNumber = "16"
+            landmarkName = "CatalogModel"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Data Load Service/DataLoadService+Catalog.swift"
+            timestampString = "575922173.641315"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "37"
+            endingLineNumber = "37"
+            landmarkName = "doEmitCatalogStart(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Data Load Service/DataLoadService.swift"
+            timestampString = "575923867.719046"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "118"
+            endingLineNumber = "118"
+            landmarkName = "screenHandle(dataTaskEnum:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VMs/CatalogVM.swift"
+            timestampString = "575923867.7190911"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "206"
+            endingLineNumber = "206"
+            landmarkName = "CatalogVM"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VCs/Catalog/CatalogVC.swift"
+            timestampString = "575899791.302415"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "222"
+            endingLineNumber = "222"
+            landmarkName = "collectionView(_:prefetchItemsAt:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VMs/CatalogVM+FilterActionDelegate.swift"
+            timestampString = "575923867.719345"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "453"
+            endingLineNumber = "453"
+            landmarkName = "handleDelegate()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Data Load Service/DataLoadService+Prefetch.swift"
+            timestampString = "575923867.719389"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
+            landmarkName = "firePrefetch(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Data Load Service/DataLoadService+Prefetch.swift"
+            timestampString = "575923867.719427"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "getPrefetchEvent()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VCs/Catalog/CatalogVC.swift"
+            timestampString = "575899791.302564"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "264"
+            endingLineNumber = "264"
+            landmarkName = "handleWaitEvent()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VCs/Catalog/CatalogVC.swift"
+            timestampString = "575899791.302627"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "263"
+            endingLineNumber = "263"
+            landmarkName = "handleWaitEvent()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.302662"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "694"
+            endingLineNumber = "694"
+            landmarkName = "doApplyFromFilter(_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.302712"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "200"
+            endingLineNumber = "200"
+            landmarkName = "applyFromFilter(_:_:_:_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.302756"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "710"
+            endingLineNumber = "710"
+            landmarkName = "doApplyFromFilter(_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Data Load Service/DataLoadService+ApplyLogic.swift"
+            timestampString = "575836285.472302"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "40"
+            endingLineNumber = "40"
+            landmarkName = "reqApplyFromFilter(categoryId:appliedSubFilters:selectedSubFilters:rangePrice:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VMs/CatalogVM+FilterActionDelegate.swift"
+            timestampString = "575923867.719527"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "401"
+            endingLineNumber = "401"
+            landmarkName = "handleDelegate()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VMs/CatalogVM.swift"
+            timestampString = "575923867.719566"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "168"
+            endingLineNumber = "168"
+            landmarkName = "setupFetch(itemsIds:fetchLimit:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Data Load Service/DataLoadService+Prefetch.swift"
+            timestampString = "575923867.719794"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "10"
+            endingLineNumber = "10"
+            landmarkName = "clearOldPrefetch()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VMs/CatalogVM+FilterActionDelegate.swift"
+            timestampString = "575923867.719834"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "220"
+            endingLineNumber = "220"
+            landmarkName = "handleDelegate()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VMs/CatalogVM+FilterActionDelegate.swift"
+            timestampString = "575923867.719872"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "64"
+            endingLineNumber = "64"
+            landmarkName = "requestSubFilters(filterId:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Data Load Service/DataLoadService.swift"
+            timestampString = "575923867.71991"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "160"
+            endingLineNumber = "160"
+            landmarkName = "reqEnterSubFilter(filterId:applied:rangePrice:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.3032629"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "554"
+            endingLineNumber = "554"
+            landmarkName = "disableSubFilters(filterId:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.303314"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "407"
+            endingLineNumber = "407"
+            landmarkName = "applyBeforeEnter(_:_:_:_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.30336"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "784"
+            endingLineNumber = "784"
+            landmarkName = "doLoadSubFilters(_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.303405"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "721"
+            endingLineNumber = "721"
+            landmarkName = "doApplyFromSubFilters(_:_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.3034509"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "236"
+            endingLineNumber = "236"
+            landmarkName = "applyFromSubFilter(_:_:_:_:_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.303499"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "854"
+            endingLineNumber = "854"
+            landmarkName = "setup(filters_:subFilters_:subfiltersByItem_:itemsBySubfilter_:priceByItemId_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.303544"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "826"
+            endingLineNumber = "826"
+            landmarkName = "setup(filters_:subFilters_:subfiltersByItem_:itemsBySubfilter_:priceByItemId_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.303589"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "828"
+            endingLineNumber = "828"
+            landmarkName = "setup(filters_:subFilters_:subfiltersByItem_:itemsBySubfilter_:priceByItemId_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MvvMcoord.FilterApplyLogic.setup(filters_: Swift.Optional&lt;Swift.Array&lt;MvvMcoord.FilterModel&gt;&gt;, subFilters_: Swift.Optional&lt;Swift.Array&lt;MvvMcoord.SubfilterModel&gt;&gt;, subfiltersByItem_: Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, Swift.Array&lt;Swift.Int&gt;&gt;&gt;, itemsBySubfilter_: Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, Swift.Array&lt;Swift.Int&gt;&gt;&gt;, priceByItemId_: Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, CoreGraphics.CGFloat&gt;&gt;) -&gt; ()"
+                  moduleName = "MvvMcoord"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/igorivanov/Downloads/Garneteum%20Filter/MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+                  timestampString = "575884366.394626"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "829"
+                  endingLineNumber = "829"
+                  offsetFromSymbolStart = "347">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in MvvMcoord.FilterApplyLogic.setup(filters_: Swift.Optional&lt;Swift.Array&lt;MvvMcoord.FilterModel&gt;&gt;, subFilters_: Swift.Optional&lt;Swift.Array&lt;MvvMcoord.SubfilterModel&gt;&gt;, subfiltersByItem_: Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, Swift.Array&lt;Swift.Int&gt;&gt;&gt;, itemsBySubfilter_: Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, Swift.Array&lt;Swift.Int&gt;&gt;&gt;, priceByItemId_: Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, CoreGraphics.CGFloat&gt;&gt;) -&gt; ()"
+                  moduleName = "MvvMcoord"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/igorivanov/Downloads/Garneteum%20Filter/MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+                  timestampString = "575884366.3966449"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "829"
+                  endingLineNumber = "829"
+                  offsetFromSymbolStart = "351">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+            timestampString = "575899791.303633"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "831"
+            endingLineNumber = "831"
+            landmarkName = "setup(filters_:subFilters_:subfiltersByItem_:itemsBySubfilter_:priceByItemId_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MvvMcoord.FilterApplyLogic.setup(filters_: Swift.Optional&lt;Swift.Array&lt;MvvMcoord.FilterModel&gt;&gt;, subFilters_: Swift.Optional&lt;Swift.Array&lt;MvvMcoord.SubfilterModel&gt;&gt;, subfiltersByItem_: Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, Swift.Array&lt;Swift.Int&gt;&gt;&gt;, itemsBySubfilter_: Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, Swift.Array&lt;Swift.Int&gt;&gt;&gt;, priceByItemId_: Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, CoreGraphics.CGFloat&gt;&gt;) -&gt; ()"
+                  moduleName = "MvvMcoord"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/igorivanov/Downloads/Garneteum%20Filter/MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+                  timestampString = "575884335.388312"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "829"
+                  endingLineNumber = "829"
+                  offsetFromSymbolStart = "347">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in MvvMcoord.FilterApplyLogic.setup(filters_: Swift.Optional&lt;Swift.Array&lt;MvvMcoord.FilterModel&gt;&gt;, subFilters_: Swift.Optional&lt;Swift.Array&lt;MvvMcoord.SubfilterModel&gt;&gt;, subfiltersByItem_: Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, Swift.Array&lt;Swift.Int&gt;&gt;&gt;, itemsBySubfilter_: Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, Swift.Array&lt;Swift.Int&gt;&gt;&gt;, priceByItemId_: Swift.Optional&lt;Swift.Dictionary&lt;Swift.Int, CoreGraphics.CGFloat&gt;&gt;) -&gt; ()"
+                  moduleName = "MvvMcoord"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/igorivanov/Downloads/Garneteum%20Filter/MvvMcoord/FilterApplyLogic/FilterApplyLogic.swift"
+                  timestampString = "575884335.391489"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "829"
+                  endingLineNumber = "829"
+                  offsetFromSymbolStart = "351">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/Data Load Service/DataLoadService.swift"
+            timestampString = "575923867.720046"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "179"
+            endingLineNumber = "179"
+            landmarkName = "dbDeleteData(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VMs/CatalogVM+FilterActionDelegate.swift"
+            timestampString = "575923867.720091"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "511"
+            endingLineNumber = "511"
+            landmarkName = "handleDelegate()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VMs/CatalogVM+FilterActionDelegate.swift"
+            timestampString = "575923867.7201281"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "504"
+            endingLineNumber = "504"
+            landmarkName = "handleDelegate()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VMs/CatalogVM+FilterActionDelegate.swift"
+            timestampString = "575923867.720166"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "517"
+            endingLineNumber = "517"
+            landmarkName = "fillSubfiltersTask(subFilters:)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VMs/CatalogVM.swift"
+            timestampString = "575923867.720202"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "129"
+            endingLineNumber = "129"
+            landmarkName = "addOperation()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MvvMcoord/VMs/CatalogVM.swift"
+            timestampString = "575923867.720438"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "131"
+            endingLineNumber = "131"
+            landmarkName = "addOperation()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

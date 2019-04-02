@@ -41,6 +41,7 @@ extension DataLoadService {
         let res = dbLoadLastUIDs(sql: "filterId == \(filterId)")
         guard let _res = res else { return }
         _res[0].needRefresh = false
+       // print("crossRefreshDone")
         self.appDelegate.saveContext()
         notifyCrossSubfilters.onNext(Void())
     }
@@ -120,6 +121,7 @@ extension DataLoadService {
                     subfilterDB.setup(subfilterModel: element)
                     subfiltersDB.append(subfilterDB)
                 }
+              //  print("crossSave")
                 self.appDelegate.saveContext()
                 self.crossRefreshDone(filterId: filterId)
             }
@@ -141,6 +143,7 @@ extension DataLoadService {
         for element in _res2 {
             self.appDelegate.moc.delete(element)
         }
+       // print("crossDelete")
         appDelegate.saveContext()
     }
 }

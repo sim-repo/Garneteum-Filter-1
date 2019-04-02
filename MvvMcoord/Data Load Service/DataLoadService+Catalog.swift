@@ -18,6 +18,7 @@ extension DataLoadService {
             dbDeleteEntity(Int(uid.categoryId), clazz: CategoryItemIdsPersistent.self, entity: "CategoryItemIdsPersistent", fetchBatchSize: 0)
             uid.needRefresh = false
         }
+       // print("clearOldCatalog")
         self.appDelegate.saveContext()
     }
     
@@ -71,6 +72,7 @@ extension DataLoadService {
             self.appDelegate.moc.performAndWait {
                 let row = CategoriesPersistent(entity: CategoriesPersistent.entity(), insertInto: self.appDelegate.moc)
                 row.setup(categoryId, minPrice, maxPrice, fetchLimit)
+               // print("dbSaveCatalog - CategoriesPersistent")
                 self.appDelegate.saveContext()
                 
                 var db2 = [CategoryItemIdsPersistent]()
@@ -79,6 +81,7 @@ extension DataLoadService {
                     row.setup(categoryId, itemId)
                     db2.append(row)
                 }
+              //  print("dbSaveCatalog - CategoryItemIdsPersistent")
                 self.appDelegate.saveContext()
                 self.fireCatalogTotal(categoryId, itemIds, fetchLimit, CGFloat(minPrice), CGFloat(maxPrice))
             }
@@ -114,6 +117,7 @@ extension DataLoadService {
         for element in res {
             self.appDelegate.moc.delete(element)
         }
+       // print("dbDeleteEntity")
         appDelegate.saveContext()
     }
 }

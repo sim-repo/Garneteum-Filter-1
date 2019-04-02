@@ -263,7 +263,7 @@ extension CatalogVC {
                 if res.1 == true {
                     self.waitContainer.alpha = 1.0
                     self.collectionView.isHidden = true
-                    self.timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.internalWaitControl), userInfo: nil, repeats: false)
+                    self.timer = Timer.scheduledTimer(timeInterval: 8, target: self, selector: #selector(self.internalWaitControl), userInfo: nil, repeats: false)
                     DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)){
                         self.startWait()
                     }

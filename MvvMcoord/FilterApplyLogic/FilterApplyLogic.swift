@@ -826,8 +826,8 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
                priceByItemId_: PriceByItemId? = nil
         ){
         
-       // DispatchQueue.global(qos: .userInitiated).async {[weak self] in
-        //    guard let `self` = self else { return }
+//       DispatchQueue.global(qos: .userInitiated).async {[weak self] in
+//            guard let `self` = self else { return }
         if let a = filters_ {
             print("----------- Apply :::: Filters:")
             a.forEach({f in
@@ -883,7 +883,7 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
             print(" ")
             print(" ")
         }
-          //  }
+         //   }
     }
     
     
@@ -906,13 +906,13 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
         itemsById.removeAll()
         itemsByCatalog.removeAll()
         itemIds.removeAll()
-        print("----------- Apply :::: After dealloc: ")
-        print("----------- filters : \(filters.count)")
-        print("----------- subfilters : \(subFilters.count)")
-        print("----------- subfiltersByFilter : \(subfiltersByFilter.count)")
-        print(" ")
-        print(" ")
-        print(" ")
+//        print("----------- Apply :::: After dealloc: ")
+//        print("----------- filters : \(filters.count)")
+//        print("----------- subfilters : \(subFilters.count)")
+//        print("----------- subfiltersByFilter : \(subfiltersByFilter.count)")
+//        print(" ")
+//        print(" ")
+//        print(" ")
     }
     
 }

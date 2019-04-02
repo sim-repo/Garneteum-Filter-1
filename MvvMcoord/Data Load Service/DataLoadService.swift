@@ -2,12 +2,15 @@ import UIKit
 import RxSwift
 import CoreData
 
+enum DataTasksEnum: Int {
+    case didStartApplication = 0, willCatalogShow, willStartPrefetch, willPrefetch
+}
 
 protocol DataLoadFacadeProtocol {
     
-    func screenHandle(eventString: String, _ categoryId: CategoryId, _ itemsIds: Set<Int>)
-    func screenHandle(eventString: String, _ categoryId: CategoryId)
-    func screenHandle(eventString: String)
+    func screenHandle(dataTaskEnum: DataTasksEnum, _ categoryId: CategoryId, _ itemsIds: Set<Int>)
+    func screenHandle(dataTaskEnum: DataTasksEnum, _ categoryId: CategoryId)
+    func screenHandle(dataTaskEnum: DataTasksEnum)
     
     func getFilters() -> BehaviorSubject<[FilterModel]>
     func getCrossFilters() -> BehaviorSubject<[FilterModel]>
@@ -41,12 +44,15 @@ protocol DataLoadFacadeProtocol {
 
 class DataLoadService : DataLoadFacadeProtocol {
    
-    internal init(){}
+    internal init(){
+        setupOperationQueue()
+    }
     
     public static var shared = DataLoadService()
     
-    internal var subfiltersByItem: SubfiltersByItem = SubfiltersByItem()
-    internal var itemsBySubfilter: ItemsBySubfilter = ItemsBySubfilter()
+    internal var operationQueues: [Int: OperationQueue] = [:]
+
+    
     internal var notifyCrossSubfilters = PublishSubject<Void>()
     
     
@@ -54,20 +60,7 @@ class DataLoadService : DataLoadFacadeProtocol {
         case brands = 1, colors
     }
    
-    enum DataTypeEnum: String {
-        case filters = "filters", subfilters = "subfilters", subfiltersByItem = "subfiltersByItem", itemsBySubfilter = "itemsBySubfilter", priceByItemId = "priceByItemId", prefetch = "prefetch", catalogIds = "catalogIds"
-    }
-    
-    //internal let viewContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
-//    lazy var updateContext: NSManagedObjectContext = {
-//        let _updateContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-//        _updateContext.parent = self.viewContext
-//        return _updateContext
-//    }()
-//
     internal var appDelegate = UIApplication.shared.delegate as! AppDelegate
-    
     
     internal var subfilters: [SubfilterModel] = []
     
@@ -87,37 +80,65 @@ class DataLoadService : DataLoadFacadeProtocol {
     
     internal let networkService = getNetworkService()
     
-    func screenHandle(eventString: String) {
-        switch eventString {
-            case "RootCoord": loadNewUIDs()
+    
+    func screenHandle(dataTaskEnum: DataTasksEnum) {
+        switch dataTaskEnum {
+            case .didStartApplication:
+                operationQueues[DataTasksEnum.didStartApplication.rawValue]?.addOperation { [weak self] in
+                    self?.loadNewUIDs()
+                }
+                break
             default:
-                fatalError("screenHandle: no handlers found for value '\(eventString)'")
+                fatalError("screenHandle: no handlers found for value '\(dataTaskEnum)'")
         }
     }
     
-    func screenHandle(eventString: String, _ categoryId: CategoryId) {
-        switch eventString {
-
-        case "ShowCatalog": self.doEmitCategoryAllFilters(categoryId)
+    func screenHandle(dataTaskEnum: DataTasksEnum, _ categoryId: CategoryId) {
+        switch dataTaskEnum {
+            case .willCatalogShow:
+                operationQueues[DataTasksEnum.willCatalogShow.rawValue]?.addOperation { [weak self] in
+                    self?.doEmitCategoryAllFilters(categoryId)
+                }
+                break
             
-        case "StartCatalogFetch": self.doEmitCatalogStart(categoryId)
+            case .willStartPrefetch:
+                operationQueues[DataTasksEnum.willCatalogShow.rawValue]?.addOperation { [weak self] in
+                    self?.doEmitCatalogStart(categoryId)
+                }
+                break
             
-        default:
-            fatalError("screenHandle: no handlers found for value '\(eventString)'")
+            default:
+                fatalError("screenHandle: no handlers found for value '\(dataTaskEnum)'")
         }
     }
     
     
-    func screenHandle(eventString: String, _ categoryId: CategoryId, _ itemsIds: Set<Int>) {
-        switch eventString {
+    func screenHandle(dataTaskEnum: DataTasksEnum, _ categoryId: CategoryId, _ itemsIds: Set<Int>) {
+        switch dataTaskEnum {
+            case .willPrefetch:
+                operationQueues[DataTasksEnum.willPrefetch.rawValue]?.addOperation { [weak self] in
+                    self?.doEmitPrefetch(categoryId: categoryId, itemIds: itemsIds)
+                }
+                break
             
-        case "Prefetch":
-            self.doEmitPrefetch(categoryId: categoryId, itemIds: itemsIds)
-            
-        default:
-            fatalError("screenHandle: no handlers found for value '\(eventString)'")
+            default:
+                fatalError("screenHandle: no handlers found for value '\(dataTaskEnum)'")
         }
     }
+    
+    private func setupOperationQueue(){
+        addOperation(dataTasksEnum: .didStartApplication)
+        addOperation(dataTasksEnum: .willCatalogShow)
+        addOperation(dataTasksEnum: .willStartPrefetch)
+        addOperation(dataTasksEnum: .willPrefetch)
+    }
+    
+    private func addOperation(dataTasksEnum: DataTasksEnum) {
+        let queue = OperationQueue()
+        queue.maxConcurrentOperationCount = 1
+        operationQueues[dataTasksEnum.rawValue] = queue
+    }
+    
     
     func getFilters() -> BehaviorSubject<[FilterModel]> {
         return outFilters
@@ -162,6 +183,7 @@ class DataLoadService : DataLoadFacadeProtocol {
             for object in results {
                 guard let objectData = object as? NSManagedObject else { continue }
                 appDelegate.moc.delete(objectData)
+                //print("dbDeleteData")
                 appDelegate.saveContext()
             }
             

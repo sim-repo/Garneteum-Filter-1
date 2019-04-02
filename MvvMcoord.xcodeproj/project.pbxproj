@@ -349,7 +349,6 @@
 				162EDC662242257C00984EFE /* Resources */,
 				16187B15222671B300000FDB /* FilterApplyLogic */,
 				16BEFA1D224112FB00226CD9 /* Data Load Service */,
-				16115C92222432570081AFBF /* Network Service */,
 				1618DDEE221E861600E96EDC /* UI Controls */,
 				161D84C9220A5543008D74F0 /* Script Upload */,
 				16123A9022030722004E507C /* Test Module */,
@@ -549,6 +548,7 @@
 				16157D9B224925D1008FD683 /* DataLoadService+ApplyLogic.swift */,
 				16140FC4224A05C1003E20BD /* DataLoadService+Catalog.swift */,
 				16140FD2224A42D9003E20BD /* DataLoadService+Prefetch.swift */,
+				16115C92222432570081AFBF /* Network Service */,
 			);
 			path = "Data Load Service";
 			sourceTree = "<group>";

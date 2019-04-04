@@ -66,25 +66,21 @@ extension DataLoadService {
     internal func dbSaveCatalog(_ categoryId: CategoryId, _ fetchLimit: Int, _ itemIds: ItemIds, _ minPrice: Int, _ maxPrice: Int) {
         dbDeleteEntity(categoryId, clazz: CategoriesPersistent.self, entity: "CategoriesPersistent", fetchBatchSize: 1)
         dbDeleteEntity(categoryId, clazz: CategoryItemIdsPersistent.self, entity: "CategoryItemIdsPersistent", fetchBatchSize: 0)
-        
-        DispatchQueue.global(qos: .userInitiated).async {[weak self] in
-            guard let `self` = self else { return }
-            self.appDelegate.moc.performAndWait {
-                let row = CategoriesPersistent(entity: CategoriesPersistent.entity(), insertInto: self.appDelegate.moc)
-                row.setup(categoryId, minPrice, maxPrice, fetchLimit)
-               // print("dbSaveCatalog - CategoriesPersistent")
-                self.appDelegate.saveContext()
-                
-                var db2 = [CategoryItemIdsPersistent]()
-                for itemId in itemIds {
-                    let row = CategoryItemIdsPersistent(entity: CategoryItemIdsPersistent.entity(), insertInto: self.appDelegate.moc)
-                    row.setup(categoryId, itemId)
-                    db2.append(row)
-                }
-              //  print("dbSaveCatalog - CategoryItemIdsPersistent")
-                self.appDelegate.saveContext()
-                self.fireCatalogTotal(categoryId, itemIds, fetchLimit, CGFloat(minPrice), CGFloat(maxPrice))
+        self.appDelegate.moc.performAndWait {
+            let row = CategoriesPersistent(entity: CategoriesPersistent.entity(), insertInto: self.appDelegate.moc)
+            row.setup(categoryId, minPrice, maxPrice, fetchLimit)
+           // print("dbSaveCatalog - CategoriesPersistent")
+            appDelegate.saveContext()
+            
+            var db2 = [CategoryItemIdsPersistent]()
+            for itemId in itemIds {
+                let row = CategoryItemIdsPersistent(entity: CategoryItemIdsPersistent.entity(), insertInto: self.appDelegate.moc)
+                row.setup(categoryId, itemId)
+                db2.append(row)
             }
+          //  print("dbSaveCatalog - CategoryItemIdsPersistent")
+            appDelegate.saveContext()
+            fireCatalogTotal(categoryId, itemIds, fetchLimit, CGFloat(minPrice), CGFloat(maxPrice))
         }
     }
     
@@ -92,6 +88,7 @@ extension DataLoadService {
     internal func dbLoadEntity<T: NSManagedObject>(_ categoryId: CategoryId, _ clazz: T.Type, _ entity: String, _ fetchBatchSize: Int, sql: String = "") -> [T]?{
         var db: [T]?
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
+         request.includesPendingChanges = false
         if fetchBatchSize != 0 {
             request.fetchBatchSize = fetchBatchSize
         }

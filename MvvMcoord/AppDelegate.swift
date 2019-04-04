@@ -27,7 +27,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }()
     
     
-    private lazy var privateMoc: NSManagedObjectContext = {
+
+    
+    private(set) lazy var moc: NSManagedObjectContext = {
+        
         // Initialize Managed Object Context
         var managedObjectContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         
@@ -37,40 +40,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return managedObjectContext
     }()
     
-    private(set) lazy var moc: NSManagedObjectContext = {
-        let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+    
+    private(set) lazy var readMoc: NSManagedObjectContext = {
         
-        managedObjectContext.parent = self.privateMoc
+        // Initialize Managed Object Context
+        var managedObjectContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        
+        // Configure Managed Object Context
+        managedObjectContext.persistentStoreCoordinator = persistentContainer.persistentStoreCoordinator
         
         return managedObjectContext
     }()
     
     
     func saveContext() {
-        moc.performAndWait {
-            do {
-                if self.moc.hasChanges {
-                    try self.moc.save()
-                }
-            } catch {
-                let saveError = error as NSError
-                print("Unable to Save Changes of Managed Object Context")
-                print("\(saveError), \(saveError.localizedDescription)")
-            }
-            
-            self.privateMoc.performAndWait {
+           // moc.perform {[weak self] in
                 do {
-                    if self.privateMoc.hasChanges {
-                        try self.privateMoc.save()
+                    if self.moc.hasChanges{
+                        try self.moc.save()
                     }
-                } catch {
-                    let saveError = error as NSError
-                    print("Unable to Save Changes of Private Managed Object Context")
-                    print("\(saveError), \(saveError.localizedDescription)")
+                } catch let error as NSError {
+                   
+                    print("Unable to Save Changes of Managed Object Context")
+                    print("\(error), \(error.localizedDescription)")
                 }
-            }
-            
-        }
+                
+          //  }
     }
     
     

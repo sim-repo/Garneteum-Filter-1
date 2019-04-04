@@ -94,5 +94,10 @@ class MvvMcoordUITests: XCTestCase {
         my1StaticText.tap()
         }
     }
+    
+    
+    func testExample2() {
+        
+    }
 
 }

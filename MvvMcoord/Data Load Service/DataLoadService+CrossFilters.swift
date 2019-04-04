@@ -19,16 +19,16 @@ extension DataLoadService {
             crossDelete(filterId: Int(uid.filterId))
         }
         
-        notifyCrossSubfilters
-            .debug()
-            .skip(_res.count-1)
-            .take(1)
-            .subscribe(onNext: {[weak self] cnt in
-                print("CROSS SUBFILTERS EMIT")
-                self?.doEmitCrossSubfilters(sql: "cross == 1")
-                self?.emitCrossFilters(sql: "cross == 1")
-            })
-            .disposed(by: bag)
+//        notifyCrossSubfilters
+//            .debug()
+//            .skip(_res.count-1)
+//            .take(1)
+//            .subscribe(onNext: {[weak self] cnt in
+//                print("CROSS SUBFILTERS EMIT")
+//                self?.doEmitCrossSubfilters(sql: "cross == 1")
+//                self?.emitCrossFilters(sql: "cross == 1")
+//            })
+//            .disposed(by: bag)
         
         for uid in _res {
             crossNetLoad(filterId: Int(uid.filterId))
@@ -43,7 +43,7 @@ extension DataLoadService {
         _res[0].needRefresh = false
        // print("crossRefreshDone")
         self.appDelegate.saveContext()
-        notifyCrossSubfilters.onNext(Void())
+       // notifyCrossSubfilters.onNext(Void())
     }
     
     
@@ -51,6 +51,7 @@ extension DataLoadService {
         var uidDB: [LastUidPersistent]?
         //let request = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
         let request: NSFetchRequest<LastUidPersistent> = LastUidPersistent.fetchRequest()
+        request.includesPendingChanges = false
         request.predicate = NSPredicate(format: sql)
         do {
             uidDB = try self.appDelegate.moc.fetch(request)
@@ -65,6 +66,7 @@ extension DataLoadService {
         var db: [SubfilterPersistent]?
         //let request = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
         let request: NSFetchRequest<SubfilterPersistent> = SubfilterPersistent.fetchRequest()
+        request.includesPendingChanges = false
         if sql != "" {
             request.predicate = NSPredicate(format: sql)
         }
@@ -81,6 +83,7 @@ extension DataLoadService {
         var db: [FilterPersistent]?
         //let request = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
         let request: NSFetchRequest<FilterPersistent> = FilterPersistent.fetchRequest()
+        request.includesPendingChanges = false
         request.predicate = NSPredicate(format: sql)
         do {
             db = try self.appDelegate.moc.fetch(request)
@@ -106,25 +109,27 @@ extension DataLoadService {
             let _subfilters = subfilters
             else { return }
         
-        DispatchQueue.global(qos: .userInitiated).async {[weak self] in
-            guard let `self` = self else { return }
-            self.self.appDelegate.moc.performAndWait {
-                var filtersDB = [FilterPersistent]()
-                for element in _filters {
-                    let filterDB = FilterPersistent(entity: FilterPersistent.entity(), insertInto: self.appDelegate.moc)
-                    filterDB.setup(filterModel: element)
-                    filtersDB.append(filterDB)
-                }
-                var subfiltersDB = [SubfilterPersistent]()
-                for element in _subfilters {
-                    let subfilterDB = SubfilterPersistent(entity: SubfilterPersistent.entity(), insertInto: self.appDelegate.moc)
-                    subfilterDB.setup(subfilterModel: element)
-                    subfiltersDB.append(subfilterDB)
-                }
-              //  print("crossSave")
-                self.appDelegate.saveContext()
-                self.crossRefreshDone(filterId: filterId)
+        applyLogic.setup(filters_: _filters)
+        outCrossFilters.onNext(_filters)
+        applyLogic.setup(subFilters_: subfilters)
+        outCrossSubfilters.onNext(_subfilters)
+        
+        appDelegate.moc.performAndWait {
+            var filtersDB = [FilterPersistent]()
+            for element in _filters {
+                let filterDB = FilterPersistent(entity: FilterPersistent.entity(), insertInto: appDelegate.moc)
+                filterDB.setup(filterModel: element)
+                filtersDB.append(filterDB)
             }
+            var subfiltersDB = [SubfilterPersistent]()
+            for element in _subfilters {
+                let subfilterDB = SubfilterPersistent(entity: SubfilterPersistent.entity(), insertInto: appDelegate.moc)
+                subfilterDB.setup(subfilterModel: element)
+                subfiltersDB.append(subfilterDB)
+            }
+          //  print("crossSave")
+            appDelegate.saveContext()
+            crossRefreshDone(filterId: filterId)
         }
     }
     

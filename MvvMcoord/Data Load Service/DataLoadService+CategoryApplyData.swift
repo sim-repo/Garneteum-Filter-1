@@ -24,31 +24,26 @@ extension DataLoadService {
         guard let _subfiltersByItem = subfiltersByItem,
             let _priceByItemId = priceByItemId
             else { return }
-
         applyDelete(categoryId: categoryId)
-        
-        DispatchQueue.global(qos: .userInitiated).async {[weak self] in
-            guard let `self` = self else { return }
-            self.self.appDelegate.moc.performAndWait {
-                var db1 = [SubfilterItemPersistent]()
-                for element in _subfiltersByItem {
+        appDelegate.moc.performAndWait {
+            var db1 = [SubfilterItemPersistent]()
+            for element in _subfiltersByItem {
 
-                    for subfilterId in element.value {
-                        let row = SubfilterItemPersistent(entity: SubfilterItemPersistent.entity(), insertInto: self.appDelegate.moc)
-                        row.setup(categoryId: categoryId, subfilterId: subfilterId, itemId: element.key)
-                        db1.append(row)
-                    }
+                for subfilterId in element.value {
+                    let row = SubfilterItemPersistent(entity: SubfilterItemPersistent.entity(), insertInto: appDelegate.moc)
+                    row.setup(categoryId: categoryId, subfilterId: subfilterId, itemId: element.key)
+                    db1.append(row)
                 }
-                var db2 = [PriceByItemPersistent]()
-                for element in _priceByItemId {
-                    let row = PriceByItemPersistent(entity: PriceByItemPersistent.entity(), insertInto: self.appDelegate.moc)
-                    row.setup(categoryId: categoryId, itemId: element.key, price: element.value)
-                    db2.append(row)
-                }
-              //  print("applySave")
-                self.appDelegate.saveContext()
-                self.applyRefreshDone(categoryId: categoryId)
             }
+            var db2 = [PriceByItemPersistent]()
+            for element in _priceByItemId {
+                let row = PriceByItemPersistent(entity: PriceByItemPersistent.entity(), insertInto: appDelegate.moc)
+                row.setup(categoryId: categoryId, itemId: element.key, price: element.value)
+                db2.append(row)
+            }
+          //  print("applySave")
+            appDelegate.saveContext()
+            applyRefreshDone(categoryId: categoryId)
         }
     }
     
@@ -57,6 +52,7 @@ extension DataLoadService {
         var db: [SubfilterItemPersistent]?
         //let request = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
         let request: NSFetchRequest<SubfilterItemPersistent> = SubfilterItemPersistent.fetchRequest()
+        request.includesPendingChanges = false
         if sql != "" {
             request.predicate = NSPredicate(format: sql)
         }
@@ -73,6 +69,7 @@ extension DataLoadService {
         var db: [PriceByItemPersistent]?
         //let request = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
         let request: NSFetchRequest<PriceByItemPersistent> = PriceByItemPersistent.fetchRequest()
+         request.includesPendingChanges = false
         if sql != "" {
             request.predicate = NSPredicate(format: sql)
         }

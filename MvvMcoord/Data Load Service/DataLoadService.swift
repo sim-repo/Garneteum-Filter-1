@@ -13,8 +13,8 @@ protocol DataLoadFacadeProtocol {
     func screenHandle(dataTaskEnum: DataTasksEnum)
     
     func getFilters() -> BehaviorSubject<[FilterModel]>
-    func getCrossFilters() -> BehaviorSubject<[FilterModel]>
-    func getCrossSubfilters() -> BehaviorSubject<[SubfilterModel]>
+    func getCrossFilters() -> ReplaySubject<[FilterModel]>
+    func getCrossSubfilters() -> ReplaySubject<[SubfilterModel]>
     func getCategorySubfilters() -> BehaviorSubject<[SubfilterModel]>
     
     func getApplyForItemsEvent() -> PublishSubject<(FilterIds, SubFilterIds, Applied, Selected, ItemIds)>
@@ -45,14 +45,17 @@ protocol DataLoadFacadeProtocol {
 class DataLoadService : DataLoadFacadeProtocol {
    
     internal init(){
+        DispatchQueue(label: "com.example.myApp.bg").async {[weak self]  in
+            let m = self?.appDelegate.moc
+        }
         setupOperationQueue()
+        notif()
     }
     
     public static var shared = DataLoadService()
     
     internal var operationQueues: [Int: OperationQueue] = [:]
 
-    
     internal var notifyCrossSubfilters = PublishSubject<Void>()
     
     
@@ -67,8 +70,8 @@ class DataLoadService : DataLoadFacadeProtocol {
     let applyLogic: FilterApplyLogic = FilterApplyLogic.shared
     
     internal var outFilters = BehaviorSubject<[FilterModel]>(value: [])
-    internal var outCrossFilters = BehaviorSubject<[FilterModel]>(value: [])
-    internal var outCrossSubfilters = BehaviorSubject<[SubfilterModel]>(value: [])
+    internal var outCrossFilters = ReplaySubject<[FilterModel]>.create(bufferSize: 2)
+    internal var outCrossSubfilters = ReplaySubject<[SubfilterModel]>.create(bufferSize: 2)
     internal var outCategorySubfilters = BehaviorSubject<[SubfilterModel]>(value: [])
     internal var outEnterSubFilter = PublishSubject<(FilterId, SubFilterIds, Applied, CountItems)>()
     internal var outApplyItemsResponse = PublishSubject<(FilterIds, SubFilterIds, Applied, Selected, ItemIds)>()
@@ -79,6 +82,17 @@ class DataLoadService : DataLoadFacadeProtocol {
     internal var outCatalogTotal = BehaviorSubject<(CategoryId, ItemIds, Int, MinPrice, MaxPrice)>(value: (0,[],20, 0, 0))
     
     internal let networkService = getNetworkService()
+    
+    
+    
+    func notif(){
+        NotificationCenter.default.addObserver(self, selector: #selector(contextObjectsDidChange(_:)), name: Notification.Name.NSManagedObjectContextDidSave, object: nil)
+    }
+    
+    @objc func contextObjectsDidChange(_ notification: Notification) {
+        let context = notification.object as? NSManagedObjectContext
+        print(context)
+    }
     
     
     func screenHandle(dataTaskEnum: DataTasksEnum) {
@@ -144,11 +158,11 @@ class DataLoadService : DataLoadFacadeProtocol {
         return outFilters
     }
     
-    func getCrossFilters() -> BehaviorSubject<[FilterModel]> {
+    func getCrossFilters() -> ReplaySubject<[FilterModel]>{
         return outCrossFilters
     }
     
-    func getCrossSubfilters() -> BehaviorSubject<[SubfilterModel]> {
+    func getCrossSubfilters() -> ReplaySubject<[SubfilterModel]> {
         return outCrossSubfilters
     }
     
@@ -159,7 +173,6 @@ class DataLoadService : DataLoadFacadeProtocol {
     func reqEnterSubFilter(filterId: FilterId, applied: Applied, rangePrice: RangePrice) {
         applyLogic.doLoadSubFilters(filterId, applied, rangePrice)
             .asObservable()
-            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: {[weak self] res in
                 let filterId = res.0
                 let subfiltersIds = res.1
@@ -177,6 +190,7 @@ class DataLoadService : DataLoadFacadeProtocol {
     
     internal func dbDeleteData(_ entity:String) {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
+        fetchRequest.includesPendingChanges = false
         fetchRequest.returnsObjectsAsFaults = false
         do {
             let results = try appDelegate.moc.fetch(fetchRequest)
@@ -253,6 +267,7 @@ extension DataLoadService {
     internal func dbLoadFilter(sql: String) -> [FilterPersistent]? {
         var db: [FilterPersistent]?
         let request: NSFetchRequest<FilterPersistent> = FilterPersistent.fetchRequest()
+        request.includesPendingChanges = false
         request.predicate = NSPredicate(format: sql)
         do {
             db = try appDelegate.moc.fetch(request)

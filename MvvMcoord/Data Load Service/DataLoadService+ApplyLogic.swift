@@ -35,7 +35,6 @@ extension DataLoadService {
     func reqApplyFromFilter(categoryId: CategoryId, appliedSubFilters: Applied, selectedSubFilters: Selected, rangePrice: RangePrice) {
         self.applyLogic.doApplyFromFilter(appliedSubFilters, selectedSubFilters, rangePrice)
             .asObservable()
-            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: {[weak self] res in
                 let filterIds = res.0
                 let subfilterIds = res.1
@@ -52,7 +51,6 @@ extension DataLoadService {
     func reqApplyFromSubFilter(categoryId: CategoryId, filterId: FilterId, appliedSubFilters: Applied, selectedSubFilters: Selected, rangePrice: RangePrice) {
         applyLogic.doApplyFromSubFilters(filterId, appliedSubFilters, selectedSubFilters, rangePrice)
             .asObservable()
-            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: {[weak self] res in
                 let filterIds = res.0
                 let subfilterIds = res.1
@@ -76,7 +74,6 @@ extension DataLoadService {
     func reqApplyByPrices(categoryId: CategoryId, rangePrice: RangePrice) {
         applyLogic.doApplyByPrices(categoryId, rangePrice)
             .asObservable()
-            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: {[weak self] res in
                 let filterIds: FilterIds = res
                 self?.fireApplyByPrices(filterIds)
@@ -88,7 +85,6 @@ extension DataLoadService {
     func reqRemoveFilter(categoryId: CategoryId, filterId: FilterId, appliedSubFilters: Applied, selectedSubFilters: Selected, rangePrice: RangePrice) {
         applyLogic.doRemoveFilter(filterId, appliedSubFilters, selectedSubFilters, rangePrice)
             .asObservable()
-            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: {[weak self] res in
                 let filterIds = res.0
                 let subfilterIds = res.1
@@ -114,7 +110,6 @@ extension DataLoadService {
     func reqMidTotal(categoryId: CategoryId, appliedSubFilters: Applied, selectedSubFilters: Selected, rangePrice: RangePrice) {
         applyLogic.doCalcMidTotal(appliedSubFilters, selectedSubFilters, rangePrice)
             .asObservable()
-            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: {[weak self] count in
                 self?.fireMidTotal(count)
             })

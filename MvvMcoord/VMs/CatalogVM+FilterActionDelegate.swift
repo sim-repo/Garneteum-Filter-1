@@ -378,8 +378,9 @@ extension CatalogVM : FilterActionDelegate {
 //            })
 //            .disposed(by: bag)
         
-        
+
         getDataLoadService().getEnterSubFilterEvent()
+            .observeOn(MainScheduler.asyncInstance)
             .filter({$0.1.count > 0})
             .subscribe(onNext: {[weak self] res in
                 guard let `self` = self else { return }
@@ -398,6 +399,7 @@ extension CatalogVM : FilterActionDelegate {
         
         
         getDataLoadService().getApplyForItemsEvent()
+            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: {[weak self] _filters in
                 guard let `self` = self else { return }
                 
@@ -420,6 +422,7 @@ extension CatalogVM : FilterActionDelegate {
         
         
         getDataLoadService().getApplyForFiltersEvent()
+            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: {[weak self] _filters in
                 guard let `self` = self else { return }
                 self.enableFilters(ids: _filters.0)
@@ -441,6 +444,7 @@ extension CatalogVM : FilterActionDelegate {
         
         
         getDataLoadService().getApplyByPriceEvent()
+            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: {[weak self] _filters in
                 guard let `self` = self else { return }
                 self.enableFilters(ids: _filters)
@@ -533,6 +537,7 @@ extension CatalogVM : FilterActionDelegate {
 
         
         getDataLoadService().getMidTotal()
+            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: {[weak self] count in
                 self?.itemsTotal = count
                 self?.outMidTotal.onNext(count)

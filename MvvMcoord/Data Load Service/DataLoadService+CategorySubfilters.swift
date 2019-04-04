@@ -59,27 +59,25 @@ extension DataLoadService {
             else { return }
         
         categoryDelete(categoryId: categoryId)
-        
-        DispatchQueue.global(qos: .userInitiated).async {[weak self] in
-            guard let `self` = self else { return }
-            self.appDelegate.moc.performAndWait {
-                var filtersDB = [FilterPersistent]()
-                for element in _filters {
-                    let filterDB = FilterPersistent(entity: FilterPersistent.entity(), insertInto: self.appDelegate.moc)
-                    filterDB.setup(filterModel: element)
-                    filtersDB.append(filterDB)
-                }
-                var subfiltersDB = [SubfilterPersistent]()
-                for element in _subfilters {
-                    let subfilterDB = SubfilterPersistent(entity: SubfilterPersistent.entity(), insertInto: self.appDelegate.moc)
-                    subfilterDB.setup(subfilterModel: element)
-                    subfiltersDB.append(subfilterDB)
-                }
-              //  print("categorySave")
-                self.appDelegate.saveContext()
-                self.categoryRefreshDone(categoryId: categoryId)
+
+        appDelegate.moc.performAndWait {
+            var filtersDB = [FilterPersistent]()
+            for element in _filters {
+                let filterDB = FilterPersistent(entity: FilterPersistent.entity(), insertInto: appDelegate.moc)
+                filterDB.setup(filterModel: element)
+                filtersDB.append(filterDB)
             }
+            var subfiltersDB = [SubfilterPersistent]()
+            for element in _subfilters {
+                let subfilterDB = SubfilterPersistent(entity: SubfilterPersistent.entity(), insertInto: appDelegate.moc)
+                subfilterDB.setup(subfilterModel: element)
+                subfiltersDB.append(subfilterDB)
+            }
+          //  print("categorySave")
+            appDelegate.saveContext()
+            categoryRefreshDone(categoryId: categoryId)
         }
+        
     }
     
     

@@ -20,7 +20,7 @@ class CatalogListCell : UICollectionViewCell{
             imageView.image = UIImage(named: "no-images")
             gsReference.getData(maxSize: 1 * 320 * 240) {[weak self] data, error in
                 if let error = error {
-                    print("Storage: \(error.localizedDescription)")
+                   // print("Storage: \(error.localizedDescription)")
                 } else {
                     if self?.tag == indexPath.row {
                         self?.imageView.image = UIImage(data: data!)

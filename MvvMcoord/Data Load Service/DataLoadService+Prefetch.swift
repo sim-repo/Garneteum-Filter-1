@@ -51,35 +51,32 @@ extension DataLoadService {
     
     
     internal func dbSavePrefetch(_ categoryId: CategoryId, _ netItems: [CatalogModel1], _ dbFoundItems: [CatalogModel]){
-        DispatchQueue.global(qos: .userInitiated).async {[weak self] in
-            guard let `self` = self else { return }
-            self.appDelegate.moc.performAndWait {
-                var db = [PrefetchPersistent]()
-                for model in netItems {
-                    let row = PrefetchPersistent(entity: PrefetchPersistent.entity(), insertInto: self.appDelegate.moc)
-                    row.setup(model: model)
-                    db.append(row)
-                }
-                //print("dbSavePrefetch")
-                self.appDelegate.saveContext()
-                var res = netItems.compactMap({CatalogModel(catalogModel1: $0)})
-                res.append(contentsOf: dbFoundItems)
-                self.firePrefetch(res)
-            }
+        var db = [PrefetchPersistent]()
+        for model in netItems {
+            let row = PrefetchPersistent(entity: PrefetchPersistent.entity(), insertInto: appDelegate.moc)
+            row.setup(model: model)
+            db.append(row)
         }
+        //print("dbSavePrefetch")
+        appDelegate.saveContext()
+        var res = netItems.compactMap({CatalogModel(catalogModel1: $0)})
+        res.append(contentsOf: dbFoundItems)
+        firePrefetch(res)
+
     }
     
     
     internal func dbLoadPrefetch(itemIds: Set<Int>) -> Set<PrefetchPersistent>{
-        var db = Set<PrefetchPersistent>()
-        
+        var db: Set<PrefetchPersistent>  = Set<PrefetchPersistent>()
+            
         let request: NSFetchRequest<PrefetchPersistent> = PrefetchPersistent.fetchRequest()
         request.sortDescriptors = [
             NSSortDescriptor.init(key: "itemId", ascending: true)
         ]
+        request.includesPendingChanges = false
         request.predicate = NSPredicate(format: "ANY itemId IN %@", itemIds)
         do {
-            db = try Set(appDelegate.moc.fetch(request))
+            db = try Set(appDelegate.readMoc.fetch(request))
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }

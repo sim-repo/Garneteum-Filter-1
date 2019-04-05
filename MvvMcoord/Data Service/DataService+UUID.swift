@@ -3,7 +3,8 @@ import RxSwift
 import CoreData
 
 // MARK: - UUIDS
-extension DataLoadService {
+extension DataService {
+    
     
     internal func loadNewUIDs(){
         let completion: (([UidModel]) -> Void)? = { [weak self] (uids) in
@@ -13,10 +14,12 @@ extension DataLoadService {
     }
     
     
+    
     internal func saveNewUIDs(_ uids: [UidModel]?) {
+        
         guard let _uids = uids
             else { return }
-        self.dbDeleteData("NewUidPersistent") // add
+        self.dbDeleteData("NewUidPersistent")
         self.appDelegate.moc.performAndWait {
             var uidsDB = [NewUidPersistent]()
             for element in _uids {
@@ -24,13 +27,15 @@ extension DataLoadService {
                 uidDB.setup(uidModel: element)
                 uidsDB.append(uidDB)
             }
-           // print("saveNewUIDs")
             self.appDelegate.saveContext()
             self.compare()
         }
     }
     
+    
+    
     internal func saveLastUIDs(_ uids: [NewUidPersistent]) {
+        
         appDelegate.moc.performAndWait {
             var uidsDB = [LastUidPersistent]()
             for element in uids {
@@ -38,7 +43,6 @@ extension DataLoadService {
                 uidDB.setup(newUID: element)
                 uidsDB.append(uidDB)
             }
-          //  print("saveLastUIDs")
             self.appDelegate.saveContext()
             self.checkCrossRefresh()
             self.clearOldPrefetch()
@@ -46,15 +50,18 @@ extension DataLoadService {
         }
     }
     
+    
+    
     internal func toRefresh(last: LastUidPersistent, newUid: String){
         last.needRefresh = true
         last.uid = newUid
-        //print("toRefresh")
         self.appDelegate.saveContext()
     }
     
     
+    
     internal func compare() {
+        
         guard let newUids = dbLoadNewUIDs() else { return }
         guard let lastUids = dbLoadLastUIDs(),
             lastUids.count > 0
@@ -91,6 +98,7 @@ extension DataLoadService {
     
     
     internal func dbLoadNewUIDs() -> [NewUidPersistent]?{
+        
         var uidDB: [NewUidPersistent]?
         do {
             uidDB = try self.appDelegate.moc.fetch(NewUidPersistent.fetchRequest())
@@ -101,7 +109,9 @@ extension DataLoadService {
     }
     
     
+    
     internal func dbLoadLastUIDs() -> [LastUidPersistent]?{
+        
         var uidDB: [LastUidPersistent]?
         do {
             uidDB = try self.appDelegate.moc.fetch(LastUidPersistent.fetchRequest())

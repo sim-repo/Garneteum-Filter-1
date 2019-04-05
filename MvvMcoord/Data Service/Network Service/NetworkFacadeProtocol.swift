@@ -1,9 +1,11 @@
 import UIKit
 import RxSwift
 
+
+
 protocol NetworkFacadeProtocol {
 
-    func reqPrefetch(itemIds: ItemIds, completion: (([CatalogModel1])->Void)?)
+    func reqPrefetch(itemIds: ItemIds, completion: (([CatalogModel1], NetError?)->Void)?)
     
     func reqFullFilterEntities(categoryId: CategoryId)
     
@@ -117,6 +119,10 @@ class NetworkFacadeBase: NetworkFacadeProtocol {
         case crossUIDs = 0, crossFilters, categoryFilters, categoryApply, catalogStart, catalogPrefetch
     }
     
+    enum NetTaskStatusEnum: Int {
+        case requestLimitAchieved = 0, rerunAfterError, success
+    }
+    
     
     private func setupDownload(){
         let didDownloadComplete = Observable.combineLatest(didDownloadChunk1,
@@ -158,7 +164,7 @@ class NetworkFacadeBase: NetworkFacadeProtocol {
    
     func reqCatalogStart(categoryId: CategoryId, completion: ((CategoryId, Int, ItemIds, Int, Int)->Void)? ) {}
     
-    func reqPrefetch(itemIds: ItemIds, completion: (([CatalogModel1])->Void)?) {}
+    func reqPrefetch(itemIds: ItemIds, completion: (([CatalogModel1], NetError?)->Void)?) {}
     
     func reqFullFilterEntities(categoryId: CategoryId) {}
     
@@ -295,8 +301,5 @@ class NetworkFacadeBase: NetworkFacadeProtocol {
     internal func fireNetworkError(errorType: FilterActionEnum){
         outNetworkError.onNext(errorType)
     }
-    
-    
-    
 
 }

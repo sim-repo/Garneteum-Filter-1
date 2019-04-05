@@ -378,6 +378,21 @@ extension CatalogVM : FilterActionDelegate {
 //            })
 //            .disposed(by: bag)
         
+        
+        
+        getDataLoadService().getNetError()
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: {[weak self] err in
+                guard let `self` = self else { return }
+                switch err {
+                    case .firPrefetchResourceExhausted:
+                            self.isPrefetchInProgress = false
+                            return
+                    
+                }
+            })
+            .disposed(by: bag)
+        
 
         getDataLoadService().getEnterSubFilterEvent()
             .observeOn(MainScheduler.asyncInstance)
@@ -534,7 +549,7 @@ extension CatalogVM : FilterActionDelegate {
             }
         }
         
-
+        
         
         getDataLoadService().getMidTotal()
             .observeOn(MainScheduler.asyncInstance)

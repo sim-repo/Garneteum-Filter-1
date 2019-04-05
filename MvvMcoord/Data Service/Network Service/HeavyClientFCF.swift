@@ -36,7 +36,7 @@ class HeavyClientFCF : NetworkFacadeBase {
     }
     
    
-    private func firebaseHandleErr(task: Completion, taskId: Int, error: NSError, delay: Int = 0){
+    private func reRunTask(task: Completion, taskId: Int, error: NSError, delay: Int = 0){
         
         if let tryno = reqTry[taskId] {
             reqTry[taskId] = tryno + 1
@@ -108,38 +108,42 @@ class HeavyClientFCF : NetworkFacadeBase {
         runCatalogStart(taskCode: NetTasksEnum.catalogStart.rawValue, taskIdx: taskNo, categoryId: categoryId, completion: completion)
     }
 
-    override func reqPrefetch(itemIds: ItemIds, completion: (([CatalogModel1])->Void)?) {
+    override func reqPrefetch(itemIds: ItemIds, completion: (([CatalogModel1], NetError?)->Void)?) {
         print("NETWORK: reqPrefetch")
         taskNo += 1
         runPrefetch(taskCode: NetTasksEnum.catalogPrefetch.rawValue, taskIdx: taskNo, itemIds: itemIds, completion: completion)
     }
     
     
-    private func checkedReqLimit(taskIdx: Int, error: Error?) -> Bool {
+    private func checkedReqLimit(taskIdx: Int, error: Error?) -> NetTaskStatusEnum {
         if let err = error as NSError? {
             let cnt = self.reqTry[taskIdx] ?? 0
             if cnt < self.limitTry,
-               let completion = self.activeTasks[taskIdx] {
-                self.firebaseHandleErr(task: completion, taskId: taskIdx, error: err)
+                let completion = self.activeTasks[taskIdx] {
+                self.reRunTask(task: completion, taskId: taskIdx, error: err)
+                return .rerunAfterError
             } else {
                 self.reqTry[taskIdx] = 0
                 self.activeTasks[taskIdx] = nil
+                return .requestLimitAchieved
             }
-            return false
         }
-        return true
+        return .success
     }
     
     
     private func runCheckUUIDS(taskCode: Int, taskIdx: Int, completion: (([UidModel])->Void)?) {
         self.activeTasks[taskIdx] = {
             functions.httpsCallable("meta").call(["method":"getUIDs"]) { [weak self] (result, error) in
-                DispatchQueue.global(qos: .background).async {
+                DispatchQueue.global(qos: .userInteractive).async {
                     guard let `self` = self else { return }
-                    if self.checkedReqLimit(taskIdx: taskIdx, error: error) == false {
-                        return
+                    let ret = self.checkedReqLimit(taskIdx: taskIdx, error: error)
+                    switch ret {
+                        case .success: break
+                        case .rerunAfterError: return
+                        case .requestLimitAchieved: return
                     }
-
+                  
                     let uuidModels: [UidModel] = ParsingHelper.parseUUIDModel(result: result, key: "uids")
                     completion?(uuidModels)
                     self.activeTasks[taskIdx] = nil
@@ -156,10 +160,13 @@ class HeavyClientFCF : NetworkFacadeBase {
     private func runCrossFilters(taskCode: Int, taskIdx: Int, filterId: Int, completion: (([FilterModel],[SubfilterModel])->Void)? ) {
         self.activeTasks[taskIdx] = {
             functions.httpsCallable("meta").call(["useCache":true, "filterId": filterId,  "method":"getCrossChunk4"]) { [weak self] (result, error) in
-                DispatchQueue.global(qos: .background).async {
+                DispatchQueue.global(qos: .userInitiated).async {
                     guard let `self` = self else { return }
-                    if self.checkedReqLimit(taskIdx: taskIdx, error: error) == false {
-                        return
+                    let ret = self.checkedReqLimit(taskIdx: taskIdx, error: error)
+                    switch ret {
+                        case .success: break
+                        case .rerunAfterError: return
+                        case .requestLimitAchieved: return
                     }
                     
                     let filters:[FilterModel] = ParsingHelper.parseJsonObjArr(result: result, key: "filter")
@@ -185,10 +192,13 @@ class HeavyClientFCF : NetworkFacadeBase {
                                                   "categoryId": categoryId,
                                                   "method":"getCategoryFiltersChunk5"]) { [weak self] (result, error) in
                 
-                DispatchQueue.global(qos: .background).async {
+                DispatchQueue.global(qos: .userInitiated).async {
                     guard let `self` = self else { return }
-                    if self.checkedReqLimit(taskIdx: taskIdx, error: error) == false {
-                        return
+                    let ret = self.checkedReqLimit(taskIdx: taskIdx, error: error)
+                    switch ret {
+                        case .success: break
+                        case .rerunAfterError: return
+                        case .requestLimitAchieved: return
                     }
                     let filters:[FilterModel] = ParsingHelper.parseJsonObjArr(result: result, key: "filters")
                     let subFilters:[SubfilterModel] = ParsingHelper.parseJsonObjArr(result: result, key: "subFilters")
@@ -211,10 +221,13 @@ class HeavyClientFCF : NetworkFacadeBase {
                                                   "categoryId": categoryId,
                                                   "method":"getItemsChunk3"]) { [weak self] (result, error) in
                
-                DispatchQueue.global(qos: .background).async {
+                DispatchQueue.global(qos: .userInitiated).async {
                     guard let `self` = self else { return }
-                    if self.checkedReqLimit(taskIdx: taskIdx, error: error) == false {
-                        return
+                    let ret = self.checkedReqLimit(taskIdx: taskIdx, error: error)
+                    switch ret {
+                        case .success: break
+                        case .rerunAfterError: return
+                        case .requestLimitAchieved: return
                     }
                     let subfiltersByItem = ParsingHelper.parseJsonDictWithValArr(result: result, key: "subfiltersByItem")
                     let priceByItemId = ParsingHelper.parseJsonDict(type: CGFloat.self, result: result, key: "priceByItemId")
@@ -237,10 +250,13 @@ class HeavyClientFCF : NetworkFacadeBase {
             functions.httpsCallable("meta").call(["useCache":true,
                                                   "categoryId": categoryId,
                                                   "method":"getCatalogTotals"]) { [weak self] (result, error) in
-                DispatchQueue.global(qos: .background).async {
+                DispatchQueue.global(qos: .userInteractive).async {
                     guard let `self` = self else { return }
-                    if self.checkedReqLimit(taskIdx: taskIdx, error: error) == false {
-                        return
+                    let ret = self.checkedReqLimit(taskIdx: taskIdx, error: error)
+                    switch ret {
+                        case .success: break
+                        case .rerunAfterError: return
+                        case .requestLimitAchieved: return
                     }
                     let fetchLimit_ = ParsingHelper.parseJsonVal(type: Int.self, result: result, key: "fetchLimit")
                     let itemIds: ItemIds = ParsingHelper.parseJsonArr(result: result, key: "itemIds")
@@ -269,20 +285,25 @@ class HeavyClientFCF : NetworkFacadeBase {
     
     
     
-    func runPrefetch(taskCode: Int, taskIdx: Int, itemIds: ItemIds, completion: (([CatalogModel1])->Void)? ) {
+    func runPrefetch(taskCode: Int, taskIdx: Int, itemIds: ItemIds, completion: (([CatalogModel1], NetError?)->Void)? ) {
         print("prefetch")
         self.activeTasks[taskIdx] = {
             functions.httpsCallable("meta").call(["useCache": true,
                                                   "itemsIds": itemIds,
                                                   "method":"getPrefetching"
             ]){[weak self] (result, error) in
-                DispatchQueue.global(qos: .background).async {
+                DispatchQueue.global(qos: .userInteractive).async {
                     guard let `self` = self else { return }
-                    if self.checkedReqLimit(taskIdx: taskIdx, error: error) == false {
-                        return
+                    let ret = self.checkedReqLimit(taskIdx: taskIdx, error: error)
+                    switch ret {
+                        case .success: break
+                        case .rerunAfterError: return
+                        case .requestLimitAchieved:
+                            completion?([], NetError.firPrefetchResourceExhausted)
+                            return
                     }
                     let arr:[CatalogModel1] = ParsingHelper.parseCatalogModel1(result: result, key: "items")
-                    completion?(arr)
+                    completion?(arr, nil)
                     self.activeTasks[taskIdx] = nil
                 }
             }

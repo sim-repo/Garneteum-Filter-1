@@ -62,7 +62,7 @@ class CatalogVM : BaseVM {
     
     // prefetching
     internal var inPrefetchEvent = PublishSubject<[CatalogModel?]>()
-    private var isPrefetchInProgress = false
+    internal var isPrefetchInProgress = false
     private var fetchLimit: Int
     public var currentPage: Int
     public var totalPages: Int
@@ -116,12 +116,9 @@ class CatalogVM : BaseVM {
         handleStartEvent()
         bindUserActivities()
         
-        
-        
         CatalogModel.localTitle(categoryId: categoryId)
             .bind(to: outTitle)
             .disposed(by: bag)
-        
     }
     
     
@@ -161,7 +158,7 @@ class CatalogVM : BaseVM {
         outMidTotal.onCompleted()
         outShowWarning.onCompleted()
         outReloadSubFilterVCEvent.onCompleted()
-        getNetworkService().resetNetworkBehaviorSubjects()
+        getDataLoadService().resetBehaviorSubjects() 
     }
     
     // MARK: -------------- Prefetching --------------
@@ -202,6 +199,8 @@ class CatalogVM : BaseVM {
             })
             .disposed(by: bag)
     }
+    
+    
     
     
     public func emitPrefetchEvent(){

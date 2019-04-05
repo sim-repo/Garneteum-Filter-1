@@ -2,11 +2,8 @@ import UIKit
 import RxSwift
 import CoreData
 
-enum DataTasksEnum: Int {
-    case didStartApplication = 0, willCatalogShow, willStartPrefetch, willPrefetch
-}
 
-protocol DataLoadFacadeProtocol {
+protocol DataFacadeProtocol {
     
     func screenHandle(dataTaskEnum: DataTasksEnum, _ categoryId: CategoryId, _ itemsIds: Set<Int>)
     func screenHandle(dataTaskEnum: DataTasksEnum, _ categoryId: CategoryId)
@@ -31,37 +28,26 @@ protocol DataLoadFacadeProtocol {
     func reqRemoveFilter(categoryId: CategoryId, filterId: FilterId, appliedSubFilters: Applied, selectedSubFilters: Selected, rangePrice: RangePrice)
     
     func getMidTotal() -> PublishSubject<Int>
-   // func getCatalogModelEvent() -> PublishSubject<[CatalogModel?]>
     func reqMidTotal(categoryId: CategoryId, appliedSubFilters: Applied, selectedSubFilters: Selected, rangePrice: RangePrice)
+    
     func getCatalogTotalEvent() -> BehaviorSubject<(CategoryId, ItemIds, Int, MinPrice, MaxPrice)>
-    
-    
     func getPrefetchEvent() -> PublishSubject<[CatalogModel]>
+    func getNetError() -> PublishSubject<NetError>
     
+    func resetBehaviorSubjects()
 }
 
 
 
-class DataLoadService : DataLoadFacadeProtocol {
+class DataService: DataFacadeProtocol {
    
     internal init(){
-        DispatchQueue(label: "com.example.myApp.bg").async {[weak self]  in
-            let m = self?.appDelegate.moc
-        }
         setupOperationQueue()
-        notif()
     }
     
-    public static var shared = DataLoadService()
+    public static var shared = DataService()
     
     internal var operationQueues: [Int: OperationQueue] = [:]
-
-    internal var notifyCrossSubfilters = PublishSubject<Void>()
-    
-    
-    enum CrossFilterEnum: Int {
-        case brands = 1, colors
-    }
    
     internal var appDelegate = UIApplication.shared.delegate as! AppDelegate
     
@@ -80,22 +66,14 @@ class DataLoadService : DataLoadFacadeProtocol {
     internal var outTotals = PublishSubject<Int>()
     internal var outPrefetch = PublishSubject<[CatalogModel]>()
     internal var outCatalogTotal = BehaviorSubject<(CategoryId, ItemIds, Int, MinPrice, MaxPrice)>(value: (0,[],20, 0, 0))
-    
+    internal var outNetError = PublishSubject<NetError>()
     internal let networkService = getNetworkService()
     
     
     
-    func notif(){
-        NotificationCenter.default.addObserver(self, selector: #selector(contextObjectsDidChange(_:)), name: Notification.Name.NSManagedObjectContextDidSave, object: nil)
-    }
-    
-    @objc func contextObjectsDidChange(_ notification: Notification) {
-        let context = notification.object as? NSManagedObjectContext
-        print(context)
-    }
-    
     
     func screenHandle(dataTaskEnum: DataTasksEnum) {
+        
         switch dataTaskEnum {
             case .didStartApplication:
                 operationQueues[DataTasksEnum.didStartApplication.rawValue]?.addOperation { [weak self] in
@@ -103,11 +81,14 @@ class DataLoadService : DataLoadFacadeProtocol {
                 }
                 break
             default:
-                fatalError("screenHandle: no handlers found for value '\(dataTaskEnum)'")
+                print("screenHandle: no handlers found for value '\(dataTaskEnum)'")
         }
     }
     
+    
+    
     func screenHandle(dataTaskEnum: DataTasksEnum, _ categoryId: CategoryId) {
+        
         switch dataTaskEnum {
             case .willCatalogShow:
                 operationQueues[DataTasksEnum.willCatalogShow.rawValue]?.addOperation { [weak self] in
@@ -116,18 +97,20 @@ class DataLoadService : DataLoadFacadeProtocol {
                 break
             
             case .willStartPrefetch:
-                operationQueues[DataTasksEnum.willCatalogShow.rawValue]?.addOperation { [weak self] in
+                operationQueues[DataTasksEnum.willStartPrefetch.rawValue]?.addOperation { [weak self] in
                     self?.doEmitCatalogStart(categoryId)
                 }
                 break
             
             default:
-                fatalError("screenHandle: no handlers found for value '\(dataTaskEnum)'")
+                print("screenHandle: no handlers found for value '\(dataTaskEnum)'")
         }
     }
     
     
+    
     func screenHandle(dataTaskEnum: DataTasksEnum, _ categoryId: CategoryId, _ itemsIds: Set<Int>) {
+        
         switch dataTaskEnum {
             case .willPrefetch:
                 operationQueues[DataTasksEnum.willPrefetch.rawValue]?.addOperation { [weak self] in
@@ -136,9 +119,11 @@ class DataLoadService : DataLoadFacadeProtocol {
                 break
             
             default:
-                fatalError("screenHandle: no handlers found for value '\(dataTaskEnum)'")
+                print("screenHandle: no handlers found for value '\(dataTaskEnum)'")
         }
     }
+    
+    
     
     private func setupOperationQueue(){
         addOperation(dataTasksEnum: .didStartApplication)
@@ -147,6 +132,8 @@ class DataLoadService : DataLoadFacadeProtocol {
         addOperation(dataTasksEnum: .willPrefetch)
     }
     
+    
+    
     private func addOperation(dataTasksEnum: DataTasksEnum) {
         let queue = OperationQueue()
         queue.maxConcurrentOperationCount = 1
@@ -154,23 +141,46 @@ class DataLoadService : DataLoadFacadeProtocol {
     }
     
     
+    
+    func resetBehaviorSubjects() {
+        outFilters.onNext([])
+        outCategorySubfilters.onNext([])
+    }
+    
+    
+    
+    func getNetError() -> PublishSubject<NetError> {
+        return outNetError
+    }
+    
+    
+    
     func getFilters() -> BehaviorSubject<[FilterModel]> {
         return outFilters
     }
+    
+    
     
     func getCrossFilters() -> ReplaySubject<[FilterModel]>{
         return outCrossFilters
     }
     
+    
+    
     func getCrossSubfilters() -> ReplaySubject<[SubfilterModel]> {
         return outCrossSubfilters
     }
+    
+    
     
     func getCategorySubfilters() -> BehaviorSubject<[SubfilterModel]> {
         return outCategorySubfilters
     }
 
+    
+    
     func reqEnterSubFilter(filterId: FilterId, applied: Applied, rangePrice: RangePrice) {
+        
         applyLogic.doLoadSubFilters(filterId, applied, rangePrice)
             .asObservable()
             .subscribe(onNext: {[weak self] res in
@@ -183,12 +193,16 @@ class DataLoadService : DataLoadFacadeProtocol {
             .disposed(by: bag)
     }
     
+    
+    
     func getEnterSubFilterEvent() -> PublishSubject<(FilterId, SubFilterIds, Applied, CountItems)> {
         return outEnterSubFilter
     }
 
     
+    
     internal func dbDeleteData(_ entity:String) {
+        
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
         fetchRequest.includesPendingChanges = false
         fetchRequest.returnsObjectsAsFaults = false
@@ -197,7 +211,6 @@ class DataLoadService : DataLoadFacadeProtocol {
             for object in results {
                 guard let objectData = object as? NSManagedObject else { continue }
                 appDelegate.moc.delete(objectData)
-                //print("dbDeleteData")
                 appDelegate.saveContext()
             }
             
@@ -209,8 +222,21 @@ class DataLoadService : DataLoadFacadeProtocol {
 
 
 
-extension DataLoadService {
+extension DataService {
+    
+    internal func emitCrossFilters(sql: String){
+        
+        if let filtersDB = dbLoadFilter(sql: sql) {
+            let filters = filtersDB.compactMap({$0.getFilterModel()})
+            self.applyLogic.setup(filters_: filters)
+            self.outCrossFilters.onNext(filters)
+        }
+    }
+    
+    
+    
     internal func doEmitCrossSubfilters(sql: String){
+        
         if let subfiltersDB = dbLoadSubfilter(sql: sql) {
             let subfilters = subfiltersDB.compactMap({$0.getSubfilterModel()})
             self.applyLogic.setup(subFilters_: subfilters)
@@ -218,15 +244,10 @@ extension DataLoadService {
         }
     }
     
-    internal func emitCategorySubfilters(sql: String){
-        if let subfiltersDB = dbLoadSubfilter(sql: sql) {
-            let subfilters = subfiltersDB.compactMap({$0.getSubfilterModel()})
-            self.applyLogic.setup(subFilters_: subfilters)
-            self.outCategorySubfilters.onNext(subfilters)
-        }
-    }
+    
     
     internal func emitCategoryFilters(sql: String){
+        
         if let filtersDB = dbLoadFilter(sql: sql) {
             let filters = filtersDB.compactMap({$0.getFilterModel()})
             self.applyLogic.setup(filters_: filters)
@@ -234,13 +255,17 @@ extension DataLoadService {
         }
     }
     
-    internal func emitCrossFilters(sql: String){
-        if let filtersDB = dbLoadFilter(sql: sql) {
-            let filters = filtersDB.compactMap({$0.getFilterModel()})
-            self.applyLogic.setup(filters_: filters)
-            self.outCrossFilters.onNext(filters)
+    
+    
+    internal func emitCategorySubfilters(sql: String){
+        
+        if let subfiltersDB = dbLoadSubfilter(sql: sql) {
+            let subfilters = subfiltersDB.compactMap({$0.getSubfilterModel()})
+            self.applyLogic.setup(subFilters_: subfilters)
+            self.outCategorySubfilters.onNext(subfilters)
         }
     }
+    
     
     
     internal func setupApplyFromDB(sql: String){
@@ -255,16 +280,10 @@ extension DataLoadService {
             self.applyLogic.setup(priceByItemId_: priceByItem)
         }
     }
-}
-
-
-
-
-
-// MARK: - FILTERS
-extension DataLoadService {
+    
     
     internal func dbLoadFilter(sql: String) -> [FilterPersistent]? {
+        
         var db: [FilterPersistent]?
         let request: NSFetchRequest<FilterPersistent> = FilterPersistent.fetchRequest()
         request.includesPendingChanges = false
@@ -277,4 +296,3 @@ extension DataLoadService {
         return db
     }
 }
-

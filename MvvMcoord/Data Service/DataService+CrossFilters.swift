@@ -1,11 +1,13 @@
 import UIKit
 import RxSwift
 import CoreData
+
+
 // MARK: - CROSS FILTERS
-extension DataLoadService {
+extension DataService {
     
     internal func checkCrossRefresh(){
-        //print("checkCrossRefresh")
+        
         let res = dbLoadLastUIDs(sql: "cross == 1 && needRefresh == 1")
         guard let _res = res,
             _res.count > 0
@@ -19,37 +21,26 @@ extension DataLoadService {
             crossDelete(filterId: Int(uid.filterId))
         }
         
-//        notifyCrossSubfilters
-//            .debug()
-//            .skip(_res.count-1)
-//            .take(1)
-//            .subscribe(onNext: {[weak self] cnt in
-//                print("CROSS SUBFILTERS EMIT")
-//                self?.doEmitCrossSubfilters(sql: "cross == 1")
-//                self?.emitCrossFilters(sql: "cross == 1")
-//            })
-//            .disposed(by: bag)
-        
         for uid in _res {
             crossNetLoad(filterId: Int(uid.filterId))
         }
     }
     
     
+    
     internal func crossRefreshDone(filterId: Int) {
-        print("done: \(filterId)")
+        
         let res = dbLoadLastUIDs(sql: "filterId == \(filterId)")
         guard let _res = res else { return }
         _res[0].needRefresh = false
-       // print("crossRefreshDone")
         self.appDelegate.saveContext()
-       // notifyCrossSubfilters.onNext(Void())
     }
     
     
+    
     internal func dbLoadLastUIDs(sql:String) -> [LastUidPersistent]?{
+        
         var uidDB: [LastUidPersistent]?
-        //let request = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
         let request: NSFetchRequest<LastUidPersistent> = LastUidPersistent.fetchRequest()
         request.includesPendingChanges = false
         request.predicate = NSPredicate(format: sql)
@@ -62,9 +53,11 @@ extension DataLoadService {
     }
     
     
+    
+    
     internal func dbLoadSubfilter(sql:String) -> [SubfilterPersistent]?{
+        
         var db: [SubfilterPersistent]?
-        //let request = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
         let request: NSFetchRequest<SubfilterPersistent> = SubfilterPersistent.fetchRequest()
         request.includesPendingChanges = false
         if sql != "" {
@@ -79,9 +72,10 @@ extension DataLoadService {
     }
     
     
+    
     internal func dbLoadCrossFilter(sql:String) -> [FilterPersistent]?{
+        
         var db: [FilterPersistent]?
-        //let request = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
         let request: NSFetchRequest<FilterPersistent> = FilterPersistent.fetchRequest()
         request.includesPendingChanges = false
         request.predicate = NSPredicate(format: sql)
@@ -94,8 +88,8 @@ extension DataLoadService {
     }
     
     
+    
     internal func crossNetLoad(filterId: FilterId){
-       // print("load from NETWORK: \(filterId)")
         let completion: (([FilterModel]?, [SubfilterModel]?) -> Void)? = { [weak self] (filters, subfilters) in
             self?.crossSave(filterId: filterId, filters: filters, subfilters: subfilters)
         }
@@ -103,8 +97,9 @@ extension DataLoadService {
     }
     
     
+    
     internal func crossSave(filterId: FilterId, filters: [FilterModel]?, subfilters: [SubfilterModel]?) {
-        print("crossSave: \(filterId)")
+
         guard let _filters = filters,
             let _subfilters = subfilters
             else { return }
@@ -127,7 +122,6 @@ extension DataLoadService {
                 subfilterDB.setup(subfilterModel: element)
                 subfiltersDB.append(subfilterDB)
             }
-          //  print("crossSave")
             appDelegate.saveContext()
             crossRefreshDone(filterId: filterId)
         }
@@ -135,8 +129,8 @@ extension DataLoadService {
     
     
     
-    
     internal func crossDelete(filterId: FilterId) {
+        
         let res1 = dbLoadSubfilter(sql: "filterId == \(filterId)")
         guard let _res1 = res1 else { return }
         for element in _res1 {
@@ -148,7 +142,6 @@ extension DataLoadService {
         for element in _res2 {
             self.appDelegate.moc.delete(element)
         }
-       // print("crossDelete")
         appDelegate.saveContext()
     }
 }

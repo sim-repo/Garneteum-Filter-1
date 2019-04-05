@@ -676,6 +676,8 @@ protocol FilterApplyLogicProtocol {
                priceByItemId_: PriceByItemId?
     )
     
+    func setupItemsAndSubfilters(subfiltersByItem: SubfiltersByItem)
+    
     func dealloc()
 }
 
@@ -887,6 +889,31 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
     }
     
     
+    func setupItemsAndSubfilters(subfiltersByItem: SubfiltersByItem) {
+        print("----------- Apply :::: SubfiltersByItem:")
+        self.subfiltersByItem = subfiltersByItem
+        print("----------- SubfiltersByItem: \(self.subfiltersByItem.count)")
+        print(" ")
+        print(" ")
+        print(" ")
+        
+        
+        for (itemId, subfilterIds) in subfiltersByItem {
+            for subfilterId in subfilterIds {
+                if itemsBySubfilter[subfilterId] == nil {
+                    itemsBySubfilter[subfilterId] = []
+                }
+                itemsBySubfilter[subfilterId]?.append(itemId)
+            }
+        }
+        
+        print("----------- Apply :::: ItemsBySubfilter:")
+        print("----------- ItemsBySubfilter count: \(self.itemsBySubfilter.count)")
+        print(" ")
+        print(" ")
+        print(" ")
+    }
+    
     func dealloc(){
         
         let filterKeys = filters.filter({$0.value.cross == false}).compactMap({$0.key})
@@ -906,13 +933,13 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
         itemsById.removeAll()
         itemsByCatalog.removeAll()
         itemIds.removeAll()
-//        print("----------- Apply :::: After dealloc: ")
-//        print("----------- filters : \(filters.count)")
-//        print("----------- subfilters : \(subFilters.count)")
-//        print("----------- subfiltersByFilter : \(subfiltersByFilter.count)")
-//        print(" ")
-//        print(" ")
-//        print(" ")
+        print("----------- Apply :::: After dealloc: ")
+        print("----------- filters : \(filters.count)")
+        print("----------- subfilters : \(subFilters.count)")
+        print("----------- subfiltersByFilter : \(subfiltersByFilter.count)")
+        print(" ")
+        print(" ")
+        print(" ")
     }
     
 }

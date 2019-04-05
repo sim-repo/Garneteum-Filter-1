@@ -2,8 +2,9 @@ import UIKit
 import RxSwift
 
 
+
 // MARK: - CATEGORY APPLY DATA
-extension DataLoadService {
+extension DataService {
     
     
     func getApplyForItemsEvent() -> PublishSubject<(FilterIds, SubFilterIds, Applied, Selected, ItemIds)> {
@@ -33,6 +34,7 @@ extension DataLoadService {
     
     
     func reqApplyFromFilter(categoryId: CategoryId, appliedSubFilters: Applied, selectedSubFilters: Selected, rangePrice: RangePrice) {
+        
         self.applyLogic.doApplyFromFilter(appliedSubFilters, selectedSubFilters, rangePrice)
             .asObservable()
             .subscribe(onNext: {[weak self] res in
@@ -49,6 +51,7 @@ extension DataLoadService {
 
 
     func reqApplyFromSubFilter(categoryId: CategoryId, filterId: FilterId, appliedSubFilters: Applied, selectedSubFilters: Selected, rangePrice: RangePrice) {
+        
         applyLogic.doApplyFromSubFilters(filterId, appliedSubFilters, selectedSubFilters, rangePrice)
             .asObservable()
             .subscribe(onNext: {[weak self] res in
@@ -70,8 +73,8 @@ extension DataLoadService {
     }
 
 
-
     func reqApplyByPrices(categoryId: CategoryId, rangePrice: RangePrice) {
+        
         applyLogic.doApplyByPrices(categoryId, rangePrice)
             .asObservable()
             .subscribe(onNext: {[weak self] res in
@@ -83,6 +86,7 @@ extension DataLoadService {
 
 
     func reqRemoveFilter(categoryId: CategoryId, filterId: FilterId, appliedSubFilters: Applied, selectedSubFilters: Selected, rangePrice: RangePrice) {
+        
         applyLogic.doRemoveFilter(filterId, appliedSubFilters, selectedSubFilters, rangePrice)
             .asObservable()
             .subscribe(onNext: {[weak self] res in
@@ -108,6 +112,7 @@ extension DataLoadService {
     }
     
     func reqMidTotal(categoryId: CategoryId, appliedSubFilters: Applied, selectedSubFilters: Selected, rangePrice: RangePrice) {
+        
         applyLogic.doCalcMidTotal(appliedSubFilters, selectedSubFilters, rangePrice)
             .asObservable()
             .subscribe(onNext: {[weak self] count in

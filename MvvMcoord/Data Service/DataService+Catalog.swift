@@ -2,10 +2,15 @@ import UIKit
 import RxSwift
 import CoreData
 
+
+
 // MARK: - CATALOG 
-extension DataLoadService {
+extension DataService {
+    
+    
     
     internal func clearOldCatalog() {
+        
         let res = dbLoadLastUIDs(sql: "needRefresh == 1 && type == 'catalogIds' ")
         guard let _res = res,
             _res.count > 0
@@ -18,12 +23,13 @@ extension DataLoadService {
             dbDeleteEntity(Int(uid.categoryId), clazz: CategoryItemIdsPersistent.self, entity: "CategoryItemIdsPersistent", fetchBatchSize: 0)
             uid.needRefresh = false
         }
-       // print("clearOldCatalog")
         self.appDelegate.saveContext()
     }
     
     
+    
     internal func doEmitCatalogStart(_ categoryId: CategoryId){
+        
         let res1_ = dbLoadEntity(categoryId, CategoriesPersistent.self, "CategoriesPersistent", 1)
         let res2_ = dbLoadEntity(categoryId, CategoryItemIdsPersistent.self, "CategoryItemIdsPersistent", 0)
         guard let res1 = res1_,
@@ -45,31 +51,27 @@ extension DataLoadService {
     }
     
     
+    
     internal func fireCatalogTotal(_ categoryId: CategoryId ,_ itemIds: ItemIds, _ fetchLimit: Int, _ minPrice: MinPrice, _ maxPrice: MaxPrice) {
         outCatalogTotal.onNext((categoryId, itemIds, fetchLimit, minPrice, maxPrice))
     }
+    
+    
     
     func getCatalogTotalEvent() -> BehaviorSubject<(CategoryId, ItemIds, Int, MinPrice, MaxPrice)> {
         return outCatalogTotal
     }
     
-//    
-//    func reqCatalogStart(categoryId: CategoryId) {
-//        let completion: ((CategoryId, Int, ItemIds, Int, Int)->Void)? = { [weak self] (categoryId, fetchLimit, itemIds, minPrice, maxPrice) in
-//            self?.dbSaveCatalog(categoryId, fetchLimit, itemIds, minPrice, maxPrice )
-//        }
-//        networkService.reqCatalogStart(categoryId: categoryId, completion: completion)
-//    }
-//    
-    
     
     internal func dbSaveCatalog(_ categoryId: CategoryId, _ fetchLimit: Int, _ itemIds: ItemIds, _ minPrice: Int, _ maxPrice: Int) {
+        
+        fireCatalogTotal(categoryId, itemIds, fetchLimit, CGFloat(minPrice), CGFloat(maxPrice))
+        
         dbDeleteEntity(categoryId, clazz: CategoriesPersistent.self, entity: "CategoriesPersistent", fetchBatchSize: 1)
         dbDeleteEntity(categoryId, clazz: CategoryItemIdsPersistent.self, entity: "CategoryItemIdsPersistent", fetchBatchSize: 0)
         self.appDelegate.moc.performAndWait {
             let row = CategoriesPersistent(entity: CategoriesPersistent.entity(), insertInto: self.appDelegate.moc)
             row.setup(categoryId, minPrice, maxPrice, fetchLimit)
-           // print("dbSaveCatalog - CategoriesPersistent")
             appDelegate.saveContext()
             
             var db2 = [CategoryItemIdsPersistent]()
@@ -78,14 +80,13 @@ extension DataLoadService {
                 row.setup(categoryId, itemId)
                 db2.append(row)
             }
-          //  print("dbSaveCatalog - CategoryItemIdsPersistent")
             appDelegate.saveContext()
-            fireCatalogTotal(categoryId, itemIds, fetchLimit, CGFloat(minPrice), CGFloat(maxPrice))
         }
     }
     
     
     internal func dbLoadEntity<T: NSManagedObject>(_ categoryId: CategoryId, _ clazz: T.Type, _ entity: String, _ fetchBatchSize: Int, sql: String = "") -> [T]?{
+        
         var db: [T]?
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
          request.includesPendingChanges = false
@@ -106,15 +107,13 @@ extension DataLoadService {
     }
     
     
-    
-    
     internal func dbDeleteEntity<T: NSManagedObject>(_ categoryId: CategoryId, clazz: T.Type, entity: String, fetchBatchSize: Int, sql: String = ""){
+        
         let res_ = dbLoadEntity(categoryId, clazz, entity, fetchBatchSize, sql: sql)
         guard let res = res_ else { return }
         for element in res {
             self.appDelegate.moc.delete(element)
         }
-       // print("dbDeleteEntity")
         appDelegate.saveContext()
     }
 }

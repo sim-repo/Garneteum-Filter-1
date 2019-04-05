@@ -2,10 +2,14 @@ import UIKit
 import RxSwift
 import CoreData
 
+
+
 // MARK: - CATALOG
-extension DataLoadService {
+extension DataService {
+    
     
     internal func clearOldPrefetch() {
+        
         let res = dbLoadLastUIDs(sql: "needRefresh == 1 && type == 'prefetch' ")
         guard let _res = res,
             _res.count > 0
@@ -16,19 +20,24 @@ extension DataLoadService {
             dbDeleteEntity(0, clazz: PrefetchPersistent.self, entity: "PrefetchPersistent", fetchBatchSize: 0, sql: "categoryId == \(Int(uid.categoryId))")
             uid.needRefresh = false
         }
-       // print("clearOldPrefetch")
         self.appDelegate.saveContext()
     }
     
     
     internal func doEmitPrefetch(categoryId: CategoryId, itemIds: Set<Int>){
+        
         let res = dbLoadPrefetch(itemIds: itemIds)
         guard res.count >= itemIds.count
             else {
                 
                 let dbFoundItems = PrefetchPersistent.getModels(prefetchPersistents: res)
-                let completion: (([CatalogModel1])->Void)? = { [weak self] catalogModels in
-                    self?.dbSavePrefetch(categoryId, catalogModels, dbFoundItems)
+                let completion: (([CatalogModel1], NetError?)->Void)? = { [weak self] catalogModels, err in
+                    guard let error = err
+                        else {
+                            self?.dbSavePrefetch(categoryId, catalogModels, dbFoundItems)
+                            return
+                        }
+                     self?.fireNetError(netError: error)
                 }
                 let dbFoundItemIds = Set(res.compactMap({Int($0.itemId)}))
                 let notFoundItemsIds = Set(itemIds).subtracting(dbFoundItemIds)
@@ -45,28 +54,39 @@ extension DataLoadService {
         outPrefetch.onNext(models)
     }
     
+    
+    
     func getPrefetchEvent() -> PublishSubject<[CatalogModel]> {
         return outPrefetch
     }
     
     
+    
+    internal func fireNetError(netError: NetError){
+        getNetError().onNext(netError)
+    }
+    
+    
+    
     internal func dbSavePrefetch(_ categoryId: CategoryId, _ netItems: [CatalogModel1], _ dbFoundItems: [CatalogModel]){
+
+        var res = netItems.compactMap({CatalogModel(catalogModel1: $0)})
+        res.append(contentsOf: dbFoundItems)
+        firePrefetch(res)
+        
         var db = [PrefetchPersistent]()
         for model in netItems {
             let row = PrefetchPersistent(entity: PrefetchPersistent.entity(), insertInto: appDelegate.moc)
             row.setup(model: model)
             db.append(row)
         }
-        //print("dbSavePrefetch")
         appDelegate.saveContext()
-        var res = netItems.compactMap({CatalogModel(catalogModel1: $0)})
-        res.append(contentsOf: dbFoundItems)
-        firePrefetch(res)
-
     }
     
     
+    
     internal func dbLoadPrefetch(itemIds: Set<Int>) -> Set<PrefetchPersistent>{
+        
         var db: Set<PrefetchPersistent>  = Set<PrefetchPersistent>()
             
         let request: NSFetchRequest<PrefetchPersistent> = PrefetchPersistent.fetchRequest()

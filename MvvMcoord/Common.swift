@@ -37,6 +37,15 @@ enum ClientModeEnum {
     case heavy, light
 }
 
+enum DataTasksEnum: Int {
+    case didStartApplication = 0, willCatalogShow, willStartPrefetch, willPrefetch
+}
+
+enum NetError: Error {
+    case firPrefetchResourceExhausted
+}
+
+
 var clientMode: ClientModeEnum = .heavy
 
 func getNetworkService() -> NetworkFacadeProtocol {
@@ -48,8 +57,8 @@ func getNetworkService() -> NetworkFacadeProtocol {
     }
 }
 
-func getDataLoadService() -> DataLoadFacadeProtocol {
-    return DataLoadService.shared
+func getDataLoadService() -> DataFacadeProtocol {
+    return DataService.shared
 }
 
 

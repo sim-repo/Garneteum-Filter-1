@@ -33,8 +33,8 @@ extension Date {
     }
 }
 
-enum ClientModeEnum {
-    case heavy, light
+enum CloudProviderEnum {
+    case firebase, aws
 }
 
 enum DataTasksEnum: Int {
@@ -46,18 +46,18 @@ enum NetError: Error {
 }
 
 
-var clientMode: ClientModeEnum = .heavy
+var providerMode: CloudProviderEnum = .firebase
 
 func getNetworkService() -> NetworkFacadeProtocol {
-    switch clientMode {
-    case .heavy:
-        return HeavyClientFCF.shared
+    switch providerMode {
+    case .firebase:
+        return FirebaseService.shared
     default:
-        return LightClientFCF.shared
+        return FirebaseService.shared
     }
 }
 
-func getDataLoadService() -> DataFacadeProtocol {
+func getDataService() -> DataFacadeProtocol {
     return DataService.shared
 }
 

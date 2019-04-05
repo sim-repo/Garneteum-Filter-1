@@ -39,7 +39,7 @@ class CategoryCoord: BaseCoord<CoordRetEnum> {
                 
                 let applyLogic: FilterApplyLogic = FilterApplyLogic.shared
                 applyLogic.dealloc()
-                getDataLoadService().screenHandle(dataTaskEnum: .willCatalogShow, baseId)
+                getDataService().screenHandle(dataTaskEnum: .willCatalogShow, baseId)
                 return self.showCatalog(on: self.viewController, baseId: baseId)
             }
             .subscribe()

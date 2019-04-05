@@ -107,16 +107,13 @@ extension DataService {
             .disposed(by: bag)
     }
     
-    internal func fireMidTotal(_ total: Int) {
-        outTotals.onNext(total)
-    }
-    
+
     func reqMidTotal(categoryId: CategoryId, appliedSubFilters: Applied, selectedSubFilters: Selected, rangePrice: RangePrice) {
         
         applyLogic.doCalcMidTotal(appliedSubFilters, selectedSubFilters, rangePrice)
             .asObservable()
             .subscribe(onNext: {[weak self] count in
-                self?.fireMidTotal(count)
+                self?.outTotals.onNext(count)
             })
             .disposed(by: bag)
     }

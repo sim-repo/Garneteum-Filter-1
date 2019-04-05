@@ -5,14 +5,18 @@ import Firebase
 import FirebaseDatabase
 import FirebaseFunctions
 
+var functions = Functions.functions()
 
-class HeavyClientFCF : NetworkFacadeBase {
+class FirebaseService : NetworkFacadeBase {
     
     private override init(){
         super.init()
     }
     
-    public static var shared = HeavyClientFCF()
+    public static var shared = FirebaseService()
+    
+    var taskNo: Int = 0
+    var activeTasks: [Int: Completion] = [:]
     
     let applyLogic: FilterApplyLogic = FilterApplyLogic.shared
     
@@ -58,24 +62,6 @@ class HeavyClientFCF : NetworkFacadeBase {
             print("error:\(String(describing: code)) : \(message) : \(String(describing: details))")
         }
     }
-
-
-    
-    override func reqMidTotal(categoryId: CategoryId, appliedSubFilters: Applied, selectedSubFilters: Selected, rangePrice: RangePrice) {
-        applyLogic.doCalcMidTotal(appliedSubFilters, selectedSubFilters, rangePrice)
-            .asObservable()
-            .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onNext: {[weak self] count in
-                self?.fireMidTotal(count)
-            })
-            .disposed(by: bag)
-    }
-    
-  
-    
-    
-    var taskNo: Int = 0
-    var activeTasks: [Int: Completion] = [:]
     
     
     override func reqLoadUIDs(completion: (([UidModel])->Void)?) {
@@ -114,7 +100,6 @@ class HeavyClientFCF : NetworkFacadeBase {
         runPrefetch(taskCode: NetTasksEnum.catalogPrefetch.rawValue, taskIdx: taskNo, itemIds: itemIds, completion: completion)
     }
     
-    
     private func checkedReqLimit(taskIdx: Int, error: Error?) -> NetTaskStatusEnum {
         if let err = error as NSError? {
             let cnt = self.reqTry[taskIdx] ?? 0
@@ -130,6 +115,13 @@ class HeavyClientFCF : NetworkFacadeBase {
         }
         return .success
     }
+    
+}
+
+
+
+// MARK: -run task functions
+extension FirebaseService  {
     
     
     private func runCheckUUIDS(taskCode: Int, taskIdx: Int, completion: (([UidModel])->Void)?) {

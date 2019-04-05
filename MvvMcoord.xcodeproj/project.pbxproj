@@ -15,7 +15,7 @@
 		160C002321FB734900C8C44F /* FilterModel2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160C002221FB734900C8C44F /* FilterModel2.swift */; };
 		160C56A2224416F500D06439 /* LastUidPersistent+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160C56A0224416F500D06439 /* LastUidPersistent+CoreDataClass.swift */; };
 		160C56A3224416F500D06439 /* LastUidPersistent+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160C56A1224416F500D06439 /* LastUidPersistent+CoreDataProperties.swift */; };
-		16115C94222435950081AFBF /* HeavyClientFCF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16115C93222435950081AFBF /* HeavyClientFCF.swift */; };
+		16115C94222435950081AFBF /* FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16115C93222435950081AFBF /* FirebaseService.swift */; };
 		16115C96222437C80081AFBF /* NetworkFacadeProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16115C95222437C80081AFBF /* NetworkFacadeProtocol.swift */; };
 		16115C9822243D5C0081AFBF /* ParsingHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16115C9722243D5C0081AFBF /* ParsingHelper.swift */; };
 		1611908E21DDF8CB00E3CB93 /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1611908D21DDF8CB00E3CB93 /* UIView+Ext.swift */; };
@@ -53,7 +53,6 @@
 		1618DDF9221EC59D00E96EDC /* PriceApply.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1618DDF8221EC59D00E96EDC /* PriceApply.xib */; };
 		1618DDFB221EC78600E96EDC /* PriceApply.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1618DDFA221EC78600E96EDC /* PriceApply.swift */; };
 		1619ECFF220D873100B452E4 /* TestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1619ECFE220D873100B452E4 /* TestData.swift */; };
-		161A440021F740E400D16F1E /* LightClientFCF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161A43FF21F740E400D16F1E /* LightClientFCF.swift */; };
 		161AC87521DB6B080078F020 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161AC87421DB6B080078F020 /* AppDelegate.swift */; };
 		161AC87721DB6B080078F020 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161AC87621DB6B080078F020 /* ViewController.swift */; };
 		161AC87A21DB6B080078F020 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 161AC87821DB6B080078F020 /* Main.storyboard */; };
@@ -130,7 +129,7 @@
 		160C002221FB734900C8C44F /* FilterModel2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterModel2.swift; sourceTree = "<group>"; };
 		160C56A0224416F500D06439 /* LastUidPersistent+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LastUidPersistent+CoreDataClass.swift"; sourceTree = "<group>"; };
 		160C56A1224416F500D06439 /* LastUidPersistent+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LastUidPersistent+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		16115C93222435950081AFBF /* HeavyClientFCF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeavyClientFCF.swift; sourceTree = "<group>"; };
+		16115C93222435950081AFBF /* FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseService.swift; sourceTree = "<group>"; };
 		16115C95222437C80081AFBF /* NetworkFacadeProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkFacadeProtocol.swift; sourceTree = "<group>"; };
 		16115C9722243D5C0081AFBF /* ParsingHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParsingHelper.swift; sourceTree = "<group>"; };
 		1611908D21DDF8CB00E3CB93 /* UIView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
@@ -168,7 +167,6 @@
 		1618DDF8221EC59D00E96EDC /* PriceApply.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PriceApply.xib; sourceTree = "<group>"; };
 		1618DDFA221EC78600E96EDC /* PriceApply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceApply.swift; sourceTree = "<group>"; };
 		1619ECFE220D873100B452E4 /* TestData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestData.swift; sourceTree = "<group>"; };
-		161A43FF21F740E400D16F1E /* LightClientFCF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightClientFCF.swift; sourceTree = "<group>"; };
 		161AC87121DB6B080078F020 /* MvvMcoord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MvvMcoord.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		161AC87421DB6B080078F020 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		161AC87621DB6B080078F020 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -265,8 +263,7 @@
 		16115C92222432570081AFBF /* Network Service */ = {
 			isa = PBXGroup;
 			children = (
-				161A43FF21F740E400D16F1E /* LightClientFCF.swift */,
-				16115C93222435950081AFBF /* HeavyClientFCF.swift */,
+				16115C93222435950081AFBF /* FirebaseService.swift */,
 				16115C95222437C80081AFBF /* NetworkFacadeProtocol.swift */,
 				16115C9722243D5C0081AFBF /* ParsingHelper.swift */,
 			);
@@ -348,6 +345,7 @@
 				1631BF6A22529C920071F243 /* GoogleService-Info.plist */,
 				162EDC662242257C00984EFE /* Resources */,
 				16187B15222671B300000FDB /* FilterApplyLogic */,
+				16115C92222432570081AFBF /* Network Service */,
 				16BEFA1D224112FB00226CD9 /* Data Service */,
 				1618DDEE221E861600E96EDC /* UI Controls */,
 				161D84C9220A5543008D74F0 /* Script Upload */,
@@ -548,7 +546,6 @@
 				16157D9B224925D1008FD683 /* DataService+ApplyLogic.swift */,
 				16140FC4224A05C1003E20BD /* DataService+Catalog.swift */,
 				16140FD2224A42D9003E20BD /* DataService+Prefetch.swift */,
-				16115C92222432570081AFBF /* Network Service */,
 			);
 			path = "Data Service";
 			sourceTree = "<group>";
@@ -968,13 +965,12 @@
 				16115C96222437C80081AFBF /* NetworkFacadeProtocol.swift in Sources */,
 				16187B172226723C00000FDB /* FilterApplyLogic.swift in Sources */,
 				161D84CB220A5572008D74F0 /* UploadModel.swift in Sources */,
-				161A440021F740E400D16F1E /* LightClientFCF.swift in Sources */,
 				16BEFA1C224112F500226CD9 /* DataService.swift in Sources */,
 				1617B56821E34B5400FFE2DA /* FilterVC.swift in Sources */,
 				1614E69A22197F7A00BBF936 /* CatalogVM+FilterActionDelegate.swift in Sources */,
 				16128F5022391BDD00D6E07A /* FirebaseCreator.swift in Sources */,
 				163BB447224803E40073526A /* DataService+CrossFilters.swift in Sources */,
-				16115C94222435950081AFBF /* HeavyClientFCF.swift in Sources */,
+				16115C94222435950081AFBF /* FirebaseService.swift in Sources */,
 				163BB46422482B7F0073526A /* PriceByItemPersistent+CoreDataClass.swift in Sources */,
 				161AC8A321DB6B950078F020 /* CategoryCoord.swift in Sources */,
 				16140FD0224A3F3E003E20BD /* PrefetchPersistent+CoreDataClass.swift in Sources */,

@@ -158,7 +158,7 @@ class CatalogVM : BaseVM {
         outMidTotal.onCompleted()
         outShowWarning.onCompleted()
         outReloadSubFilterVCEvent.onCompleted()
-        getDataLoadService().resetBehaviorSubjects() 
+        getDataService().resetBehaviorSubjects() 
     }
     
     // MARK: -------------- Prefetching --------------
@@ -178,11 +178,11 @@ class CatalogVM : BaseVM {
 
     
     private func emitStartEvent(){
-        getDataLoadService().screenHandle(dataTaskEnum: .willStartPrefetch, categoryId)
+        getDataService().screenHandle(dataTaskEnum: .willStartPrefetch, categoryId)
     }
    
     private func handleStartEvent(){
-        getDataLoadService().getCatalogTotalEvent()
+        getDataService().getCatalogTotalEvent()
             .observeOn(MainScheduler.asyncInstance)
             .filter({[weak self] res in
                      res.0 == self?.categoryId &&
@@ -215,7 +215,7 @@ class CatalogVM : BaseVM {
         
         if itemIds.count >= from {
             let nextItemIds = itemIds[from...to]
-            getDataLoadService().screenHandle(dataTaskEnum: .willPrefetch, categoryId, Set(nextItemIds))
+            getDataService().screenHandle(dataTaskEnum: .willPrefetch, categoryId, Set(nextItemIds))
         }
     }
     

@@ -31,6 +31,7 @@ extension DataService {
             else {
                 
                 let dbFoundItems = PrefetchPersistent.getModels(prefetchPersistents: res)
+                
                 let completion: (([CatalogModel1], NetError?)->Void)? = { [weak self] catalogModels, err in
                     guard let error = err
                         else {
@@ -39,9 +40,14 @@ extension DataService {
                         }
                      self?.fireNetError(netError: error)
                 }
+                
+                let midCompletion: ((NetError, Int)->Void)? = { [weak self] err, cnt in
+                    self?.fireMidNetError(netError: err, trying: cnt)
+                }
+                
                 let dbFoundItemIds = Set(res.compactMap({Int($0.itemId)}))
                 let notFoundItemsIds = Set(itemIds).subtracting(dbFoundItemIds)
-                networkService.reqPrefetch(itemIds: Array(notFoundItemsIds), completion: completion)
+                networkService.reqPrefetch(itemIds: Array(notFoundItemsIds), completion: completion, midCompletion: midCompletion)
                 return
         }
         let catalogModels: [CatalogModel] = PrefetchPersistent.getModels(prefetchPersistents: res)
@@ -61,11 +67,7 @@ extension DataService {
     }
     
     
-    
-    internal func fireNetError(netError: NetError){
-        getNetError().onNext(netError)
-    }
-    
+
     
     
     internal func dbSavePrefetch(_ categoryId: CategoryId, _ netItems: [CatalogModel1], _ dbFoundItems: [CatalogModel]){

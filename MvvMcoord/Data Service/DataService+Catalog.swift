@@ -27,7 +27,6 @@ extension DataService {
     }
     
     
-    
     internal func doEmitCatalogStart(_ categoryId: CategoryId){
         
         let res1_ = dbLoadEntity(categoryId, CategoriesPersistent.self, "CategoriesPersistent", 1)
@@ -37,8 +36,13 @@ extension DataService {
               res1.count > 0,
               res2.count > 0
             else {
-                let completion: ((CategoryId, Int, ItemIds, Int, Int)->Void)? = { [weak self] (categoryId, fetchLimit, itemIds, minPrice, maxPrice) in
-                    self?.dbSaveCatalog(categoryId, fetchLimit, itemIds, minPrice, maxPrice)
+                let completion: ((CategoryId, Int, ItemIds, Int, Int, NetError?)->Void)? = { [weak self] (categoryId, fetchLimit, itemIds, minPrice, maxPrice, err) in
+                    guard let error = err
+                        else {
+                            self?.dbSaveCatalog(categoryId, fetchLimit, itemIds, minPrice, maxPrice)
+                            return
+                    }
+                    self?.fireNetError(netError: error)
                 }
                 networkService.reqCatalogStart(categoryId: categoryId, completion: completion)
                 return

@@ -7,8 +7,13 @@ extension DataService {
     
     
     internal func loadNewUIDs(){
-        let completion: (([UidModel]) -> Void)? = { [weak self] (uids) in
-            self?.saveNewUIDs(uids)
+        let completion: (([UidModel], NetError?) -> Void)? = { [weak self] (uids, err) in
+            guard let error = err
+                else {
+                    self?.saveNewUIDs(uids)
+                    return
+            }
+            self?.fireNetError(netError: error)
         }
         networkService.reqLoadUIDs(completion: completion)
     }

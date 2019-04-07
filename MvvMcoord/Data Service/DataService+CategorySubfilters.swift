@@ -39,13 +39,24 @@ extension DataService {
     
     internal func categoryNetLoad(categoryId: FilterId){
         
-        let completion: (([FilterModel]?, [SubfilterModel]?) -> Void)? = { [weak self] (filters, subfilters) in
-            self?.categorySave(categoryId: categoryId, filters: filters, subfilters: subfilters)
+        let completion: (([FilterModel]?, [SubfilterModel]?, NetError?) -> Void)? = { [weak self] (filters, subfilters, err) in
+            guard let error = err
+                else {
+                    self?.categorySave(categoryId: categoryId, filters: filters, subfilters: subfilters)
+                    return
+            }
+            self?.fireNetError(netError: error)
         }
+        
         networkService.reqLoadCategoryFilters(categoryId: categoryId, completion: completion)
         
-        let completion2: ((SubfiltersByItem?, PriceByItemId?) -> Void)? = { [weak self] (subfiltersByItem, priceByItemId) in
-            self?.applySave(categoryId: categoryId, subfiltersByItem: subfiltersByItem, priceByItemId: priceByItemId)
+        let completion2: ((SubfiltersByItem?, PriceByItemId?, NetError?) -> Void)? = { [weak self] (subfiltersByItem, priceByItemId, err) in
+            guard let error = err
+                else {
+                    self?.applySave(categoryId: categoryId, subfiltersByItem: subfiltersByItem, priceByItemId: priceByItemId)
+                    return
+            }
+            self?.fireNetError(netError: error)
         }
      
         networkService.reqLoadCategoryApply(categoryId: categoryId, completion: completion2)

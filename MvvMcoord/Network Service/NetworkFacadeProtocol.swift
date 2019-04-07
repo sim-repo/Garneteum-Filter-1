@@ -5,17 +5,17 @@ import RxSwift
 
 protocol NetworkFacadeProtocol {
 
-    func reqPrefetch(itemIds: ItemIds, completion: (([CatalogModel1], NetError?)->Void)?)
+    func reqPrefetch(itemIds: ItemIds, completion: (([CatalogModel1], NetError?)->Void)?, midCompletion: ((NetError, Int)->Void)?)
 
-    func reqLoadCrossFilters(filterId: Int, completion: (([FilterModel],[SubfilterModel])->Void)? )
+    func reqLoadCrossFilters(filterId: Int, completion: (([FilterModel],[SubfilterModel], NetError?)->Void)? )
 
-    func reqLoadUIDs(completion: (([UidModel])->Void)?)
+    func reqLoadUIDs(completion: (([UidModel], NetError?)->Void)?)
 
-    func reqLoadCategoryFilters(categoryId: CategoryId, completion: (([FilterModel],[SubfilterModel])->Void)? )
+    func reqLoadCategoryFilters(categoryId: CategoryId, completion: (([FilterModel],[SubfilterModel], NetError?)->Void)? )
 
-    func reqLoadCategoryApply(categoryId: CategoryId, completion: ((SubfiltersByItem?, PriceByItemId?)->Void)? )
+    func reqLoadCategoryApply(categoryId: CategoryId, completion: ((SubfiltersByItem?, PriceByItemId?, NetError?)->Void)? )
     
-    func reqCatalogStart(categoryId: CategoryId, completion: ((CategoryId, Int, ItemIds, Int, Int)->Void)? )
+    func reqCatalogStart(categoryId: CategoryId, completion: ((CategoryId, Int, ItemIds, Int, Int, NetError?)->Void)? )
 }
 
 
@@ -55,17 +55,17 @@ class NetworkFacadeBase: NetworkFacadeProtocol {
     }
     
     
-    func reqCatalogStart(categoryId: CategoryId, completion: ((CategoryId, Int, ItemIds, Int, Int)->Void)? ) {}
+    func reqCatalogStart(categoryId: CategoryId, completion: ((CategoryId, Int, ItemIds, Int, Int, NetError?)->Void)? ) {}
 
-    func reqPrefetch(itemIds: ItemIds, completion: (([CatalogModel1], NetError?)->Void)?) {}
+    func reqPrefetch(itemIds: ItemIds, completion: (([CatalogModel1], NetError?)->Void)?, midCompletion: ((NetError, Int)->Void)?) {}
 
-    func reqLoadCrossFilters(filterId: Int, completion: (([FilterModel],[SubfilterModel])->Void)? ) {}
+    func reqLoadCrossFilters(filterId: Int, completion: (([FilterModel],[SubfilterModel], NetError?)->Void)? ) {}
 
-    func reqLoadUIDs(completion: (([UidModel])->Void)?){}
+    func reqLoadUIDs(completion: (([UidModel], NetError?)->Void)?) {}
 
-    func reqLoadCategoryFilters(categoryId: CategoryId, completion: (([FilterModel],[SubfilterModel])->Void)? ) { }
+    func reqLoadCategoryFilters(categoryId: CategoryId, completion: (([FilterModel],[SubfilterModel], NetError?)->Void)? ) {}
 
-    func reqLoadCategoryApply(categoryId: CategoryId, completion: ((SubfiltersByItem?, PriceByItemId?)->Void)? ) {}
+    func reqLoadCategoryApply(categoryId: CategoryId, completion: ((SubfiltersByItem?, PriceByItemId?, NetError?)->Void)? ) {}
  
 
 }

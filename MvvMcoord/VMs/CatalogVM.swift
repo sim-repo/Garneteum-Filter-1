@@ -35,6 +35,7 @@ class CatalogVM : BaseVM {
     var outCloseVC = PublishSubject<Void>()
     var outReloadCatalogVC = BehaviorSubject<Bool>(value: false)
     var outFetchComplete = PublishSubject<[IndexPath]?>()
+    var outFetchStart = PublishSubject<Int>() // added test
     var currEnteredFilterId = 0
     
     // Filters
@@ -91,25 +92,25 @@ class CatalogVM : BaseVM {
     internal var outShowApplyViewEvent = BehaviorSubject<Bool>(value: false)
     internal var outShowPriceApplyViewEvent = PublishSubject<Bool>()
     internal var outRefreshedCellSelectionsEvent = PublishSubject<Set<Int>>()
-    internal var outWaitEvent = BehaviorSubject<(FilterActionEnum, Bool)>(value: (.noAction, false))
+    internal var outWaitEvent = BehaviorSubject<(FilterActionEnum, Bool, Int)>(value: (.noAction, false, 2))
     internal var outBackEvent = PublishSubject<FilterActionEnum>()
     internal var outMidTotal = PublishSubject<Int>()
     internal var outShowWarning = PublishSubject<Void>()
     internal var outReloadSubFilterVCEvent = PublishSubject<Void>()
     
-    
     internal var operationQueues: [Int: OperationQueue] = [:]
-    
+    internal var defWaitDelay = 2
     
     internal init(categoryId: Int, fetchLimit: Int, currentPage: Int, totalPages: Int, totalItems: Int){
         self.categoryId = categoryId
         self.fetchLimit = fetchLimit
         self.currentPage = currentPage
         self.totalPages = totalPages
-        self.totalItems = totalItems
+       // self.totalItems = totalItems
+        self.totalItems = fetchLimit
         super.init()
         addOperation()
-        wait().onNext((.prefetchCatalog, true))
+        wait().onNext((.prefetchCatalog, true, defWaitDelay))
         emitStartEvent()
         handlePrefetchEvent()
         handleDelegate()
@@ -174,6 +175,7 @@ class CatalogVM : BaseVM {
             self.totalPages = self.totalItems/fetchLimit
         }
         catalog = []
+        self.outFetchStart.onNext(self.itemIds.count < 20 ? self.itemIds.count : 20)// added test
     }
 
     
@@ -213,10 +215,16 @@ class CatalogVM : BaseVM {
         let from =  (currentPage-1) * fetchLimit
         let to = min(maxi2, maxi)
         
-        if itemIds.count >= from {
-            let nextItemIds = itemIds[from...to]
-            getDataService().screenHandle(dataTaskEnum: .willPrefetch, categoryId, Set(nextItemIds))
-        }
+        guard itemIds.count >= from,
+              from <= to
+            else {
+                isPrefetchInProgress = false
+                return
+            }
+        
+        let nextItemIds = itemIds[from...to]
+        
+        getDataService().screenHandle(dataTaskEnum: .willPrefetch, categoryId, Set(nextItemIds))
     }
     
     
@@ -224,17 +232,18 @@ class CatalogVM : BaseVM {
         inPrefetchEvent
         .observeOn(MainScheduler.asyncInstance)
         .subscribe(onNext: {[weak self] res in
-            switch self?.currentPage {
-                case 1: self?.catalog = res
-                default: self?.catalog.append(contentsOf: res)
+            guard let `self` = self else {return}
+            switch self.currentPage {
+                case 1: self.catalog = res
+                default: self.catalog.append(contentsOf: res)
             }
-            let indexPathsToReload = self?.calcIndexPathsToReload(from: res)
-            self?.outFetchComplete.onNext(indexPathsToReload)
+            let indexPathsToReload = self.calcIndexPathsToReload(from: res)
+            self.outFetchComplete.onNext(indexPathsToReload)
             
-            self?.wait().onNext((.prefetchCatalog, false))
+            self.wait().onNext((.prefetchCatalog, false, self.defWaitDelay))
             
-            self?.currentPage += 1
-            self?.isPrefetchInProgress = false
+            self.currentPage += 1
+            self.isPrefetchInProgress = false
         })
         .disposed(by: bag)
     }

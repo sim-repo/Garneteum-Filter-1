@@ -42,7 +42,19 @@ enum DataTasksEnum: Int {
 }
 
 enum NetError: Error {
-    case firPrefetchResourceExhausted
+    case specificError,
+    prefetch_ServerRetError,
+    catalogStart_ServerRetError,
+    prefetch_ServerRetEmpty,
+    catalogStart_ServerRetEmpty,
+    categoryApply_ServerRetError,
+    categoryApply_ServerRetEmpty,
+    categoryFilters_ServerRetError,
+    categoryFilters_ServerRetEmpty,
+    crossFilters_ServerRetError,
+    crossFilters_ServerRetEmpty,
+    uid_ServerRetError,
+    uid_ServerRetEmpty
 }
 
 

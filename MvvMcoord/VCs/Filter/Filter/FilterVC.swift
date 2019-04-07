@@ -268,7 +268,8 @@ extension FilterVC {
             .filter({[.enterFilter, .applySubFilter, .removeFilter].contains($0.0)})
             .takeWhile({$0.1 == true})
             .subscribe(onNext: {[weak self] res in
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)){
+                                    let delay = res.2
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)){
                                         guard let `self` = self else {return}
                                         Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(self.internalWaitControl), userInfo: nil, repeats: false)
                                         self.startWait()

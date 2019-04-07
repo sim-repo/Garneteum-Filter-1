@@ -176,7 +176,8 @@ extension SubFilterSelectVC {
             .takeWhile({$0.1 == true})
             .subscribe(
                 onNext: {[weak self] res in
-                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)){
+                    let delay = res.2
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)){
                         guard let `self` = self else {return}
                         Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(self.internalWaitControl), userInfo: nil, repeats: false)
                         self.startWait()

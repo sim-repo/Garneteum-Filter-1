@@ -90,8 +90,13 @@ extension DataService {
     
     
     internal func crossNetLoad(filterId: FilterId){
-        let completion: (([FilterModel]?, [SubfilterModel]?) -> Void)? = { [weak self] (filters, subfilters) in
-            self?.crossSave(filterId: filterId, filters: filters, subfilters: subfilters)
+        let completion: (([FilterModel]?, [SubfilterModel]?, NetError?) -> Void)? = { [weak self] (filters, subfilters, err) in
+            guard let error = err
+                else {
+                    self?.crossSave(filterId: filterId, filters: filters, subfilters: subfilters)
+                    return
+            }
+            self?.fireNetError(netError: error)
         }
         networkService.reqLoadCrossFilters(filterId: filterId, completion: completion)
     }

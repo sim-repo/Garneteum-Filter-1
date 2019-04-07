@@ -23,6 +23,9 @@ class CatalogVC: UIViewController {
     internal let waitContainer: UIView = UIView()
     internal let waitActivityView = UIActivityIndicatorView(style: .whiteLarge)
     
+    var itemCount = 20
+    
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         uitCurrMemVCs += 1 // uitest
@@ -32,13 +35,15 @@ class CatalogVC: UIViewController {
         super.viewDidLoad()
         setFlowLayout()
         setTitle()
-        collectionView.prefetchDataSource = self
+       // collectionView.prefetchDataSource = self
         collectionView.isHidden = true
         handleReloadEvent()
         handleWaitEvent()
+        handleFetchStartEvent() // added test
         handleFetchCompleteEvent()
         bindNavigation()
         bindLayout()
+        self.collectionView.decelerationRate = UIScrollView.DecelerationRate.normal
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -83,14 +88,39 @@ class CatalogVC: UIViewController {
             .disposed(by: bag)
     }
     
+    // added
+    private func handleFetchStartEvent(){
+        viewModel.outFetchStart
+            .subscribe(onNext: {[weak self] numberOfItemsInSection in
+                guard let `self` = self else {return}
+                self.itemCount = numberOfItemsInSection
+            })
+            .disposed(by: bag)
+    }
     
     private func handleFetchCompleteEvent(){
         viewModel.outFetchComplete
             .subscribe(onNext: {[weak self] newIndexPathsToReload in
                 guard let `self` = self else {return}
+               
                 guard let newIndexPathsToReload = newIndexPathsToReload else { return }
                 let indexPathsToReload = self.visibleIndexPathsToReload(intersecting: newIndexPathsToReload)
-                self.collectionView.reloadItems(at: indexPathsToReload)
+                
+                // added
+                if newIndexPathsToReload[0].row  == 0 {
+                   // self.collectionView.reloadItems(at: indexPathsToReload)
+                    self.collectionView.reloadItems(at: newIndexPathsToReload)
+                } else {
+                    self.collectionView.performBatchUpdates({
+                        if newIndexPathsToReload.count < 20 {
+                            print("err: \(newIndexPathsToReload.count)")
+                        }
+                        self.itemCount += newIndexPathsToReload.count
+                        self.collectionView.insertItems(at: newIndexPathsToReload)
+                    })
+                }
+                
+              //  self.collectionView.reloadItems(at: indexPathsToReload)
             })
             .disposed(by: bag)
     }
@@ -142,12 +172,18 @@ class CatalogVC: UIViewController {
 extension CatalogVC: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.totalItems
+        print("itemCOUNT: \(itemCount)")
+        return itemCount //viewModel.totalItems
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell: UICollectionViewCell!
+        
+        if isLoadingCell2(for: indexPath) {
+            viewModel.emitPrefetchEvent()
+            currPage.text = "\(viewModel.currentPage)/\(viewModel.totalPages)"
+        }
         
         switch cellLayout {
             case .list:
@@ -215,22 +251,28 @@ extension CatalogVC: UICollectionViewDelegate, UICollectionViewDelegateFlowLayou
     
 }
 
-
-extension CatalogVC: UICollectionViewDataSourcePrefetching {
-    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        if indexPaths.contains(where: isLoadingCell) {
-            viewModel.emitPrefetchEvent()
-            
-            currPage.text = "\(viewModel.currentPage)/\(viewModel.totalPages)"
-        }
-    }
-}
+//
+//extension CatalogVC: UICollectionViewDataSourcePrefetching {
+////    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+////        if indexPaths.contains(where: isLoadingCell2) {
+////            viewModel.emitPrefetchEvent()
+////            currPage.text = "\(viewModel.currentPage)/\(viewModel.totalPages)"
+////        }
+////    }
+//}
 
 
 
 private extension CatalogVC {
     func isLoadingCell(for indexPath: IndexPath) -> Bool {
+       // return indexPath.row >= viewModel.currItemsCount() // comment
         return indexPath.row >= viewModel.currItemsCount()
+    }
+    
+    func isLoadingCell2(for indexPath: IndexPath) -> Bool {
+        // return indexPath.row >= viewModel.currItemsCount() // comment
+       // print("\(indexPath.row) : \(viewModel.currItemsCount()-1)")
+        return indexPath.row >= viewModel.currItemsCount()-1
     }
     
     func visibleIndexPathsToReload(intersecting indexPaths: [IndexPath])->[IndexPath]{
@@ -262,9 +304,9 @@ extension CatalogVC {
                 guard let `self` = self else {return}
                 if res.1 == true {
                     self.waitContainer.alpha = 1.0
-                    self.collectionView.isHidden = true
+                    let delay = res.2
                     self.timer = Timer.scheduledTimer(timeInterval: 8, target: self, selector: #selector(self.internalWaitControl), userInfo: nil, repeats: false)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)){
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)){
                         self.startWait()
                     }
                 } else {
@@ -277,13 +319,23 @@ extension CatalogVC {
     
     private func startWait() {
         guard waitContainer.alpha == 1.0 else { return }
+        UIView.animate(withDuration: 0.7,
+                       animations: {
+                        self.collectionView.alpha = 0.0
+        },
+                       completion: {[weak self] _ in
+                        self?.collectionView.isHidden = true
+        })
         waitContainer.isHidden = false
         waitActivityView.startAnimating()
     }
     
     private func stopWait(){
-        waitContainer.alpha = 0.0
-        collectionView.isHidden = false
+        self.waitContainer.alpha = 0.0
+        UIView.animate(withDuration: 1.5, animations: {
+            self.collectionView.alpha = 1.0
+            self.collectionView.isHidden = false
+        })
         waitContainer.isHidden = true
         waitActivityView.stopAnimating()
     }

@@ -81,13 +81,15 @@ extension DataService {
         appDelegate.moc.performAndWait {
             var filtersDB = [FilterPersistent]()
             for element in _filters {
-                let filterDB = FilterPersistent(entity: FilterPersistent.entity(), insertInto: appDelegate.moc)
+              //  let filterDB = FilterPersistent(entity: FilterPersistent.entity(), insertInto: appDelegate.moc)
+                let filterDB = NSEntityDescription.insertNewObject(forEntityName: "FilterPersistent", into: appDelegate.moc) as! FilterPersistent
                 filterDB.setup(filterModel: element)
                 filtersDB.append(filterDB)
             }
             var subfiltersDB = [SubfilterPersistent]()
             for element in _subfilters {
-                let subfilterDB = SubfilterPersistent(entity: SubfilterPersistent.entity(), insertInto: appDelegate.moc)
+               // let subfilterDB = SubfilterPersistent(entity: SubfilterPersistent.entity(), insertInto: appDelegate.moc)
+                let subfilterDB = NSEntityDescription.insertNewObject(forEntityName: "SubfilterPersistent", into: appDelegate.moc) as! SubfilterPersistent
                 subfilterDB.setup(subfilterModel: element)
                 subfiltersDB.append(subfilterDB)
             }

@@ -259,9 +259,9 @@ extension FirebaseService  {
                 }
             }
         }
-        operationQueues[taskCode]?.addOperation {[weak self] in
-            guard let task = self?.activeTasks[taskIdx] else { return }
-            task?()
+        operationQueues[taskCode]?.addOperation {
+           guard let task =  self.activeTasks[taskIdx] else { return }
+                    task?()
         }
     }
     
@@ -415,6 +415,7 @@ extension FirebaseService  {
                 }
             }
         }
+        
         operationQueues[taskCode]?.addOperation {[weak self] in
             guard let task = self?.activeTasks[taskIdx] else { return }
             task?()

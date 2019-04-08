@@ -36,7 +36,8 @@ extension DataService {
             var db1 = [SubfilterItemPersistent]()
             for element in _subfiltersByItem {
                 for subfilterId in element.value {
-                    let row = SubfilterItemPersistent(entity: SubfilterItemPersistent.entity(), insertInto: appDelegate.moc)
+                    //let row = SubfilterItemPersistent(entity: SubfilterItemPersistent.entity(), insertInto: appDelegate.moc)
+                    let row = NSEntityDescription.insertNewObject(forEntityName: "SubfilterItemPersistent", into: appDelegate.moc) as! SubfilterItemPersistent
                     row.setup(categoryId: categoryId, subfilterId: subfilterId, itemId: element.key)
                     db1.append(row)
                 }
@@ -44,7 +45,8 @@ extension DataService {
             appDelegate.saveContext()
             var db2 = [PriceByItemPersistent]()
             for element in _priceByItemId {
-                let row = PriceByItemPersistent(entity: PriceByItemPersistent.entity(), insertInto: appDelegate.moc)
+               // let row = PriceByItemPersistent(entity: PriceByItemPersistent.entity(), insertInto: appDelegate.moc)
+                let row = NSEntityDescription.insertNewObject(forEntityName: "PriceByItemPersistent", into: appDelegate.moc) as! PriceByItemPersistent
                 row.setup(categoryId: categoryId, itemId: element.key, price: element.value)
                 db2.append(row)
             }

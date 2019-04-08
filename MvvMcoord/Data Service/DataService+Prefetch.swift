@@ -77,7 +77,8 @@ extension DataService {
         
         var db = [PrefetchPersistent]()
         for model in netItems {
-            let row = PrefetchPersistent(entity: PrefetchPersistent.entity(), insertInto: appDelegate.moc)
+           // let row = PrefetchPersistent(entity: PrefetchPersistent.entity(), insertInto: appDelegate.moc)
+            let row = NSEntityDescription.insertNewObject(forEntityName: "PrefetchPersistent", into: appDelegate.moc) as! PrefetchPersistent
             row.setup(model: model)
             db.append(row)
         }

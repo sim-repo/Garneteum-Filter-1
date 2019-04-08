@@ -14,7 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
     
-    lazy var persistentContainer: NSPersistentContainer = {
+    var persistentContainer: NSPersistentContainer = {
+        objc_sync_enter(self)
         let container = NSPersistentContainer(name: "FilterCoreData")
         container.loadPersistentStores(completionHandler: {
             (storeDescription, error) in
@@ -23,9 +24,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })
+        objc_sync_exit(self)
         return container
     }()
-    
     
 
     
@@ -76,7 +77,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         FirebaseApp.configure()
+        let _ = getNetworkService()
+        usleep(10000)
+        let _ = getDataService()
         CategoryModel.fillModels()
+        
         
         window = UIWindow()
         if let window = window {

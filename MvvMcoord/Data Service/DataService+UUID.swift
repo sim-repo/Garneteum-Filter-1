@@ -28,7 +28,9 @@ extension DataService {
         self.appDelegate.moc.performAndWait {
             var uidsDB = [NewUidPersistent]()
             for element in _uids {
-                let uidDB = NewUidPersistent(entity: NewUidPersistent.entity(), insertInto: self.appDelegate.moc)
+               // let uidDB = NewUidPersistent(entity: NewUidPersistent.entity(), insertInto: self.appDelegate.moc)
+                let uidDB = NSEntityDescription.insertNewObject(forEntityName: "NewUidPersistent", into: self.appDelegate.moc) as! NewUidPersistent
+
                 uidDB.setup(uidModel: element)
                 uidsDB.append(uidDB)
             }

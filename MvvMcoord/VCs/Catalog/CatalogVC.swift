@@ -52,6 +52,7 @@ class CatalogVC: UIViewController {
     
     
     deinit {
+        print("Catalog VC deinit")
         uitCurrMemVCs -= 1 // uitest
     }
     
@@ -94,10 +95,15 @@ class CatalogVC: UIViewController {
             .subscribe(onNext: {[weak self] _ in
                 guard let `self` = self else {return}
                 self.itemCount = 0
-                let currP = self.viewModel.currentPage < 0 ? 0 : self.viewModel.currentPage
-                self.currPage.text = "\(currP)/\( self.viewModel.totalPages)"
+                self.changeCurrPage()
             })
             .disposed(by: bag)
+    }
+    
+    private func changeCurrPage(){
+        let totalP = self.viewModel.totalPages == 0 ? 1: self.viewModel.totalPages + 1
+        let currP = self.viewModel.currentPage < 0 ? 1 : self.viewModel.currentPage + 1
+        self.currPage.text = "\(currP)/\( totalP)"
     }
     
     
@@ -173,9 +179,8 @@ extension CatalogVC: UICollectionViewDataSource {
         let cell: UICollectionViewCell!
         
         if isLoadingCell2(for: indexPath) {
-            print("isLoadingCell2")
             viewModel.emitPrefetchEvent()
-            currPage.text = "\(viewModel.currentPage)/\(viewModel.totalPages)"
+            changeCurrPage()
         }
         
         switch cellLayout {
@@ -244,32 +249,20 @@ extension CatalogVC: UICollectionViewDelegate, UICollectionViewDelegateFlowLayou
     
 }
 
-//
-//extension CatalogVC: UICollectionViewDataSourcePrefetching {
-////    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-////        if indexPaths.contains(where: isLoadingCell2) {
-////            viewModel.emitPrefetchEvent()
-////            currPage.text = "\(viewModel.currentPage)/\(viewModel.totalPages)"
-////        }
-////    }
-//}
-
-
-
 private extension CatalogVC {
+    
     func isLoadingCell(for indexPath: IndexPath) -> Bool {
-       // return indexPath.row >= viewModel.currItemsCount() // comment
         return indexPath.row >= viewModel.currItemsCount()
     }
     
+    
     func isLoadingCell2(for indexPath: IndexPath) -> Bool {
-        // return indexPath.row >= viewModel.currItemsCount() // comment
-       // print("\(indexPath.row) : \(viewModel.currItemsCount()-1)")
         if viewModel.currItemsCount() == 0 {
             return false
         }
         return indexPath.row >= viewModel.currItemsCount()-1
     }
+    
     
     func visibleIndexPathsToReload(intersecting indexPaths: [IndexPath])->[IndexPath]{
         let indexPathsForVisibleRows = collectionView.indexPathsForVisibleItems 
@@ -296,18 +289,22 @@ extension CatalogVC {
         // reusable wait
         viewModel.wait()
             .filter({[.prefetchCatalog, .applyFilter].contains($0.0)})
-            .subscribe(onNext: {[weak self] res in
+            .subscribe(
+            onNext: {[weak self] res in
                 guard let `self` = self else {return}
                 if res.1 == true {
                     self.waitContainer.alpha = 1.0
                     let delay = res.2
                     self.timer = Timer.scheduledTimer(timeInterval: 8, target: self, selector: #selector(self.internalWaitControl), userInfo: nil, repeats: false)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)){
-                        self.startWait()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)){[weak self] in
+                        self?.startWait()
                     }
                 } else {
                     self.stopWait()
                 }
+            },
+            onCompleted: {
+                 self.timer?.invalidate() //!!!
             })
             .disposed(by: bag)
     }
@@ -316,8 +313,8 @@ extension CatalogVC {
     private func startWait() {
         guard waitContainer.alpha == 1.0 else { return }
         UIView.animate(withDuration: 0.7,
-                       animations: {
-                        self.collectionView.alpha = 0.0
+                       animations: {[weak self] in
+                        self?.collectionView.alpha = 0.0
         },
                        completion: {[weak self] _ in
                         self?.collectionView.isHidden = true
@@ -328,9 +325,9 @@ extension CatalogVC {
     
     private func stopWait(){
         self.waitContainer.alpha = 0.0
-        UIView.animate(withDuration: 1.5, animations: {
-            self.collectionView.alpha = 1.0
-            self.collectionView.isHidden = false
+        UIView.animate(withDuration: 1.5, animations: {[weak self] in
+            self?.collectionView.alpha = 1.0
+            self?.collectionView.isHidden = false
         })
         waitContainer.isHidden = true
         waitActivityView.stopAnimating()

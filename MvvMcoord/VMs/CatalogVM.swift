@@ -103,11 +103,12 @@ class CatalogVM : BaseVM {
     
     internal init(categoryId: Int, fetchLimit: Int, totalPages: Int, totalItems: Int){
         self.categoryId = categoryId
-        self.fetchLimit = fetchLimit
+        if fetchLimit > 0 {
+            self.fetchLimit = fetchLimit
+        }
+        self.totalItems = self.fetchLimit
         self.currentPage = -1
         self.totalPages = totalPages
-       // self.totalItems = totalItems
-        self.totalItems = fetchLimit
         super.init()
         addOperation()
         wait().onNext((.prefetchCatalog, true, defWaitDelay))
@@ -130,7 +131,7 @@ class CatalogVM : BaseVM {
     }
     
     public func realloc(){
-        
+
         unitTestSignalOperationComplete.onCompleted()
         inPrefetchEvent.onCompleted()
         inPressFilter.onCompleted()
@@ -159,9 +160,14 @@ class CatalogVM : BaseVM {
         outMidTotal.onCompleted()
         outShowWarning.onCompleted()
         outReloadSubFilterVCEvent.onCompleted()
-        getDataService().resetBehaviorSubjects() 
+        getDataService().resetBehaviorSubjects()
     }
     
+    
+    deinit {
+        print("Catalog VM deinit")
+        realloc()
+    }
     // MARK: -------------- Prefetching --------------
     
     
@@ -216,11 +222,8 @@ class CatalogVM : BaseVM {
                 self.fullCatalogItemIds = res.1
                 self.setupFetch(itemIds: res.1, fetchLimit: res.2)
                 self.rangePrice.setupRangePrice(minPrice: res.3, maxPrice: res.4)
+                print("handleStartEvent")
                 self.emitPrefetchEvent()
-//                if self.fullCatalogItemIds.count < res.2 {
-//                    self.emitPrefetchEvent()
-//                }
-               // self.outReloadCatalogVC.onNext(true)
             })
             .disposed(by: bag)
     }
@@ -363,6 +366,7 @@ class CatalogVM : BaseVM {
         itemIds = fullCatalogItemIds
         setupFetch(itemIds: fullCatalogItemIds)
         outReloadCatalogVC.onNext(true)
+        print("resetFilters")
         emitPrefetchEvent()
         outFiltersEvent.onNext(self.getEnabledFilters())
         unitTestSignalOperationComplete.onNext(utMsgId)

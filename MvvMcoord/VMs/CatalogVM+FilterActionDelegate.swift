@@ -220,8 +220,8 @@ extension CatalogVM : FilterActionDelegate {
                         self.showApplyWarning().onNext(Void())
                         return
                     }
-                
-                
+
+
                 // check if new applying exists
                 let united = self.midAppliedSubFilters.subtracting(self.unapplying).union(self.selectedSubFilters)
                 guard united.subtracting(self.appliedSubFilters).count > 0 ||
@@ -231,8 +231,8 @@ extension CatalogVM : FilterActionDelegate {
                     self.back().onNext(.closeFilter)
                     return
                 }
-                
-                
+
+
                 let midApplying = self.midAppliedSubFilters.subtracting(self.unapplying)
                 if midApplying.count == 0 &&
                    self.selectedSubFilters.count == 0 &&
@@ -241,12 +241,12 @@ extension CatalogVM : FilterActionDelegate {
                         self.back().onNext(.closeFilter)
                         return
                 }
-                
+
                 self.resetFetch() // added
                 self.unapplying.removeAll()
                 self.wait().onNext((.applyFilter, true, self.defWaitDelay))
                 self.back().onNext(.closeFilter)
-            
+
                 DispatchQueue.global(qos: .background).async {
                     getDataService().reqApplyFromFilter(categoryId: self.categoryId,
                                                             appliedSubFilters: midApplying,
@@ -255,12 +255,12 @@ extension CatalogVM : FilterActionDelegate {
                 }
             })
             .disposed(by: bag)
-        
-        
+
+
         applyFromSubFilterEvent()
             .subscribe(onNext: {[weak self] filterId in
                 guard let `self` = self else { return }
-                
+
                 guard self.canApplyFromSubfilter == true
                     else {
                         self.back().onNext(.closeSubFilter)
@@ -282,8 +282,8 @@ extension CatalogVM : FilterActionDelegate {
                 }
             })
             .disposed(by: bag)
-        
-        
+
+
         applyByPrices()
             .subscribe(onNext: {[weak self] _ in
                 guard let `self` = self else { return }
@@ -293,8 +293,8 @@ extension CatalogVM : FilterActionDelegate {
                 }
             })
             .disposed(by: bag)
-        
-        
+
+
         removeFilterEvent()
             .subscribe(onNext: {[weak self] filterId in
                 if let `self` = self {
@@ -310,15 +310,15 @@ extension CatalogVM : FilterActionDelegate {
                 }
             })
             .disposed(by: bag)
-        
-        
+
+
         selectSubFilterEvent()
             .subscribe(onNext: {[weak self] (subFilterId, selected) in
                 self?.selectSubFilter(subFilterId: subFilterId, selected: selected)
             })
             .disposed(by: bag)
-        
-        
+
+
         cleanupFromFilterEvent()
             .subscribe(onNext: {[weak self] _ in
                 if let `self` = self {
@@ -327,28 +327,28 @@ extension CatalogVM : FilterActionDelegate {
                 }
             })
             .disposed(by: bag)
-        
-        
+
+
         cleanupFromSubFilterEvent()
             .subscribe(onNext: {[weak self] filterId in
                 guard let `self` = self else { return }
-                
+
                 self.back().onNext(.closeFilter)
-                
+
                 guard let ids = self.subfiltersByFilter[filterId] else { return }
-                
+
                 let res = Set(ids).intersection(self.selectedSubFilters)
-                
+
                 self.outRefreshedCellSelectionsEvent.onNext(res)
-                
+
                 for id in ids {
                     self.selectSubFilter(subFilterId: id, selected: false)
                 }
                 self.unitTestSignalOperationComplete.onNext(self.utMsgId)
             })
             .disposed(by: bag)
-        
-        
+
+
         getDataService().getNetError()
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: {[weak self] err in
@@ -374,7 +374,7 @@ extension CatalogVM : FilterActionDelegate {
                 }
             })
             .disposed(by: bag)
-        
+
         getDataService().getMidNetError()
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: {[weak self] err, trying in
@@ -402,9 +402,9 @@ extension CatalogVM : FilterActionDelegate {
                 }
             })
             .disposed(by: bag)
-        
-        
-        
+
+
+
         getDataService().getEnterSubFilterEvent()
             .observeOn(MainScheduler.asyncInstance)
             .filter({$0.1.count > 0})
@@ -422,29 +422,28 @@ extension CatalogVM : FilterActionDelegate {
                 self.unitTestSignalOperationComplete.onNext(self.utMsgId)
             })
             .disposed(by: bag)
-        
-        
+
+
         getDataService().getApplyForItemsEvent()
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: {[weak self] _filters in
                 guard let `self` = self else { return }
-                
                 self.enableFilters(ids: _filters.0)
                 self.enableSubFilters(ids: _filters.1)
-                
+
                 self.appliedSubFilters = _filters.2
                 self.midAppliedSubFilters = _filters.2 // last added!!!
                 self.selectedSubFilters = _filters.3
                 self.outFiltersEvent.onNext(self.getEnabledFilters())
-
+                print("HLL:::")
                 self.fetchAfterApplyFromFilter(itemIds: _filters.4)
                 self.wait().onNext((.applyFilter, false, 0))
-                
+
                 self.unitTestSignalOperationComplete.onNext(self.utMsgId)
             })
             .disposed(by: bag)
-        
-        
+
+
         getDataService().getApplyForFiltersEvent()
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: {[weak self] _filters in
@@ -454,19 +453,19 @@ extension CatalogVM : FilterActionDelegate {
                 self.midAppliedSubFilters = _filters.2
                 self.selectedSubFilters.removeAll()
                 self.setTipRangePrice(minPrice: _filters.4, maxPrice: _filters.5)
-                
+
                 self.itemsTotal = _filters.6
                 self.outMidTotal.onNext(self.itemsTotal)
-                
+
                 let filters = self.getEnabledFilters()
                 self.outFiltersEvent.onNext(filters)
                 self.wait().onNext((.applySubFilter, false, 0))
-                
+
                 self.unitTestSignalOperationComplete.onNext(self.utMsgId)
             })
             .disposed(by: bag)
-        
-        
+
+
         getDataService().getApplyByPriceEvent()
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: {[weak self] _filters in
@@ -476,90 +475,71 @@ extension CatalogVM : FilterActionDelegate {
                 self.outFiltersEvent.onNext(filters)
             })
             .disposed(by: bag)
-        
-        
+
+
         getDataService().getPrefetchEvent()
             .subscribe(onNext: {[weak self] res in
                 guard let `self` = self else { return }
                 self.inPrefetchEvent.onNext(res)
             })
             .disposed(by: bag)
-        
-        
+
+
         getDataService().getFilters()
             .filter({$0.count > 0})
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [weak self] res in
                 guard let `self` = self else { return }
-                
+
                 guard res.count > 0 else { return }
                 let filters = res
                 filters.forEach { [weak self] filter in
                     self?.filters[filter.id] = filter
                 }
-                
+
                // self.filters = Dictionary(uniqueKeysWithValues: filters.compactMap({$0}).map{ ($0.id, $0) })
                 self.outFiltersEvent.onNext(self.getEnabledFilters())
                 self.wait().onNext((.enterFilter, false, 0))
                 self.unitTestSignalOperationComplete.onNext(self.utMsgId)
             })
             .disposed(by: bag)
-        
-        
+
+
         getDataService().getCrossFilters()
             .filter({$0.count > 0})
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [weak self] res in
                 guard let `self` = self else { return }
-                
+
                 guard res.count > 0 else { return }
                 let filters = res
                 filters.forEach { [weak self] filter in
                     self?.filters[filter.id] = filter
                 }
-                
+
                 // self.filters = Dictionary(uniqueKeysWithValues: filters.compactMap({$0}).map{ ($0.id, $0) })
                 self.outFiltersEvent.onNext(self.getEnabledFilters())
                 self.wait().onNext((.enterFilter, false, 0))
                 self.unitTestSignalOperationComplete.onNext(self.utMsgId)
             })
             .disposed(by: bag)
-        
-        
+
+
         getDataService().getCrossSubfilters()
             .filter({$0.count > 0})
             .subscribe(onNext: { [weak self] res in
-                fillSubfiltersTask(subFilters: res)
+                self?.fillSubfiltersTask(subFilters: res)
             })
             .disposed(by: bag)
-        
+
         getDataService().getCategorySubfilters()
             .filter({$0.count > 0})
             .subscribe(onNext: { [weak self] res in
-                fillSubfiltersTask(subFilters: res)
+                self?.fillSubfiltersTask(subFilters: res)
             })
             .disposed(by: bag)
-        
-        
-        func fillSubfiltersTask(subFilters: [SubfilterModel]){
-            let completion = {
-                subFilters.forEach{ subf in
-                    if self.subfiltersByFilter[subf.filterId] == nil {
-                        self.subfiltersByFilter[subf.filterId] = []
-                    }
-                    if self.subfiltersByFilter[subf.filterId]?.contains(subf.id) == false  {
-                        self.subfiltersByFilter[subf.filterId]?.append(subf.id)
-                        self.subFilters[subf.id] = subf
-                    }
-                }
-            }
-            operationQueues[0]!.addOperation {
-                    completion()
-            }
-        }
-        
-        
-        
+
+
         getDataService().getMidTotal()
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: {[weak self] count in
@@ -567,8 +547,8 @@ extension CatalogVM : FilterActionDelegate {
                 self?.outMidTotal.onNext(count)
             })
             .disposed(by: bag)
-        
-        
+
+
 
         inRefreshFromSubFilterEvent
             .observeOn(MainScheduler.asyncInstance)
@@ -581,8 +561,8 @@ extension CatalogVM : FilterActionDelegate {
                 }
             })
             .disposed(by: bag)
-        
-        
+
+
         inRefreshFromFilterEvent
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: {[weak self] _ in
@@ -592,7 +572,25 @@ extension CatalogVM : FilterActionDelegate {
                 }
             })
             .disposed(by: bag)
+
+    }
     
+    func fillSubfiltersTask(subFilters: [SubfilterModel]){
+        
+        let completion = { [weak self] in
+            subFilters.forEach{ subf in
+                if self?.subfiltersByFilter[subf.filterId] == nil {
+                    self?.subfiltersByFilter[subf.filterId] = []
+                }
+                if self?.subfiltersByFilter[subf.filterId]?.contains(subf.id) == false  {
+                    self?.subfiltersByFilter[subf.filterId]?.append(subf.id)
+                    self?.subFilters[subf.id] = subf
+                }
+            }
+        }
+        operationQueues[0]!.addOperation {
+            completion()
+        }
     }
     
 }

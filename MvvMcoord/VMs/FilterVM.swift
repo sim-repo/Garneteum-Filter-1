@@ -32,6 +32,11 @@ class FilterVM : BaseVM {
         bindUserActivities()
     }
     
+    deinit {
+        print("Filter VM deinit")
+        realloc()
+    }
+    
     func realloc(){
         inSelectFilter.onCompleted()
         inApply.onCompleted()

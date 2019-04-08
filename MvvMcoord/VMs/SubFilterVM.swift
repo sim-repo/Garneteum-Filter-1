@@ -28,6 +28,11 @@ class SubFilterVM : BaseVM {
         bindUserActivities()
     }
     
+    deinit {
+        print("SubFilter VM deinit")
+        realloc()
+    }
+    
     func realloc(){
         outCloseSubFilterVC.onCompleted()
         inApply.onCompleted()

@@ -71,7 +71,6 @@ extension DataService {
     
     
     internal func dbSavePrefetch(_ categoryId: CategoryId, _ netItems: [CatalogModel1], _ dbFoundItems: [CatalogModel]){
-
         var res = netItems.compactMap({CatalogModel(catalogModel1: $0)})
         res.append(contentsOf: dbFoundItems)
         firePrefetch(res)

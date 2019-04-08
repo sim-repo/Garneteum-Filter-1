@@ -145,6 +145,7 @@ class DataService: DataFacadeProtocol {
     func resetBehaviorSubjects() {
         outFilters.onNext([])
         outCategorySubfilters.onNext([])
+        fireCatalogTotal(0, [], 0, 0, 0)
     }
     
     

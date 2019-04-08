@@ -11,6 +11,8 @@ class SubFilterSelectVC: UIViewController {
     @IBOutlet weak var applyView: ApplyButton!
     @IBOutlet weak var applyViewBottomCon: NSLayoutConstraint!
 
+    
+    private var timer: Timer?
     private let waitContainer: UIView = UIView()
     private let waitActivityView = UIActivityIndicatorView(style: .whiteLarge)
     
@@ -32,6 +34,7 @@ class SubFilterSelectVC: UIViewController {
     }
     
     deinit {
+        print("SubFilter VC deinit")
         uitCurrMemVCs -= 1    // uitest
     }
     
@@ -177,15 +180,15 @@ extension SubFilterSelectVC {
             .subscribe(
                 onNext: {[weak self] res in
                     let delay = res.2
-                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)){
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)){ [weak self] in
                         guard let `self` = self else {return}
-                        Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(self.internalWaitControl), userInfo: nil, repeats: false)
+                        self.timer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(self.internalWaitControl), userInfo: nil, repeats: false)
                         self.startWait()
                     }
                 },
                 onCompleted: {
                         self.stopWait()
-            })
+                })
             .disposed(by: bag)
     }
     
@@ -198,6 +201,7 @@ extension SubFilterSelectVC {
     }
     
     private func stopWait(){
+        timer?.invalidate()
         tableView.isHidden = false
         waitContainer.alpha = 0.0
         waitContainer.isHidden = true

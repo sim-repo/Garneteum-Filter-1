@@ -12,11 +12,13 @@ class FilterVC: UIViewController {
 
     
     
+    
     public var viewModel: FilterVM!
     private var bag = DisposeBag()
     private var indexPaths: Set<IndexPath> = []
     private let waitContainer: UIView = UIView()
     private let waitActivityView = UIActivityIndicatorView(style: .whiteLarge)
+    private var timer: Timer?
     var removeFilterEvent = PublishSubject<Int>()
     
     var rangeCellIndexPath: IndexPath!
@@ -43,6 +45,7 @@ class FilterVC: UIViewController {
     }
     
     deinit {
+        print("Filter VC deinit")
         uitCurrMemVCs -= 1  // uitest
     }
     
@@ -269,9 +272,9 @@ extension FilterVC {
             .takeWhile({$0.1 == true})
             .subscribe(onNext: {[weak self] res in
                                     let delay = res.2
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)){
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)){ [weak self] in
                                         guard let `self` = self else {return}
-                                        Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(self.internalWaitControl), userInfo: nil, repeats: false)
+                                        self.timer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(self.internalWaitControl), userInfo: nil, repeats: false)
                                         self.startWait()
                                     }
                         },
@@ -297,6 +300,7 @@ extension FilterVC {
     }
     
     private func stopWait(){
+        timer?.invalidate()
         tableView.isHidden = false
         waitContainer.alpha = 0.0
         waitContainer.isHidden = true

@@ -23,7 +23,7 @@ class CatalogVC: UIViewController {
     internal let waitContainer: UIView = UIView()
     internal let waitActivityView = UIActivityIndicatorView(style: .whiteLarge)
     
-    var itemCount = 20
+    var itemCount = 0
     
     
     required init?(coder aDecoder: NSCoder) {
@@ -88,41 +88,31 @@ class CatalogVC: UIViewController {
             .disposed(by: bag)
     }
     
-    // added
+    
     private func handleFetchStartEvent(){
         viewModel.outFetchStart
-            .debug()
-            .subscribe(onNext: {[weak self] numberOfItemsInSection in
+            .subscribe(onNext: {[weak self] _ in
                 guard let `self` = self else {return}
-               self.itemCount = numberOfItemsInSection
+                self.itemCount = 0
+                let currP = self.viewModel.currentPage < 0 ? 0 : self.viewModel.currentPage
+                self.currPage.text = "\(currP)/\( self.viewModel.totalPages)"
             })
             .disposed(by: bag)
     }
     
+    
     private func handleFetchCompleteEvent(){
         viewModel.outFetchComplete
-            .debug()
-            .subscribe(onNext: {[weak self] newIndexPathsToReload in
+            .subscribe(onNext: {[weak self] indexPaths_ in
                 guard let `self` = self else {return}
-               
-                guard let newIndexPathsToReload = newIndexPathsToReload else { return }
-                let indexPathsToReload = self.visibleIndexPathsToReload(intersecting: newIndexPathsToReload)
-                
-                // added
-                if newIndexPathsToReload[0].row  == 0 {
-                   // self.collectionView.reloadItems(at: indexPathsToReload)
-                    self.collectionView.reloadItems(at: newIndexPathsToReload)
-                } else {
-                    self.collectionView.performBatchUpdates({
-                        if newIndexPathsToReload.count < 20 {
-                            print("err: \(newIndexPathsToReload.count)")
-                        }
-                        self.itemCount += newIndexPathsToReload.count
-                        self.collectionView.insertItems(at: newIndexPathsToReload)
-                    })
-                }
-                
-              //  self.collectionView.reloadItems(at: indexPathsToReload)
+                guard let indexPaths = indexPaths_ else { return }
+                self.collectionView.performBatchUpdates({
+                    if indexPaths.count < 20 {
+                        print("err: \(indexPaths.count)")
+                    }
+                    self.itemCount += indexPaths.count
+                    self.collectionView.insertItems(at: indexPaths)
+                })
             })
             .disposed(by: bag)
     }
@@ -183,6 +173,7 @@ extension CatalogVC: UICollectionViewDataSource {
         let cell: UICollectionViewCell!
         
         if isLoadingCell2(for: indexPath) {
+            print("isLoadingCell2")
             viewModel.emitPrefetchEvent()
             currPage.text = "\(viewModel.currentPage)/\(viewModel.totalPages)"
         }
@@ -274,6 +265,9 @@ private extension CatalogVC {
     func isLoadingCell2(for indexPath: IndexPath) -> Bool {
         // return indexPath.row >= viewModel.currItemsCount() // comment
        // print("\(indexPath.row) : \(viewModel.currItemsCount()-1)")
+        if viewModel.currItemsCount() == 0 {
+            return false
+        }
         return indexPath.row >= viewModel.currItemsCount()-1
     }
     

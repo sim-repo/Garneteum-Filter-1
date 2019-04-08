@@ -216,10 +216,11 @@ class CatalogVM : BaseVM {
                 self.fullCatalogItemIds = res.1
                 self.setupFetch(itemIds: res.1, fetchLimit: res.2)
                 self.rangePrice.setupRangePrice(minPrice: res.3, maxPrice: res.4)
-                if self.fullCatalogItemIds.count < res.2 {
-                    self.emitPrefetchEvent()
-                }
-                self.outReloadCatalogVC.onNext(true)
+                self.emitPrefetchEvent()
+//                if self.fullCatalogItemIds.count < res.2 {
+//                    self.emitPrefetchEvent()
+//                }
+               // self.outReloadCatalogVC.onNext(true)
             })
             .disposed(by: bag)
     }
@@ -228,6 +229,7 @@ class CatalogVM : BaseVM {
     
     
     public func emitPrefetchEvent(){
+        print("emitPrefetchEvent")
         guard isPrefetchInProgress == false else {return}
         guard itemIds.count > 0
             else {

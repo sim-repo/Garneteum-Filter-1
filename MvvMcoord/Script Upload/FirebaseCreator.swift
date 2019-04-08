@@ -139,7 +139,7 @@ class FirebaseCreator {
 //                      black: 2,
 //                      filters: [.size, .season , .material , .delivery])
 
-        
+     
         uploadFilters(categoryId: 01010604,
                       totalItems: 153,
                       minPrice: 800,

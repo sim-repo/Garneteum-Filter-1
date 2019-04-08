@@ -42,7 +42,7 @@ protocol FilterActionDelegate : class {
 extension CatalogVM : FilterActionDelegate {
    
     convenience init(categoryId: CategoryId) {
-        self.init(categoryId: categoryId, fetchLimit: 0, currentPage: 1, totalPages: 0, totalItems: 0)
+        self.init(categoryId: categoryId, fetchLimit: 0,  totalPages: 0, totalItems: 0)
         
     }
     
@@ -241,6 +241,8 @@ extension CatalogVM : FilterActionDelegate {
                         self.back().onNext(.closeFilter)
                         return
                 }
+                
+                self.resetFetch() // added
                 self.unapplying.removeAll()
                 self.wait().onNext((.applyFilter, true, self.defWaitDelay))
                 self.back().onNext(.closeFilter)
@@ -434,10 +436,8 @@ extension CatalogVM : FilterActionDelegate {
                 self.midAppliedSubFilters = _filters.2 // last added!!!
                 self.selectedSubFilters = _filters.3
                 self.outFiltersEvent.onNext(self.getEnabledFilters())
-                self.setupFetch(itemsIds: _filters.4)
-                self.outReloadCatalogVC.onNext(true)
-                self.emitPrefetchEvent()
-                
+
+                self.fetchAfterApplyFromFilter(itemIds: _filters.4)
                 self.wait().onNext((.applyFilter, false, 0))
                 
                 self.unitTestSignalOperationComplete.onNext(self.utMsgId)

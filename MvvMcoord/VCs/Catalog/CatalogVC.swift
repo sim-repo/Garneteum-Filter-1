@@ -43,7 +43,7 @@ class CatalogVC: UIViewController {
         handleFetchCompleteEvent()
         bindNavigation()
         bindLayout()
-        self.collectionView.decelerationRate = UIScrollView.DecelerationRate.normal
+        //self.collectionView.decelerationRate = UIScrollView.DecelerationRate.normal
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -91,15 +91,17 @@ class CatalogVC: UIViewController {
     // added
     private func handleFetchStartEvent(){
         viewModel.outFetchStart
+            .debug()
             .subscribe(onNext: {[weak self] numberOfItemsInSection in
                 guard let `self` = self else {return}
-                self.itemCount = numberOfItemsInSection
+               self.itemCount = numberOfItemsInSection
             })
             .disposed(by: bag)
     }
     
     private func handleFetchCompleteEvent(){
         viewModel.outFetchComplete
+            .debug()
             .subscribe(onNext: {[weak self] newIndexPathsToReload in
                 guard let `self` = self else {return}
                

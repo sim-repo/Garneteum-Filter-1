@@ -9,6 +9,11 @@ class FilterApplyLogic {
     
     public static let shared = FilterApplyLogic()
     
+    
+    let controlActiveTasks = DispatchQueue(label: "", attributes: .concurrent)
+    
+    
+    
     private var filters: Filters = Filters()
     private var subfiltersByFilter: SubfiltersByFilter = SubfiltersByFilter()
     private var sectionSubFiltersByFilter: SectionSubFiltersByFilter = SectionSubFiltersByFilter()
@@ -672,19 +677,19 @@ class FilterApplyLogic {
 protocol FilterApplyLogicProtocol {
     
     
-    func doLoadSubFilters(_ filterId: FilterId, _ appliedSubFilters: Set<Int>?, _ rangePrice: RangePrice?) -> Observable<(FilterId, SubFilterIds, Applied, CountItems)>
+    func doLoadSubFilters(_ filterId: FilterId, _ appliedSubFilters: Set<Int>?, _ rangePrice: RangePrice?, completion: ((FilterId, SubFilterIds, Applied, CountItems) -> Void)?)
     
     func doLoadFilters() -> Observable<([FilterModel], [SubfilterModel])>
     
-    func doCalcMidTotal(_ appliedSubFilters: Set<Int>,  _ selectedSubFilters: Set<Int>, _ rangePrice: RangePrice) -> Observable<Int>
+    func doCalcMidTotal(_ appliedSubFilters: Set<Int>,  _ selectedSubFilters: Set<Int>, _ rangePrice: RangePrice, completion: ((Int) -> Void)?)
     
-    func doApplyFromFilter(_ appliedSubFilters: Set<Int>,  _ selectedSubFilters: Set<Int>, _ rangePrice: RangePrice) -> Observable<(FilterIds, SubFilterIds, Applied, Selected, ItemIds)>
+    func doApplyFromFilter(_ appliedSubFilters: Set<Int>,  _ selectedSubFilters: Set<Int>, _ rangePrice: RangePrice, completion: ((FilterIds, SubFilterIds, Applied, Selected, ItemIds) -> Void)? )
     
-    func doApplyFromSubFilters(_ filterId: Int, _ appliedSubFilters: Set<Int>, _ selectedSubFilters: Set<Int>, _ rangePrice: RangePrice) -> Observable<(FilterIds, SubFilterIds, Applied, Selected, RangePrice, ItemsTotal)>
+    func doApplyFromSubFilters(_ filterId: Int, _ appliedSubFilters: Set<Int>, _ selectedSubFilters: Set<Int>, _ rangePrice: RangePrice, completion: ((FilterIds, SubFilterIds, Applied, Selected, RangePrice, ItemsTotal) -> Void)? )
     
-    func doRemoveFilter(_ filterId: Int, _ appliedSubFilters: Set<Int>,  _ selectedSubFilters: Set<Int>, _ rangePrice: RangePrice) -> Observable<(FilterIds, SubFilterIds, Applied, Selected, RangePrice, ItemsTotal)>
+    func doRemoveFilter(_ filterId: Int, _ appliedSubFilters: Set<Int>,  _ selectedSubFilters: Set<Int>, _ rangePrice: RangePrice, completion: ((FilterIds, SubFilterIds, Applied, Selected, RangePrice, ItemsTotal) -> Void)? )
     
-    func doApplyByPrices(_ categoryId: Int, _ rangePrice: RangePrice) -> Observable<[Int?]>
+    func doApplyByPrices(_ categoryId: Int, _ rangePrice: RangePrice, completion: (([Int?]) -> Void)? )
     
     func setup(filters_: [FilterModel]?,
                subFilters_: [SubfilterModel]?,
@@ -704,123 +709,172 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
     
     
     
-    func doCalcMidTotal(_ appliedSubFilters: Set<Int>,  _ selectedSubFilters: Set<Int>, _ rangePrice: RangePrice) -> Observable<Int> {
-        let count = applyForTotal(appliedSubFilters: appliedSubFilters, selectedSubFilters: selectedSubFilters, rangePrice: rangePrice)
-        return Observable.just(count)
-    }
-    
-    func doApplyFromFilter(_ appliedSubFilters: Set<Int>,  _ selectedSubFilters: Set<Int>, _ rangePrice: RangePrice) -> Observable<(FilterIds, SubFilterIds, Applied, Selected, ItemIds)> {
+    func doCalcMidTotal(_ appliedSubFilters: Set<Int>,  _ selectedSubFilters: Set<Int>, _ rangePrice: RangePrice, completion: ((Int) -> Void)?) {
         
-        var enabledFilters = EnabledFilters()
-        var enabledSubfilters = EnabledSubfilters()
-        var itemsIds: [Int] = []
-        var applied = appliedSubFilters
-        var selected = selectedSubFilters
-        fillEnabledFilters(&enabledFilters)
-        fillEnabledSubFilters(&enabledSubfilters)
-        
-        
-        applyFromFilter(&applied,
-                        &selected,
-                        &enabledFilters,
-                        &enabledSubfilters,
-                        &itemsIds,
-                        rangePrice)
-        
-        let filtersIds = getEnabledFiltersIds(&enabledFilters)
-        let subFiltersIds = getEnabledSubFiltersIds(&enabledSubfilters)
-        itemsIds.sort(by: {$0 < $1})
-        return Observable.just((filtersIds, subFiltersIds, applied, selected, itemsIds))
+        controlActiveTasks.sync { [weak self] in
+            guard let `self` = self
+                else { return }
+            
+            let count = self.applyForTotal(appliedSubFilters: appliedSubFilters, selectedSubFilters: selectedSubFilters, rangePrice: rangePrice)
+            completion?(count)
+        }
     }
     
     
-    func doApplyFromSubFilters(_ filterId: Int, _ appliedSubFilters: Set<Int>, _ selectedSubFilters: Set<Int>, _ rangePrice: RangePrice) -> Observable<(FilterIds, SubFilterIds, Applied, Selected, RangePrice, ItemsTotal)> {
+    func doApplyFromFilter(_ appliedSubFilters: Set<Int>,
+                           _ selectedSubFilters: Set<Int>,
+                           _ rangePrice: RangePrice,
+                           completion: ((FilterIds, SubFilterIds, Applied, Selected, ItemIds) -> Void)?
+                           ){
         
-        guard timer4SubFilterApply()
+        controlActiveTasks.sync { [weak self] in
+            
+            guard let `self` = self
+                else { return }
+            
+            var enabledFilters = EnabledFilters()
+            var enabledSubfilters = EnabledSubfilters()
+            var itemsIds: [Int] = []
+            var applied = appliedSubFilters
+            var selected = selectedSubFilters
+            self.fillEnabledFilters(&enabledFilters)
+            self.fillEnabledSubFilters(&enabledSubfilters)
+        
+        
+            self.applyFromFilter(&applied,
+                            &selected,
+                            &enabledFilters,
+                            &enabledSubfilters,
+                            &itemsIds,
+                            rangePrice)
+        
+            let filtersIds = self.getEnabledFiltersIds(&enabledFilters)
+            let subFiltersIds = self.getEnabledSubFiltersIds(&enabledSubfilters)
+            itemsIds.sort(by: {$0 < $1})
+            completion?(filtersIds, subFiltersIds, applied, selected, itemsIds)
+        }
+    }
+    
+    
+    
+    func doApplyFromSubFilters(_ filterId: Int,
+                               _ appliedSubFilters: Set<Int>,
+                               _ selectedSubFilters: Set<Int>,
+                               _ rangePrice: RangePrice,
+                               completion: ((FilterIds, SubFilterIds, Applied, Selected, RangePrice, ItemsTotal) -> Void)? )  {
+        
+        
+        guard self.timer4SubFilterApply()
             else {
-                return Observable.empty()
-            }
+                return
+        }
         
-        var enabledFilters = EnabledFilters()
-        var enabledSubfilters = EnabledSubfilters()
-        var applied = appliedSubFilters
-        var selected = selectedSubFilters
-        fillEnabledFilters(&enabledFilters)
-        fillEnabledSubFilters(&enabledSubfilters)
+        controlActiveTasks.sync { [weak self] in
+            
+            guard let `self` = self
+                else { return }
+            
+            
+            var enabledFilters = EnabledFilters()
+            var enabledSubfilters = EnabledSubfilters()
+            var applied = appliedSubFilters
+            var selected = selectedSubFilters
+            self.fillEnabledFilters(&enabledFilters)
+            self.fillEnabledSubFilters(&enabledSubfilters)
+            
+            rangePrice.tipMinPrice = 50000000
+            rangePrice.tipMaxPrice = -1
+            var itemsTotal = 0
+            
+            self.applyFromSubFilter(filterId,
+                               &applied,
+                               &selected,
+                               &enabledFilters,
+                               &enabledSubfilters,
+                               rangePrice,
+                               &itemsTotal
+                               )
+            
+            
+            let filtersIds = self.getEnabledFiltersIds(&enabledFilters)
+            let subFiltersIds = self.getEnabledSubFiltersIds(&enabledSubfilters)
+            completion?(filtersIds, subFiltersIds, applied, selected, rangePrice, itemsTotal)
+        }
         
-        rangePrice.tipMinPrice = 50000000
-        rangePrice.tipMaxPrice = -1
-        var itemsTotal = 0
-        
-        applyFromSubFilter(filterId,
-                           &applied,
-                           &selected,
-                           &enabledFilters,
-                           &enabledSubfilters,
-                           rangePrice,
-                           &itemsTotal
-                           )
-        
-        
-        let filtersIds = getEnabledFiltersIds(&enabledFilters)
-        let subFiltersIds = getEnabledSubFiltersIds(&enabledSubfilters)
-        return Observable.just((filtersIds, subFiltersIds, applied, selected, rangePrice, itemsTotal))
-    }
-    
-    
-    func doRemoveFilter(_ filterId: Int, _ appliedSubFilters: Set<Int>,  _ selectedSubFilters: Set<Int>, _ rangePrice: RangePrice) -> Observable<(FilterIds, SubFilterIds, Applied, Selected, RangePrice, ItemsTotal)> {
-        
-        var enabledFilters = EnabledFilters()
-        var enabledSubfilters = EnabledSubfilters()
-        var applied = appliedSubFilters
-        var selected = selectedSubFilters
-        fillEnabledFilters(&enabledFilters)
-        fillEnabledSubFilters(&enabledSubfilters)
-        
-        rangePrice.tipMinPrice = 50000000
-        rangePrice.tipMaxPrice = -1
-        var itemsTotal = 0
-        
-        removeFilter(&applied,
-                     &selected,
-                     filterId,
-                     &enabledFilters,
-                     &enabledSubfilters,
-                     rangePrice,
-                     &itemsTotal)
-        
-        
-        let filtersIds = getEnabledFiltersIds(&enabledFilters)
-        let subFiltersIds = getEnabledSubFiltersIds(&enabledSubfilters)
-        return Observable.just((filtersIds, subFiltersIds, applied, selected, rangePrice, itemsTotal))
     }
     
 
-    func doLoadSubFilters(_ filterId: Int = 0, _ appliedSubFilters: Set<Int>?, _ rangePrice: RangePrice?) -> Observable<(FilterId, SubFilterIds, Applied, CountItems)> {
+    
+    func doRemoveFilter(_ filterId: Int,
+                        _ appliedSubFilters: Set<Int>,
+                        _ selectedSubFilters: Set<Int>,
+                        _ rangePrice: RangePrice,
+                        completion: ((FilterIds, SubFilterIds, Applied, Selected, RangePrice, ItemsTotal) -> Void)? ) {
         
-        guard let rangePrice_ = rangePrice,
-              var applied = appliedSubFilters
-            else { return Observable.empty()}
-        
-        guard timer4SubFilterEnter()
-            else { return Observable.empty()}
-        
-        var enabledFilters = EnabledFilters()
-        var enabledSubfilters = EnabledSubfilters()
-        var countsItems = CountItems()
-        fillEnabledFilters(&enabledFilters)
-        fillEnabledSubFilters(&enabledSubfilters)
-        
-        
-        applyBeforeEnter(&applied,
+        controlActiveTasks.sync { [weak self] in
+            
+            guard let `self` = self
+                else { return }
+            
+            var enabledFilters = EnabledFilters()
+            var enabledSubfilters = EnabledSubfilters()
+            var applied = appliedSubFilters
+            var selected = selectedSubFilters
+            self.fillEnabledFilters(&enabledFilters)
+            self.fillEnabledSubFilters(&enabledSubfilters)
+            
+            rangePrice.tipMinPrice = 50000000
+            rangePrice.tipMaxPrice = -1
+            var itemsTotal = 0
+ 
+            self.removeFilter(&applied,
+                         &selected,
                          filterId,
                          &enabledFilters,
                          &enabledSubfilters,
-                         &countsItems,
-                         rangePrice_)
+                         rangePrice,
+                         &itemsTotal)
+            
+            
+            let filtersIds = self.getEnabledFiltersIds(&enabledFilters)
+            let subFiltersIds = self.getEnabledSubFiltersIds(&enabledSubfilters)
+            completion?(filtersIds, subFiltersIds, applied, selected, rangePrice, itemsTotal)
+        }
+    }
+    
+    
+
+    func doLoadSubFilters(_ filterId: Int = 0, _ appliedSubFilters: Set<Int>?, _ rangePrice: RangePrice?, completion: ((FilterId, SubFilterIds, Applied, CountItems) -> Void)?)  {
         
-        let subFiltersIds = getEnabledSubFiltersIds(&enabledSubfilters)
-        return Observable.just((filterId, subFiltersIds, applied, countsItems))
+            
+        guard let rangePrice_ = rangePrice,
+              var applied = appliedSubFilters
+            else { return}
+        
+        guard self.timer4SubFilterEnter()
+            else { return }
+       
+        controlActiveTasks.sync { [weak self] in
+            guard let `self` = self
+                else { return }
+            
+            var enabledFilters = EnabledFilters()
+            var enabledSubfilters = EnabledSubfilters()
+            var countsItems = CountItems()
+            self.fillEnabledFilters(&enabledFilters)
+            self.fillEnabledSubFilters(&enabledSubfilters)
+            
+            
+            self.applyBeforeEnter(&applied,
+                             filterId,
+                             &enabledFilters,
+                             &enabledSubfilters,
+                             &countsItems,
+                             rangePrice_)
+            
+            let subFiltersIds = self.getEnabledSubFiltersIds(&enabledSubfilters)
+            completion?(filterId, subFiltersIds, applied, countsItems)
+        }
     }
     
     
@@ -830,17 +884,25 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
     }
     
     
-    func doApplyByPrices(_ categoryId: Int, _ rangePrice: RangePrice) -> Observable<[Int?]> {
+
+    
+    func doApplyByPrices(_ categoryId: Int, _ rangePrice: RangePrice, completion: (([Int?]) -> Void)? ) {
         
-        var enabledSubfilters = EnabledSubfilters()
-        fillEnabledFilters(&enabledSubfilters)
-        
-        applyByPrice(categoryId: categoryId, enabledFilters: &enabledSubfilters, rangePrice: rangePrice)
-        
-        let subFiltersIds = getEnabledSubFiltersIds(&enabledSubfilters)
-        
-        return Observable.just(subFiltersIds)
+        controlActiveTasks.sync { [weak self] in
+            guard let `self` = self
+                else { return }
+            
+            var enabledSubfilters = EnabledSubfilters()
+            self.fillEnabledFilters(&enabledSubfilters)
+            
+            self.applyByPrice(categoryId: categoryId, enabledFilters: &enabledSubfilters, rangePrice: rangePrice)
+            
+            let subFiltersIds = self.getEnabledSubFiltersIds(&enabledSubfilters)
+            completion?(subFiltersIds)
+        }
     }
+    
+    
     
     
     func setup(filters_: [FilterModel]? = nil,
@@ -851,102 +913,111 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
                priceByItemId_: PriceByItemId? = nil
         ){
         
-
-        if let a = filters_ {
-            print("----------- Apply :::: Filters:")
-            a.forEach({f in
-               self.filters[f.id] = f
-               print("\(self.filters[f.id]?.title)")
-            })
-            print("----------- Filters count: \(self.filters.count)")
-            print(" ")
-            print(" ")
-            print(" ")
-            filters_HasSet = true
-        }
+        controlActiveTasks.async(flags: .barrier) { [weak self] in
             
-        if let b = subFilters_ {
-            print("----------- Apply :::: Subfilters:")
-            b.forEach({s in
-                self.subFilters[s.id] = s
-              //  print("\(self.subFilters[s.id]?.title)")
-                if self.subfiltersByFilter[s.filterId] == nil {
-                    self.subfiltersByFilter[s.filterId] = []
-                }
-                self.subfiltersByFilter[s.filterId]?.append(s.id)
-            })
-            print("----------- Subfilters count: \(self.subFilters.count)    SubfiltersByFilter count: \(self.subfiltersByFilter.count)")
-            print(" ")
-            print(" ")
-            print(" ")
-            subfilters_HasSet = true
+            guard let `self` = self
+                else { return }
+            
+            if let a = filters_ {
+                print("----------- Apply :::: Filters:")
+                a.forEach({f in
+                   self.filters[f.id] = f
+                   print("\(self.filters[f.id]?.title)")
+                })
+                print("----------- Filters count: \(self.filters.count)")
+                print(" ")
+                print(" ")
+                print(" ")
+                self.filters_HasSet = true
+            }
+            
+            if let b = subFilters_ {
+                print("----------- Apply :::: Subfilters:")
+                b.forEach({s in
+                    self.subFilters[s.id] = s
+                  //  print("\(self.subFilters[s.id]?.title)")
+                    if self.subfiltersByFilter[s.filterId] == nil {
+                        self.subfiltersByFilter[s.filterId] = []
+                    }
+                    self.subfiltersByFilter[s.filterId]?.append(s.id)
+                })
+                print("----------- Subfilters count: \(self.subFilters.count)    SubfiltersByFilter count: \(self.subfiltersByFilter.count)")
+                print(" ")
+                print(" ")
+                print(" ")
+                 self.subfilters_HasSet = true
+            }
+            
+            
+            if let d = subfiltersByItem_ {
+                print("----------- Apply :::: SubfiltersByItem:")
+                self.subfiltersByItem = d
+                print("----------- SubfiltersByItem: \(self.subfiltersByItem.count)")
+                print(" ")
+                print(" ")
+                print(" ")
+                 self.subfiltersByItem_HasSet = true
+            }
+            
+            if let e = itemsBySubfilter_ {
+                print("----------- Apply :::: ItemsBySubfilter:")
+                self.itemsBySubfilter = e
+                print("----------- ItemsBySubfilter count: \(self.itemsBySubfilter.count)")
+                print(" ")
+                print(" ")
+                print(" ")
+                 self.itemsBySubfilter_HasSet = true
+            }
+            
+            if let f = priceByItemId_ {
+                print("----------- Apply :::: PriceByItemId:")
+                self.priceByItemId = f
+                print("----------- PriceByItemId  count: \(self.priceByItemId.count)")
+                print(" ")
+                print(" ")
+                print(" ")
+                 self.priceByItemId_HasSet = true
+            }
         }
-        
-        
-        if let d = subfiltersByItem_ {
-            print("----------- Apply :::: SubfiltersByItem:")
-            self.subfiltersByItem = d
-            print("----------- SubfiltersByItem: \(self.subfiltersByItem.count)")
-            print(" ")
-            print(" ")
-            print(" ")
-            subfiltersByItem_HasSet = true
-        }
-        
-        if let e = itemsBySubfilter_ {
-            print("----------- Apply :::: ItemsBySubfilter:")
-            self.itemsBySubfilter = e
-            print("----------- ItemsBySubfilter count: \(self.itemsBySubfilter.count)")
-            print(" ")
-            print(" ")
-            print(" ")
-            itemsBySubfilter_HasSet = true
-        }
-        
-        if let f = priceByItemId_ {
-            print("----------- Apply :::: PriceByItemId:")
-            self.priceByItemId = f
-            print("----------- PriceByItemId  count: \(self.priceByItemId.count)")
-            print(" ")
-            print(" ")
-            print(" ")
-            priceByItemId_HasSet = true
-        }
-        
     }
     
     
     func setupItemsAndSubfilters(subfiltersByItem: SubfiltersByItem) {
-        print("----------- Apply :::: SubfiltersByItem:")
-        self.subfiltersByItem = subfiltersByItem
-        print("----------- SubfiltersByItem: \(self.subfiltersByItem.count)")
-        print(" ")
-        print(" ")
-        print(" ")
         
-        var tmpItemsBySubfilter = ItemsBySubfilter()
-        for (itemId, subfilterIds) in subfiltersByItem {
-            for subfilterId in subfilterIds {
-                if tmpItemsBySubfilter[subfilterId] == nil {
-                    tmpItemsBySubfilter[subfilterId] = []
+        controlActiveTasks.async(flags: .barrier) { [weak self] in
+            
+            guard let `self` = self
+                else { return }
+            
+            print("----------- Apply :::: SubfiltersByItem:")
+            self.subfiltersByItem = subfiltersByItem
+            print("----------- SubfiltersByItem: \(self.subfiltersByItem.count)")
+            print(" ")
+            print(" ")
+            print(" ")
+            
+            var tmpItemsBySubfilter = ItemsBySubfilter()
+            for (itemId, subfilterIds) in subfiltersByItem {
+                for subfilterId in subfilterIds {
+                    if tmpItemsBySubfilter[subfilterId] == nil {
+                        tmpItemsBySubfilter[subfilterId] = []
+                    }
+                    tmpItemsBySubfilter[subfilterId]?.append(itemId)
                 }
-                tmpItemsBySubfilter[subfilterId]?.append(itemId)
             }
+            
+            self.itemsBySubfilter = tmpItemsBySubfilter
+            
+            print("----------- Apply :::: ItemsBySubfilter:")
+            print("----------- ItemsBySubfilter count: \(self.itemsBySubfilter.count)")
+            print(" ")
+            print(" ")
+            print(" ")
+            
+            
+            self.subfiltersByItem_HasSet = true
+            self.itemsBySubfilter_HasSet = true
         }
-        
-        itemsBySubfilter = tmpItemsBySubfilter
-        
-        print("----------- Apply :::: ItemsBySubfilter:")
-        print("----------- ItemsBySubfilter count: \(self.itemsBySubfilter.count)")
-        print(" ")
-        print(" ")
-        print(" ")
-        
-        
-        subfiltersByItem_HasSet = true
-        itemsBySubfilter_HasSet = true
-        print("DONE")
-        
     }
     
     
@@ -954,38 +1025,45 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
     
     func dealloc(){
         
-        let filterKeys = filters.filter({$0.value.cross == false}).compactMap({$0.key})
-        filterKeys.forEach({key in
-            filters.removeValue(forKey: key)
-            subfiltersByFilter.removeValue(forKey: key)
-            sectionSubFiltersByFilter.removeValue(forKey: key)
-            let subfilterKeys = subFilters.filter({$0.value.filterId == key}).compactMap({$0.key})
-            subfilterKeys.forEach{subfilterKey in
-                subFilters.removeValue(forKey: subfilterKey)
-            }
-        })
-        
+        controlActiveTasks.async(flags: .barrier) {[weak self] in
+            
+            guard let `self` = self
+                else { return }
+            
+            let filterKeys = self.filters.filter({$0.value.cross == false}).compactMap({$0.key})
+            
+            filterKeys.forEach({key in
+                self.filters.removeValue(forKey: key)
+                self.subfiltersByFilter.removeValue(forKey: key)
+                self.sectionSubFiltersByFilter.removeValue(forKey: key)
+                let subfilterKeys = self.subFilters.filter({$0.value.filterId == key}).compactMap({$0.key})
+                subfilterKeys.forEach{subfilterKey in
+                    self.subFilters.removeValue(forKey: subfilterKey)
+                }
+            })
+            
 
-        filters_HasSet = false
-        subfilters_HasSet = false
-        subfiltersByItem_HasSet = false
-        itemsBySubfilter_HasSet = false
-        priceByItemId_HasSet = false
-                
-                
-        subfiltersByItem.removeAll()
-        itemsBySubfilter.removeAll()
-        priceByItemId.removeAll()
-        itemsById.removeAll()
-        itemsByCatalog.removeAll()
-        itemIds.removeAll()
-        print("----------- Apply :::: After dealloc: ")
-        print("----------- filters : \(filters.count)")
-        print("----------- subfilters : \(subFilters.count)")
-        print("----------- subfiltersByFilter : \(subfiltersByFilter.count)")
-        print(" ")
-        print(" ")
-        print(" ")
+            self.filters_HasSet = false
+            self.subfilters_HasSet = false
+            self.subfiltersByItem_HasSet = false
+            self.itemsBySubfilter_HasSet = false
+            self.priceByItemId_HasSet = false
+            
+            
+            self.subfiltersByItem.removeAll()
+            self.itemsBySubfilter.removeAll()
+            self.priceByItemId.removeAll()
+            self.itemsById.removeAll()
+            self.itemsByCatalog.removeAll()
+            self.itemIds.removeAll()
+            print("----------- Apply :::: After dealloc: ")
+            print("----------- filters : \(self.filters.count)")
+            print("----------- subfilters : \(self.subFilters.count)")
+            print("----------- subfiltersByFilter : \(self.subfiltersByFilter.count)")
+            print(" ")
+            print(" ")
+            print(" ")
+        }
     }
     
 }

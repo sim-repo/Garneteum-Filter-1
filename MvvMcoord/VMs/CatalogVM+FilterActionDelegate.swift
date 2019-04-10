@@ -144,6 +144,8 @@ extension CatalogVM : FilterActionDelegate {
     }
     
     func prefetchItemAt(indexPaths: [IndexPath]) {
+        
+        
         let models = indexPaths.compactMap({self.catalog(at: $0.row)})
         for model in models {
             if model.imageView == nil {

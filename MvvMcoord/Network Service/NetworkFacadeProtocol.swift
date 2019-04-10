@@ -22,13 +22,19 @@ protocol NetworkFacadeProtocol {
 
 class NetworkFacadeBase: NetworkFacadeProtocol {
     
+    let controlActiveTasks = DispatchQueue(label: "", attributes: .concurrent)
+
     public init(){
         setupOperationQueue()
     }
     
     internal var outNetworkError = PublishSubject<FilterActionEnum>()
 
-    internal var operationQueues: [Int: OperationQueue] = [:]
+    internal var operationQueuesDict: [Int: OperationQueue] = [:]
+    
+    typealias Completion = (() -> Void)?
+    
+    var activeTasks: [Int: Completion] = [:]
     
     enum NetTasksEnum: Int {
         case crossUIDs = 0, crossFilters, categoryFilters, categoryApply, catalogStart, catalogPrefetch
@@ -48,10 +54,23 @@ class NetworkFacadeBase: NetworkFacadeProtocol {
         addOperation(newTaskEnum: NetTasksEnum.catalogPrefetch)
     }
     
+    internal func asyncWriteTask(taskIdx : Int, closure: Completion) {
+        controlActiveTasks.async(flags: .barrier) {
+            self.activeTasks[taskIdx] = closure
+        }
+    }
+    
+    internal func syncRunTask(taskIdx : Int){
+        controlActiveTasks.sync {
+            guard let task = activeTasks[taskIdx] else { return }
+            task?()
+        }
+    }
+    
     private func addOperation(newTaskEnum: NetTasksEnum) {
         let queue = OperationQueue()
         queue.maxConcurrentOperationCount = 1
-        operationQueues[newTaskEnum.rawValue] = queue
+        operationQueuesDict[newTaskEnum.rawValue] = queue
     }
     
     

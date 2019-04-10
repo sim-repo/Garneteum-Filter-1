@@ -1,8 +1,10 @@
 import UIKit
 
 
-var waitForFiltersTimeoutInSec: Double = 7
+var waitForFiltersTimeoutInSec: Double = 12
 // waitForSubfiltersTimeoutInSec <= waitForFiltersTimeoutInSec
-var waitForSubfiltersTimeoutInSec: Double  = 5
+var waitForSubfiltersTimeoutInSec: Double  = 10
 // waitForSubfiltersApplySetInSec <= waitForSubfiltersTimeoutInSec
-var waitForSubfiltersApplySetInSec: Double  = 5
+var waitForSubfiltersApplySetInSec: Double  = 10
+
+var waitForStartPrefetchInSec: Double = 10

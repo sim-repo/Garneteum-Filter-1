@@ -16,11 +16,11 @@ class FirebaseService : NetworkFacadeBase {
     public static var shared = FirebaseService()
     
     var taskNo: Int = 0
-    var activeTasks: [Int: Completion] = [:]
+    
     
     let applyLogic: FilterApplyLogic = FilterApplyLogic.shared
     
-    typealias Completion = (() -> Void)?
+    
     
     private var reqTry: [Int:Int] = [:]
     private let limitTry = 3
@@ -130,7 +130,8 @@ extension FirebaseService  {
     
     
     private func runCheckUUIDS(taskCode: Int, taskIdx: Int, completion: (([UidModel], NetError?)->Void)?) {
-        self.activeTasks[taskIdx] = {
+        
+        let completion = {
             functions.httpsCallable("meta").call(["method":"getUIDs"]) { [weak self] (result, error) in
                 DispatchQueue.global(qos: .userInteractive).async {
                     guard let `self` = self else { return }
@@ -164,16 +165,15 @@ extension FirebaseService  {
                 }
             }
         }
-        operationQueues[taskCode]?.addOperation {
-            guard let task = self.activeTasks[taskIdx] else { return }
-            task?()
-        }
+        asyncWriteTask(taskIdx: taskIdx, closure: completion)
+        syncRunTask(taskIdx: taskIdx)
     }
     
     
     private func runCrossFilters(taskCode: Int, taskIdx: Int, filterId: Int, completion: (([FilterModel],[SubfilterModel], NetError?)->Void)? ) {
         print("filterID \(filterId)")
-        self.activeTasks[taskIdx] = {
+       
+        let completion = {
             functions.httpsCallable("meta").call(["useCache":true, "filterId": filterId,  "method":"getCrossChunk4"]) { [weak self] (result, error) in
                 DispatchQueue.global(qos: .userInitiated).async {
                     guard let `self` = self else { return }
@@ -214,17 +214,16 @@ extension FirebaseService  {
             }
         }
         
-        operationQueues[taskCode]?.addOperation {
-            guard let task = self.activeTasks[taskIdx] else { return }
-            task?()
-        }
+        asyncWriteTask(taskIdx: taskIdx, closure: completion)
+        syncRunTask(taskIdx: taskIdx)
     }
     
     
 
     
     private func runCategoryFilters(taskCode: Int, taskIdx: Int, categoryId: CategoryId, completion: (([FilterModel], [SubfilterModel], NetError?)->Void)? ){
-        self.activeTasks[taskIdx] = {
+        
+        let completion = {
             functions.httpsCallable("meta").call(["useCache":true,
                                                   "categoryId": categoryId,
                                                   "method":"getCategoryFiltersChunk5"]) { [weak self] (result, error) in
@@ -264,16 +263,15 @@ extension FirebaseService  {
                 }
             }
         }
-        operationQueues[taskCode]?.addOperation {
-           guard let task =  self.activeTasks[taskIdx] else { return }
-           task?()
-        }
+        asyncWriteTask(taskIdx: taskIdx, closure: completion)
+        syncRunTask(taskIdx: taskIdx)
     }
     
     
     
     private func runCategoryApply(taskCode: Int, taskIdx: Int, categoryId: CategoryId, completion: ((SubfiltersByItem?, PriceByItemId?, NetError?)->Void)? ){
-        self.activeTasks[taskIdx] = {
+        
+        let completion = {
             functions.httpsCallable("meta").call(["useCache":true,
                                                   "categoryId": categoryId,
                                                   "method":"getItemsChunk3"]) { [weak self] (result, error) in
@@ -314,17 +312,16 @@ extension FirebaseService  {
                 }
             }
         }
-        operationQueues[taskCode]?.addOperation {
-            guard let task = self.activeTasks[taskIdx] else { return }
-            task?()
-        }
+        
+        asyncWriteTask(taskIdx: taskIdx, closure: completion)
+        syncRunTask(taskIdx: taskIdx)
     }
     
     
     
    func runCatalogStart(taskCode: Int, taskIdx: Int, categoryId: CategoryId, completion: ((CategoryId, Int, ItemIds, Int, Int, NetError?)->Void)? ) {
     
-        self.activeTasks[taskIdx] = {
+        let completion = {
             functions.httpsCallable("meta").call(["useCache":true,
                                                   "categoryId": categoryId,
                                                   "method":"getCatalogTotals"]) { [weak self] (result, error) in
@@ -368,17 +365,17 @@ extension FirebaseService  {
             }
         }
         
-        operationQueues[taskCode]?.addOperation {
-            guard let task = self.activeTasks[taskIdx] else { return }
-            task?()
-        }
+        asyncWriteTask(taskIdx: taskIdx, closure: completion)
+        syncRunTask(taskIdx: taskIdx)
     }
     
     
     
     func runPrefetch(taskCode: Int, taskIdx: Int, itemIds: ItemIds, _ completion: (([CatalogModel1], NetError?)->Void)? , _ midCompletion: ((NetError, Int)->Void)?) {
         print("prefetch")
-        self.activeTasks[taskIdx] = {
+        
+        
+        let completion = {
             functions.httpsCallable("meta").call(["useCache": true,
                                                   "itemsIds": itemIds,
                                                   "method":"getPrefetching"
@@ -421,9 +418,8 @@ extension FirebaseService  {
             }
         }
         
-        operationQueues[taskCode]?.addOperation {
-            guard let task = self.activeTasks[taskIdx] else { return }
-            task?()
-        }
+        asyncWriteTask(taskIdx: taskIdx, closure: completion)
+        syncRunTask(taskIdx: taskIdx)
+
     }
 }

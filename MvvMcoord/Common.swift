@@ -79,6 +79,12 @@ public func +<K, V>(left: [K:V], right: [K:V]) -> [K:V] {
     return left.merging(right) { $1 }
 }
 
+extension Array {
+    func getElement(at index: Int) -> Element? {
+        let isValidIndex = index >= 0 && index < count
+        return isValidIndex ? self[index] : nil
+    }
+}
 
 public func getCatalogImage(picName: String)->String {
     return "https://github.com/sim-repo/catalog/blob/master/\(picName).jpg?raw=true"

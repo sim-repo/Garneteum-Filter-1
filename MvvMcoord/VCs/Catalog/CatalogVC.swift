@@ -298,7 +298,7 @@ extension CatalogVC {
                 if res.1 == true {
                     self.waitContainer.alpha = 1.0
                     let delay = res.2
-                    self.timer = Timer.scheduledTimer(timeInterval: 8, target: self, selector: #selector(self.internalWaitControl), userInfo: nil, repeats: false)
+                    self.timer = Timer.scheduledTimer(timeInterval: waitForStartPrefetchInSec, target: self, selector: #selector(self.internalWaitControl), userInfo: nil, repeats: false)
                     DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)){[weak self] in
                         self?.startWait()
                     }

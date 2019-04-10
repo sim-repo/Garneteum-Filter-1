@@ -35,87 +35,62 @@ extension DataService {
     
     func reqApplyFromFilter(categoryId: CategoryId, appliedSubFilters: Applied, selectedSubFilters: Selected, rangePrice: RangePrice) {
         
-        self.applyLogic.doApplyFromFilter(appliedSubFilters, selectedSubFilters, rangePrice)
-            .asObservable()
-            .subscribe(onNext: {[weak self] res in
-                let filterIds = res.0
-                let subfilterIds = res.1
-                let applied = res.2
-                let selected = res.3
-                let itemIds = res.4
-                self?.fireApplyForItems(filterIds, subfilterIds, applied, selected, itemIds)
-            })
-            .disposed(by: bag)
+        let completion: ((FilterIds, SubFilterIds, Applied, Selected, ItemIds) -> Void)? = { [weak self] filterIds, subfilterIds, applied, selected, itemIds in
+            self?.fireApplyForItems(filterIds, subfilterIds, applied, selected, itemIds)
+        }
+        self.applyLogic.doApplyFromFilter(appliedSubFilters, selectedSubFilters, rangePrice, completion: completion)
+        
     }
 
 
 
     func reqApplyFromSubFilter(categoryId: CategoryId, filterId: FilterId, appliedSubFilters: Applied, selectedSubFilters: Selected, rangePrice: RangePrice) {
         
-        applyLogic.doApplyFromSubFilters(filterId, appliedSubFilters, selectedSubFilters, rangePrice)
-            .asObservable()
-            .subscribe(onNext: {[weak self] res in
-                let filterIds = res.0
-                let subfilterIds = res.1
-                let applied = res.2
-                let selected = res.3
-                let rangePrice = res.4
-                let itemsTotal = res.5
-                self?.fireApplyForFilters(filterIds,
-                                          subfilterIds,
-                                          applied,
-                                          selected,
-                                          rangePrice.tipMinPrice,
-                                          rangePrice.tipMaxPrice,
-                                          itemsTotal)
-            })
-            .disposed(by: bag)
+        let completion: ((FilterIds, SubFilterIds, Applied, Selected, RangePrice, ItemsTotal) -> Void)? = { [weak self] filterIds, subfilterIds, applied, selected, rangePrice, itemsTotal in
+            self?.fireApplyForFilters(filterIds,
+                                      subfilterIds,
+                                      applied,
+                                      selected,
+                                      rangePrice.tipMinPrice,
+                                      rangePrice.tipMaxPrice,
+                                      itemsTotal)
+        }
+        
+        applyLogic.doApplyFromSubFilters(filterId, appliedSubFilters, selectedSubFilters, rangePrice, completion: completion)
     }
 
 
     func reqApplyByPrices(categoryId: CategoryId, rangePrice: RangePrice) {
-        
-        applyLogic.doApplyByPrices(categoryId, rangePrice)
-            .asObservable()
-            .subscribe(onNext: {[weak self] res in
-                let filterIds: FilterIds = res
-                self?.fireApplyByPrices(filterIds)
-            })
-            .disposed(by: bag)
+        let completion: (([Int?]) -> Void)? = { [weak self] filterIds in
+            let filterIds: FilterIds = filterIds
+            self?.fireApplyByPrices(filterIds)
+        }
+        applyLogic.doApplyByPrices(categoryId, rangePrice, completion: completion)
     }
 
 
     func reqRemoveFilter(categoryId: CategoryId, filterId: FilterId, appliedSubFilters: Applied, selectedSubFilters: Selected, rangePrice: RangePrice) {
         
-        applyLogic.doRemoveFilter(filterId, appliedSubFilters, selectedSubFilters, rangePrice)
-            .asObservable()
-            .subscribe(onNext: {[weak self] res in
-                let filterIds = res.0
-                let subfilterIds = res.1
-                let applied = res.2
-                let selected = res.3
-                let rangePrice = res.4
-                let itemsTotal = res.5
-                self?.fireApplyForFilters(filterIds,
-                                          subfilterIds,
-                                          applied,
-                                          selected,
-                                          rangePrice.tipMinPrice,
-                                          rangePrice.tipMaxPrice,
-                                          itemsTotal)
-            })
-            .disposed(by: bag)
+        let completion: ((FilterIds, SubFilterIds, Applied, Selected, RangePrice, ItemsTotal) -> Void)? = { [weak self] filterIds, subfilterIds, applied, selected, rangePrice, itemsTotal in
+            self?.fireApplyForFilters(filterIds,
+                                      subfilterIds,
+                                      applied,
+                                      selected,
+                                      rangePrice.tipMinPrice,
+                                      rangePrice.tipMaxPrice,
+                                      itemsTotal)
+        }
+        
+        applyLogic.doRemoveFilter(filterId, appliedSubFilters, selectedSubFilters, rangePrice, completion: completion)
     }
     
 
     func reqMidTotal(categoryId: CategoryId, appliedSubFilters: Applied, selectedSubFilters: Selected, rangePrice: RangePrice) {
         
-        applyLogic.doCalcMidTotal(appliedSubFilters, selectedSubFilters, rangePrice)
-            .asObservable()
-            .subscribe(onNext: {[weak self] count in
-                self?.outTotals.onNext(count)
-            })
-            .disposed(by: bag)
+        let completion: ((Int) -> Void)? = { [weak self] count in
+            self?.outTotals.onNext(count)
+        }
+        applyLogic.doCalcMidTotal(appliedSubFilters, selectedSubFilters, rangePrice, completion: completion)
     }
     
     func getMidTotal() -> PublishSubject<Int> {

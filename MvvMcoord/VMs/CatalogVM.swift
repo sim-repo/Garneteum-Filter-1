@@ -285,7 +285,10 @@ class CatalogVM : BaseVM {
     }
     
     public func catalog(at index: Int) -> CatalogModel? {
-        return catalog[index]
+        if index >= 0 && index < catalog.count {
+            return catalog[index]
+        }
+        return nil
     }
     
     

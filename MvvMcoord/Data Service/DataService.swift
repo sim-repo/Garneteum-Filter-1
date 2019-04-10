@@ -216,16 +216,10 @@ class DataService: DataFacadeProtocol {
     
     func reqEnterSubFilter(filterId: FilterId, applied: Applied, rangePrice: RangePrice) {
         
-        applyLogic.doLoadSubFilters(filterId, applied, rangePrice)
-            .asObservable()
-            .subscribe(onNext: {[weak self] res in
-                let filterId = res.0
-                let subfiltersIds = res.1
-                let applied = res.2
-                let countsItems = res.3
-                self?.outEnterSubFilter.onNext((filterId, subfiltersIds, applied, countsItems))
-            })
-            .disposed(by: bag)
+        let completion: ((FilterId, SubFilterIds, Applied, CountItems) -> Void)? = { [weak self] filterId, subfiltersIds, applied, countsItems in
+           self?.outEnterSubFilter.onNext((filterId, subfiltersIds, applied, countsItems))
+        }
+        applyLogic.doLoadSubFilters(filterId, applied, rangePrice, completion: completion)
     }
     
     

@@ -18,7 +18,10 @@ target 'MvvMcoord' do
     pod 'Firebase/Database'
     pod 'Firebase/Functions'
     pod 'Firebase/Storage'
+    pod 'Kingfisher'
+    
 
+    
   target 'MvvMcoordTests' do
     inherit! :search_paths
     pod 'RxTest'

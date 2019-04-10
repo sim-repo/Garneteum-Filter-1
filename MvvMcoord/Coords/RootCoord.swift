@@ -22,7 +22,7 @@ class RootCoord: BaseCoord<CoordRetEnum> {
             else { fatalError("view model") }
         
         
-        viewController.viewModel = vm
+       viewController.viewModel = vm
 
 //         let creater = FirebaseCreator.shared
 //         creater.run()

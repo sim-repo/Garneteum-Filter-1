@@ -2,7 +2,7 @@ import UIKit
 import RxSwift
 import Firebase
 import CoreData
-
+import Kingfisher
 
 let storage = Storage.storage()
 
@@ -11,9 +11,11 @@ let storage = Storage.storage()
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    private var appCoordinator: AppCoord!
+    private let disposeBag = DisposeBag()
+    var navigationController: UINavigationController?
     
-    
-    
+    // MARK: >>> Core Data:
     var persistentContainer: NSPersistentContainer = {
         objc_sync_enter(self)
         let container = NSPersistentContainer(name: "FilterCoreData")
@@ -28,51 +30,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return container
     }()
     
-
     
-    private(set) lazy var moc: NSManagedObjectContext = {
+    // MARK: >>> Kingfisher:
+    func setupKingfisher(){
         
-        // Initialize Managed Object Context
-        var managedObjectContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        let downloader = KingfisherManager.shared.downloader
+        downloader.downloadTimeout = 5 // Download process will timeout after 5 seconds. Default is 15.
         
-        // Configure Managed Object Context
-        managedObjectContext.persistentStoreCoordinator = persistentContainer.persistentStoreCoordinator
+        let cache = KingfisherManager.shared.cache
         
-        return managedObjectContext
-    }()
-    
-    
-    private(set) lazy var readMoc: NSManagedObjectContext = {
+        // Set max disk cache to 50 mb. Default is no limit.
+        cache.maxDiskCacheSize = 50 * 1024 * 1024
         
-        // Initialize Managed Object Context
-        var managedObjectContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        
-        // Configure Managed Object Context
-        managedObjectContext.persistentStoreCoordinator = persistentContainer.persistentStoreCoordinator
-        
-        return managedObjectContext
-    }()
-    
-    
-    func saveContext() {
-           // moc.perform {[weak self] in
-                do {
-                    if self.moc.hasChanges{
-                        try self.moc.save()
-                    }
-                } catch let error as NSError {
-                   
-                    print("Unable to Save Changes of Managed Object Context")
-                    print("\(error), \(error.localizedDescription)")
-                }
-                
-          //  }
+        // Set max disk cache to duration to 1 day, Default is 1 week.
+        cache.maxCachePeriodInSecond = 60 * 60 * 24 * 1
     }
     
+    func kfCleanMemoryCache(){
+        let cache = KingfisherManager.shared.cache
+        cache.clearMemoryCache()
+    }
     
-    private var appCoordinator: AppCoord!
-    private let disposeBag = DisposeBag()
-    var navigationController: UINavigationController?
+    func kfCleanDiskCache(){
+        let cache = KingfisherManager.shared.cache
+        cache.clearDiskCache()
+    }
+    
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
@@ -80,6 +63,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let _ = getNetworkService()
         usleep(10000)
         let _ = getDataService()
+        
+        setupKingfisher()
+        
         CategoryModel.fillModels()
         
         
@@ -97,6 +83,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         return true
     }
+    
+    
+    
 
 }
 

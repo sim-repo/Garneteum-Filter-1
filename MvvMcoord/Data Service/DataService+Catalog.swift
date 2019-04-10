@@ -7,40 +7,16 @@ import CoreData
 // MARK: - CATALOG 
 extension DataService {
     
-    
-    
-    internal func clearOldCatalog() {
-        
-        let res = dbLoadLastUIDs(sql: "needRefresh == 1 && type == 'catalogIds' ")
-        guard let _res = res,
-            _res.count > 0
-            else {
-                return
-        }
-
-        for uid in _res {
-            dbDeleteEntity(Int(uid.categoryId), clazz: CategoriesPersistent.self, entity: "CategoriesPersistent", fetchBatchSize: 0)
-            dbDeleteEntity(Int(uid.categoryId), clazz: CategoryItemIdsPersistent.self, entity: "CategoryItemIdsPersistent", fetchBatchSize: 0)
-            uid.needRefresh = false
-        }
-        self.appDelegate.saveContext()
-    }
-    
-    
     internal func doEmitCatalogStart(_ categoryId: CategoryId){
         
-        let newMoc: NSManagedObjectContext = {
-            let moc = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-            moc.persistentStoreCoordinator = appDelegate.persistentContainer.persistentStoreCoordinator
-            return moc
-        }()
+        let moc = getMoc()
         
-        let res1_ = dbLoadEntity(moc: newMoc, categoryId, CategoriesPersistent.self, "CategoriesPersistent", 1)
-        let res2_ = dbLoadEntity(moc: newMoc, categoryId, CategoryItemIdsPersistent.self, "CategoryItemIdsPersistent", 0)
+        let res1_ = dbLoadEntity(categoryId, CategoriesPersistent.self, "CategoriesPersistent", 1, moc)
+        let res2_ = dbLoadEntity(categoryId, CategoryItemIdsPersistent.self, "CategoryItemIdsPersistent", 0, moc)
         guard let res1 = res1_,
-              let res2 = res2_,
-              res1.count > 0,
-              res2.count > 0
+            let res2 = res2_,
+            res1.count > 0,
+            res2.count > 0
             else {
                 let completion: ((CategoryId, Int, ItemIds, Int, Int, NetError?)->Void)? = { [weak self] (categoryId, fetchLimit, itemIds, minPrice, maxPrice, err) in
                     guard let error = err
@@ -62,6 +38,25 @@ extension DataService {
     
     
     
+    internal func clearOldCatalog(_ moc_: NSManagedObjectContext? = nil) {
+        
+        let moc = getMoc(moc_)
+        let res = dbLoadLastUIDs(sql: "needRefresh == 1 && type == 'catalogIds' ", moc)
+        guard let _res = res,
+            _res.count > 0
+            else {
+                return
+        }
+
+        for uid in _res {
+            dbDeleteEntity(Int(uid.categoryId), clazz: CategoriesPersistent.self, entity: "CategoriesPersistent", fetchBatchSize: 0, moc) // added moc
+            dbDeleteEntity(Int(uid.categoryId), clazz: CategoryItemIdsPersistent.self, entity: "CategoryItemIdsPersistent", fetchBatchSize: 0, moc) // added moc
+            uid.needRefresh = false
+        }
+        save(moc: moc)
+    }
+
+    
     internal func fireCatalogTotal(_ categoryId: CategoryId ,_ itemIds: ItemIds, _ fetchLimit: Int, _ minPrice: MinPrice, _ maxPrice: MaxPrice) {
         outCatalogTotal.onNext((categoryId, itemIds, fetchLimit, minPrice, maxPrice))
     }
@@ -75,44 +70,41 @@ extension DataService {
     
     internal func dbSaveCatalog(_ categoryId: CategoryId, _ fetchLimit: Int, _ itemIds: ItemIds, _ minPrice: Int, _ maxPrice: Int) {
         
-        let newMoc: NSManagedObjectContext = {
-            let moc = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-            moc.persistentStoreCoordinator = appDelegate.persistentContainer.persistentStoreCoordinator
-            return moc
-        }() 
-        
-        
+        let moc = getMoc()
+
         fireCatalogTotal(categoryId, itemIds, fetchLimit, CGFloat(minPrice), CGFloat(maxPrice))
         
-        dbDeleteEntity(categoryId, clazz: CategoriesPersistent.self, entity: "CategoriesPersistent", fetchBatchSize: 1)
-        dbDeleteEntity(categoryId, clazz: CategoryItemIdsPersistent.self, entity: "CategoryItemIdsPersistent", fetchBatchSize: 0)
+        dbDeleteEntity(categoryId, clazz: CategoriesPersistent.self, entity: "CategoriesPersistent", fetchBatchSize: 1, moc) // added moc
+        dbDeleteEntity(categoryId, clazz: CategoryItemIdsPersistent.self, entity: "CategoryItemIdsPersistent", fetchBatchSize: 0, moc) // added moc
 
-        newMoc.performAndWait {
-            let row = CategoriesPersistent(entity: CategoriesPersistent.entity(), insertInto: newMoc)
+        moc.performAndWait {
+            
+            let row = CategoriesPersistent(entity: CategoriesPersistent.entity(), insertInto: moc)
             row.setup(categoryId, minPrice, maxPrice, fetchLimit)
-            do {
-                try newMoc.save()
-            } catch let err as NSError {
-                print(err)
-            }
+            save(moc: moc)
+            
+            
             var db2 = [CategoryItemIdsPersistent]()
             for itemId in itemIds {
-               // let row = CategoryItemIdsPersistent(entity: CategoryItemIdsPersistent.entity(), insertInto: self.appDelegate.moc)
-                let row = NSEntityDescription.insertNewObject(forEntityName: "CategoryItemIdsPersistent", into: newMoc) as! CategoryItemIdsPersistent
+                let row = CategoryItemIdsPersistent(entity: CategoryItemIdsPersistent.entity(), insertInto: moc)
+                //let row = NSEntityDescription.insertNewObject(forEntityName: "CategoryItemIdsPersistent", into: moc) as! CategoryItemIdsPersistent
                 row.setup(categoryId, itemId)
                 db2.append(row)
             }
-            do {
-                try newMoc.save()
-            } catch let err as NSError {
-                print(err)
-            }
+            save(moc: moc)
         }
     }
     
     
-    internal func dbLoadEntity<T: NSManagedObject>(moc: NSManagedObjectContext, _ categoryId: CategoryId, _ clazz: T.Type, _ entity: String, _ fetchBatchSize: Int, sql: String = "") -> [T]?{
+    internal func dbLoadEntity<T: NSManagedObject>(_ categoryId: CategoryId,
+                                                   _ clazz: T.Type,
+                                                   _ entity: String,
+                                                   _ fetchBatchSize: Int,
+                                                   sql: String = "",
+                                                   _ moc_: NSManagedObjectContext? = nil
+                                                   ) -> [T]?{
         
+        let moc = getMoc(moc_)
         var db: [T]?
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
          request.includesPendingChanges = false
@@ -134,23 +126,19 @@ extension DataService {
     
     
     
-    internal func dbDeleteEntity<T: NSManagedObject>(_ categoryId: CategoryId, clazz: T.Type, entity: String, fetchBatchSize: Int, sql: String = ""){
+    internal func dbDeleteEntity<T: NSManagedObject>(_ categoryId: CategoryId,
+                                                     clazz: T.Type,
+                                                     entity: String,
+                                                     fetchBatchSize: Int,
+                                                     sql: String = "",
+                                                     _ moc_: NSManagedObjectContext? = nil){
         
-        let newMoc: NSManagedObjectContext = {
-            let moc = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-            moc.persistentStoreCoordinator = appDelegate.persistentContainer.persistentStoreCoordinator
-            return moc
-        }()
-        
-        let res_ = dbLoadEntity(moc: newMoc, categoryId, clazz, entity, fetchBatchSize, sql: sql)
+        let moc = getMoc(moc_)
+        let res_ = dbLoadEntity(categoryId, clazz, entity, fetchBatchSize, sql: sql, moc_)
         guard let res = res_ else { return }
         for element in res {
-            newMoc.delete(element)
+            moc.delete(element)
         }
-        do {
-            try newMoc.save()
-        } catch let err as NSError {
-            print(err)
-        }
+        save(moc: moc)
     }
 }

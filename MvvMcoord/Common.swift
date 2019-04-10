@@ -27,6 +27,7 @@ typealias MinPrice = CGFloat
 typealias MaxPrice = CGFloat
 typealias UuidByFilter = [Int:String]
 
+
 extension Date {
     func currentTimeMillis() -> Int64! {
         return Int64(self.timeIntervalSince1970 * 1000)
@@ -77,3 +78,10 @@ func getDataService() -> DataFacadeProtocol {
 public func +<K, V>(left: [K:V], right: [K:V]) -> [K:V] {
     return left.merging(right) { $1 }
 }
+
+
+public func getCatalogImage(picName: String)->String {
+    return "https://github.com/sim-repo/catalog/blob/master/\(picName).jpg?raw=true"
+}
+
+

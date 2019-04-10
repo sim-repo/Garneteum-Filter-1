@@ -75,6 +75,7 @@ PODS:
   - GoogleUtilities/UserDefaults (5.3.6):
     - GoogleUtilities/Logger
   - GTMSessionFetcher/Core (1.2.1)
+  - Kingfisher (4.10.1)
   - leveldb-library (1.20)
   - nanopb (0.3.901):
     - nanopb/decode (= 0.3.901)
@@ -105,6 +106,7 @@ DEPENDENCIES:
   - Firebase/Database
   - Firebase/Functions
   - Firebase/Storage
+  - Kingfisher
   - RxBlocking
   - RxCocoa
   - RxDataSources
@@ -127,6 +129,7 @@ SPEC REPOS:
     - GoogleAppMeasurement
     - GoogleUtilities
     - GTMSessionFetcher
+    - Kingfisher
     - leveldb-library
     - nanopb
     - RxAtomic
@@ -151,6 +154,7 @@ SPEC CHECKSUMS:
   GoogleAppMeasurement: 5029d78f2b438bd30ffb44e6c558b57c21622727
   GoogleUtilities: 95996bea7c7d9b8fb811b7507669a4a8762f80c7
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
+  Kingfisher: c148cd7b47ebde9989f6bc7c27dcaa79d81279a0
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   RxAtomic: eacf60db868c96bfd63320e28619fe29c179656f
@@ -161,6 +165,6 @@ SPEC CHECKSUMS:
   RxTest: 19d03286bdc0a3aaea5d61d4cde31fdf4bb8a5ba
   SwiftyJSON: c4bcba26dd9ec7a027fc8eade48e2c911f229e96
 
-PODFILE CHECKSUM: 6dbcea9c54dfb32ab178ce95969157a4c067ad0f
+PODFILE CHECKSUM: 867d88bf91844463f5567340e65e58d022a0ef02
 
 COCOAPODS: 1.5.3

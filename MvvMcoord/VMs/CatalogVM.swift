@@ -64,7 +64,7 @@ class CatalogVM : BaseVM {
     // prefetching
     internal var inPrefetchEvent = PublishSubject<[CatalogModel?]>()
     internal var isPrefetchInProgress = false
-    private var fetchLimit: Int = 50
+    private var fetchLimit: Int = 100
     public var currentPage: Int
     public var totalPages: Int
     public var totalItems: Int

@@ -9,30 +9,34 @@ extension DataService {
     
     internal func doEmitCategoryAllFilters(_ categoryId: CategoryId){
         
-        let res = dbLoadLastUIDs(sql: "categoryId == \(categoryId) && needRefresh == 1 && type == 'filters' ")
+        print("START Category")
+        let moc = getMoc()
+        let res = dbLoadLastUIDs(sql: "categoryId == \(categoryId) && needRefresh == 1 && type == 'filters' ", moc)
         guard let _res = res,
             _res.count > 0
             else {
-                self.emitCategoryFilters(sql: "categoryId == \(categoryId)")
-                self.emitCategorySubfilters(sql: "categoryId == \(categoryId)")
-                self.setupApplyFromDB(sql: "categoryId == \(categoryId)")
+                print("EMIT Category")
+                self.emitCategoryFilters(sql: "categoryId == \(categoryId)", moc)
+                self.emitCategorySubfilters(sql: "categoryId == \(categoryId)", moc)
+                self.setupApplyFromDB(sql: "categoryId == \(categoryId)", moc)
                 return
         }
         for uid in _res {
+            print("NETLOAD Category")
             categoryNetLoad(categoryId: Int(uid.categoryId))
         }
     }
     
     
     
-    internal func categoryRefreshDone(categoryId: Int) {
-        
-        let uids = dbLoadLastUIDs(sql: "categoryId == \(categoryId) && type = 'filters'")
+    internal func categoryRefreshDone(categoryId: Int, _ moc_: NSManagedObjectContext? = nil) {
+        let moc = getMoc()
+        let uids = dbLoadLastUIDs(sql: "categoryId == \(categoryId) && type = 'filters'", moc)
         guard let _uids = uids else { return }
         for uid in _uids {
             uid.needRefresh = false
         }
-        self.appDelegate.saveContext()
+        save(moc: moc)
     }
     
     
@@ -75,44 +79,45 @@ extension DataService {
         outCategorySubfilters.onNext(_subfilters)
         outFilters.onNext(_filters)
         
+        let moc = getMoc()
+        categoryDelete(categoryId: categoryId, moc) //added moc
         
-        categoryDelete(categoryId: categoryId)
-
-        appDelegate.moc.performAndWait {
+        moc.performAndWait {
             var filtersDB = [FilterPersistent]()
             for element in _filters {
               //  let filterDB = FilterPersistent(entity: FilterPersistent.entity(), insertInto: appDelegate.moc)
-                let filterDB = NSEntityDescription.insertNewObject(forEntityName: "FilterPersistent", into: appDelegate.moc) as! FilterPersistent
+                let filterDB = NSEntityDescription.insertNewObject(forEntityName: "FilterPersistent", into: moc) as! FilterPersistent
                 filterDB.setup(filterModel: element)
                 filtersDB.append(filterDB)
             }
             var subfiltersDB = [SubfilterPersistent]()
             for element in _subfilters {
                // let subfilterDB = SubfilterPersistent(entity: SubfilterPersistent.entity(), insertInto: appDelegate.moc)
-                let subfilterDB = NSEntityDescription.insertNewObject(forEntityName: "SubfilterPersistent", into: appDelegate.moc) as! SubfilterPersistent
+                let subfilterDB = NSEntityDescription.insertNewObject(forEntityName: "SubfilterPersistent", into: moc) as! SubfilterPersistent
                 subfilterDB.setup(subfilterModel: element)
                 subfiltersDB.append(subfilterDB)
             }
-            appDelegate.saveContext()
-            categoryRefreshDone(categoryId: categoryId)
+            save(moc: moc)
+            categoryRefreshDone(categoryId: categoryId, moc) //added moc
         }
     }
     
     
 
-    internal func categoryDelete(categoryId: CategoryId) {
+    internal func categoryDelete(categoryId: CategoryId, _ moc_ : NSManagedObjectContext? = nil) {
         
-        let res1 = dbLoadSubfilter(sql: "categoryId == \(categoryId)")
+        let moc = getMoc(moc_)
+        let res1 = dbLoadSubfilter(sql: "categoryId == \(categoryId)", moc)
         guard let _res1 = res1 else { return }
         for element in _res1 {
-            self.appDelegate.moc.delete(element)
+            moc.delete(element)
         }
-        let res2 = dbLoadCrossFilter(sql: "categoryId == \(categoryId)") // ?????????
+        let res2 = dbLoadCrossFilter(sql: "categoryId == \(categoryId)", moc) // ?????????
         guard let _res2 = res2 else { return }
         for element in _res2 {
-            self.appDelegate.moc.delete(element)
+            moc.delete(element)
         }
-        appDelegate.saveContext()
+        save(moc: moc)
     }
 }
 

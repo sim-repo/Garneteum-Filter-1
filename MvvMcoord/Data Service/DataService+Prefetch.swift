@@ -1,32 +1,17 @@
 import UIKit
 import RxSwift
 import CoreData
-
+import Kingfisher
 
 
 // MARK: - CATALOG
 extension DataService {
     
     
-    internal func clearOldPrefetch() {
-        
-        let res = dbLoadLastUIDs(sql: "needRefresh == 1 && type == 'prefetch' ")
-        guard let _res = res,
-            _res.count > 0
-            else {
-                return
-        }
-        for uid in _res {
-            dbDeleteEntity(0, clazz: PrefetchPersistent.self, entity: "PrefetchPersistent", fetchBatchSize: 0, sql: "categoryId == \(Int(uid.categoryId))")
-            uid.needRefresh = false
-        }
-        self.appDelegate.saveContext()
-    }
-    
-    
     internal func doEmitPrefetch(categoryId: CategoryId, itemIds: Set<Int>){
         
-        let res = dbLoadPrefetch(itemIds: itemIds)
+        let moc = getMoc()
+        let res = dbLoadPrefetch(itemIds: itemIds, moc) // added moc
         guard res.count >= itemIds.count
             else {
                 
@@ -37,8 +22,8 @@ extension DataService {
                         else {
                             self?.dbSavePrefetch(categoryId, catalogModels, dbFoundItems)
                             return
-                        }
-                     self?.fireNetError(netError: error)
+                    }
+                    self?.fireNetError(netError: error)
                 }
                 
                 let midCompletion: ((NetError, Int)->Void)? = { [weak self] err, cnt in
@@ -52,6 +37,26 @@ extension DataService {
         }
         let catalogModels: [CatalogModel] = PrefetchPersistent.getModels(prefetchPersistents: res)
         firePrefetch(catalogModels)
+    }
+    
+    
+    
+    internal func clearOldPrefetch(_ moc_: NSManagedObjectContext? = nil) {
+        
+        appDelegate.kfCleanMemoryCache()
+        appDelegate.kfCleanDiskCache()
+        let moc = getMoc(moc_)
+        let res = dbLoadLastUIDs(sql: "needRefresh == 1 && type == 'prefetch' ", moc)
+        guard let _res = res,
+            _res.count > 0
+            else {
+                return
+        }
+        for uid in _res {
+            dbDeleteEntity(0, clazz: PrefetchPersistent.self, entity: "PrefetchPersistent", fetchBatchSize: 0, sql: "categoryId == \(Int(uid.categoryId))")
+            uid.needRefresh = false
+        }
+        save(moc: moc)
     }
     
     
@@ -75,20 +80,24 @@ extension DataService {
         res.append(contentsOf: dbFoundItems)
         firePrefetch(res)
         
-        var db = [PrefetchPersistent]()
-        for model in netItems {
-           // let row = PrefetchPersistent(entity: PrefetchPersistent.entity(), insertInto: appDelegate.moc)
-            let row = NSEntityDescription.insertNewObject(forEntityName: "PrefetchPersistent", into: appDelegate.moc) as! PrefetchPersistent
-            row.setup(model: model)
-            db.append(row)
+        let moc = getMoc()
+        
+        moc.performAndWait {
+            var db = [PrefetchPersistent]()
+            for model in netItems {
+                let row = NSEntityDescription.insertNewObject(forEntityName: "PrefetchPersistent", into: moc) as! PrefetchPersistent
+                row.setup(model: model)
+                db.append(row)
+            }
+            save(moc: moc)
         }
-        appDelegate.saveContext()
     }
     
     
     
-    internal func dbLoadPrefetch(itemIds: Set<Int>) -> Set<PrefetchPersistent>{
+    internal func dbLoadPrefetch(itemIds: Set<Int>, _ moc_ : NSManagedObjectContext? = nil) -> Set<PrefetchPersistent>{
         
+        let moc = getMoc(moc_)
         var db: Set<PrefetchPersistent>  = Set<PrefetchPersistent>()
             
         let request: NSFetchRequest<PrefetchPersistent> = PrefetchPersistent.fetchRequest()
@@ -98,7 +107,7 @@ extension DataService {
         request.includesPendingChanges = false
         request.predicate = NSPredicate(format: "ANY itemId IN %@", itemIds)
         do {
-            db = try Set(appDelegate.readMoc.fetch(request))
+            db = try Set(moc.fetch(request))
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }

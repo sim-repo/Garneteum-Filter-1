@@ -35,7 +35,7 @@ class CatalogVC: UIViewController {
         super.viewDidLoad()
         setFlowLayout()
         setTitle()
-       // collectionView.prefetchDataSource = self
+        collectionView.prefetchDataSource = self
         collectionView.isHidden = true
         handleReloadEvent()
         handleWaitEvent()
@@ -43,7 +43,6 @@ class CatalogVC: UIViewController {
         handleFetchCompleteEvent()
         bindNavigation()
         bindLayout()
-        //self.collectionView.decelerationRate = UIScrollView.DecelerationRate.normal
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -61,7 +60,6 @@ class CatalogVC: UIViewController {
             collectionViewFlowLayout.minimumInteritemSpacing = 0
         }
     }
-    
     
     private func setTitle(){
         var title = viewModel.outTitle.value
@@ -113,7 +111,7 @@ class CatalogVC: UIViewController {
                 guard let `self` = self else {return}
                 guard let indexPaths = indexPaths_ else { return }
                 self.collectionView.performBatchUpdates({
-                    if indexPaths.count < 20 {
+                    if indexPaths.count < 100 {
                         print("err: \(indexPaths.count)")
                     }
                     self.itemCount += indexPaths.count
@@ -226,9 +224,14 @@ extension CatalogVC: UICollectionViewDataSource {
         }
         return cell
     }
+    
 }
 
-
+extension CatalogVC: UICollectionViewDataSourcePrefetching {
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        viewModel.prefetchItemAt(indexPaths: indexPaths)
+    }
+}
 
 
 extension CatalogVC: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {

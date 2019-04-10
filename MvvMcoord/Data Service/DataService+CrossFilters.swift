@@ -6,46 +6,53 @@ import CoreData
 // MARK: - CROSS FILTERS
 extension DataService {
     
-    internal func checkCrossRefresh(){
+    internal func emitCrossFilters(_ moc_ : NSManagedObjectContext? = nil){
         
-        let res = dbLoadLastUIDs(sql: "cross == 1 && needRefresh == 1")
+        print("start CROSS")
+        let moc = getMoc(moc_)
+        let res = dbLoadLastUIDs(sql: "cross == 1 && needRefresh == 1", moc) // added moc
         guard let _res = res,
             _res.count > 0
             else {
-                doEmitCrossSubfilters(sql: "cross == 1")
-                emitCrossFilters(sql: "cross == 1")
+                print("emit CROSS")
+                doEmitCrossSubfilters(sql: "cross == 1", moc)
+                emitCrossFilters(sql: "cross == 1", moc)
                 return
         }
+        
         
         for uid in _res {
             crossDelete(filterId: Int(uid.filterId))
         }
         
         for uid in _res {
+            print("netload CROSS")
             crossNetLoad(filterId: Int(uid.filterId))
         }
     }
     
     
     
-    internal func crossRefreshDone(filterId: Int) {
+    internal func crossRefreshDone(filterId: Int, _ moc_ : NSManagedObjectContext? = nil) {
         
-        let res = dbLoadLastUIDs(sql: "filterId == \(filterId)")
+        let moc = getMoc(moc_)
+        let res = dbLoadLastUIDs(sql: "filterId == \(filterId)", moc) // added moc
         guard let _res = res else { return }
         _res[0].needRefresh = false
-        self.appDelegate.saveContext()
+        save(moc: moc)
     }
     
     
     
-    internal func dbLoadLastUIDs(sql:String) -> [LastUidPersistent]?{
+    internal func dbLoadLastUIDs(sql:String, _ moc_: NSManagedObjectContext? = nil) -> [LastUidPersistent]?{
         
         var uidDB: [LastUidPersistent]?
         let request: NSFetchRequest<LastUidPersistent> = LastUidPersistent.fetchRequest()
         request.includesPendingChanges = false
         request.predicate = NSPredicate(format: sql)
+        let moc = getMoc(moc_)
         do {
-            uidDB = try self.appDelegate.moc.fetch(request)
+            uidDB = try moc.fetch(request)
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
@@ -55,8 +62,9 @@ extension DataService {
     
     
     
-    internal func dbLoadSubfilter(sql:String) -> [SubfilterPersistent]?{
+    internal func dbLoadSubfilter(sql:String, _ moc_: NSManagedObjectContext? = nil) -> [SubfilterPersistent]?{
         
+        let moc = getMoc(moc_)
         var db: [SubfilterPersistent]?
         let request: NSFetchRequest<SubfilterPersistent> = SubfilterPersistent.fetchRequest()
         request.includesPendingChanges = false
@@ -64,7 +72,7 @@ extension DataService {
             request.predicate = NSPredicate(format: sql)
         }
         do {
-            db = try self.appDelegate.moc.fetch(request)
+            db = try moc.fetch(request)
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
@@ -73,14 +81,15 @@ extension DataService {
     
     
     
-    internal func dbLoadCrossFilter(sql:String) -> [FilterPersistent]?{
+    internal func dbLoadCrossFilter(sql:String, _ moc_: NSManagedObjectContext? = nil) -> [FilterPersistent]?{
         
+        let moc = getMoc(moc_)
         var db: [FilterPersistent]?
         let request: NSFetchRequest<FilterPersistent> = FilterPersistent.fetchRequest()
         request.includesPendingChanges = false
         request.predicate = NSPredicate(format: sql)
         do {
-            db = try self.appDelegate.moc.fetch(request)
+            db = try moc.fetch(request)
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
@@ -105,6 +114,8 @@ extension DataService {
     
     internal func crossSave(filterId: FilterId, filters: [FilterModel]?, subfilters: [SubfilterModel]?) {
 
+        print("crossSave")
+        
         guard let _filters = filters,
             let _subfilters = subfilters
             else { return }
@@ -114,23 +125,25 @@ extension DataService {
         applyLogic.setup(subFilters_: subfilters)
         outCrossSubfilters.onNext(_subfilters)
         
-        appDelegate.moc.performAndWait {
+        let moc = getMoc()
+        moc.performAndWait {
             var filtersDB = [FilterPersistent]()
             for element in _filters {
                 //let filterDB = FilterPersistent(entity: FilterPersistent.entity(), insertInto: appDelegate.moc)
-                let filterDB = NSEntityDescription.insertNewObject(forEntityName: "FilterPersistent", into: appDelegate.moc) as! FilterPersistent
+                let filterDB = NSEntityDescription.insertNewObject(forEntityName: "FilterPersistent", into: moc) as! FilterPersistent
                 filterDB.setup(filterModel: element)
                 filtersDB.append(filterDB)
             }
+            save(moc: moc)
             var subfiltersDB = [SubfilterPersistent]()
             for element in _subfilters {
                 //let subfilterDB = SubfilterPersistent(entity: SubfilterPersistent.entity(), insertInto: appDelegate.moc)
-                let subfilterDB = NSEntityDescription.insertNewObject(forEntityName: "SubfilterPersistent", into: appDelegate.moc) as! SubfilterPersistent
+                let subfilterDB = NSEntityDescription.insertNewObject(forEntityName: "SubfilterPersistent", into: moc) as! SubfilterPersistent
                 subfilterDB.setup(subfilterModel: element)
                 subfiltersDB.append(subfilterDB)
             }
-            appDelegate.saveContext()
-            crossRefreshDone(filterId: filterId)
+            save(moc: moc)
+            crossRefreshDone(filterId: filterId, moc) //added moc
         }
     }
     
@@ -138,17 +151,18 @@ extension DataService {
     
     internal func crossDelete(filterId: FilterId) {
         
-        let res1 = dbLoadSubfilter(sql: "filterId == \(filterId)")
+        let moc = getMoc()
+        let res1 = dbLoadSubfilter(sql: "filterId == \(filterId)", moc) //added moc
         guard let _res1 = res1 else { return }
         for element in _res1 {
-            self.appDelegate.moc.delete(element)
+            moc.delete(element)
         }
         
-        let res2 = dbLoadCrossFilter(sql: "id == \(filterId)")
+        let res2 = dbLoadCrossFilter(sql: "id == \(filterId)", moc) //added moc
         guard let _res2 = res2 else { return }
         for element in _res2 {
-            self.appDelegate.moc.delete(element)
+            moc.delete(element)
         }
-        appDelegate.saveContext()
+        save(moc: moc)
     }
 }

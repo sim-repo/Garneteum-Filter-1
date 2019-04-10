@@ -12,18 +12,24 @@ class CatalogListCell : UICollectionViewCell{
     @IBOutlet weak var starsLabel: UILabel!
     
     
+    var viewModel: CatalogVM!
+    
     func configCell(model: CatalogModel?, indexPath: IndexPath){
     
         if let `model` = model {
             
-            let gsReference = storage.reference(forURL: "gs://filterproject2.appspot.com/\(model.thumbnail).jpg")
-            imageView.image = UIImage(named: "no-images")
-            gsReference.getData(maxSize: 1 * 320 * 240) {[weak self] data, error in
-                if let error = error {
-                   // print("Storage: \(error.localizedDescription)")
-                } else {
-                    if self?.tag == indexPath.row {
-                        self?.imageView.image = UIImage(data: data!)
+            if let img = model.imageView?.image {
+                imageView.image = img
+            } else {
+                let gsReference = storage.reference(forURL: "gs://filterproject2.appspot.com/\(model.thumbnail).jpg")
+               // imageView.image = UIImage(named: "no-images")
+                gsReference.getData(maxSize: 1 * 320 * 240) {[weak self] data, error in
+                    if let error = error {
+                        print("Storage: \(error.localizedDescription)")
+                    } else {
+                        if self?.tag == indexPath.row {
+                            self?.imageView.image = UIImage(data: data!)
+                        }
                     }
                 }
             }

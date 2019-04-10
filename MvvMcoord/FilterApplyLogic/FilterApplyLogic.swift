@@ -23,6 +23,16 @@ class FilterApplyLogic {
     private var itemIds: ItemIds = []
     
     
+    private var filters_HasSet = false
+    private var subfilters_HasSet = false
+    private var subfiltersByFilter_HasSet = false
+    private var subfiltersByItem_HasSet = false
+    private var itemsBySubfilter_HasSet = false
+    private var priceByItemId_HasSet = false
+    
+    private var limitTry = Int(waitForSubfiltersApplySetInSec)
+    
+    
     public func getFilters() -> [FilterModel] {
         return filters.compactMap({$0.value})
     }
@@ -602,50 +612,58 @@ class FilterApplyLogic {
     
     
     private func checkSubFilterApply() -> Bool {
-        
-        if self.filters.count > 0 &&
-            self.subFilters.count > 0 &&
-            self.subfiltersByFilter.count > 0 &&
-            self.subfiltersByItem.count > 0 &&
-            self.itemsBySubfilter.count > 0 &&
-            self.priceByItemId.count > 0 {
-            return true
+        if filters_HasSet == false ||
+           subfilters_HasSet == false ||
+           subfiltersByItem_HasSet == false ||
+           itemsBySubfilter_HasSet == false ||
+           priceByItemId_HasSet == false {
+            return false
         }
-        return false
+        return true
     }
     
     
-    private func timer4SubFilterApply() {
+    private func timer4SubFilterApply()  -> Bool {
+        var tryNo = 1
         var ready = false
-        while ready == false {
+        
+        while ready == false && tryNo <= limitTry {
             ready = checkSubFilterApply()
             if ready {
-                return
+                return true
             }
-            usleep(200)
-        }
-    }
-    
-    private func checkEnterSubFilter() -> Bool {
-        
-        if self.filters.count > 0 &&
-            self.subFilters.count > 0 &&
-            self.subfiltersByFilter.count > 0 {
-            return true
+            sleep(1)
+            tryNo += 1
         }
         return false
     }
     
     
-    private func timer4SubFilterEnter() {
+    private func checkEnterSubFilter() -> Bool {
+        if filters_HasSet == false ||
+            subfilters_HasSet == false ||
+            subfiltersByItem_HasSet == false ||
+            itemsBySubfilter_HasSet == false ||
+            priceByItemId_HasSet == false {
+            return false
+        }
+        return true
+    }
+    
+    
+    private func timer4SubFilterEnter() -> Bool {
+        var tryNo = 1
         var ready = false
-        while ready == false {
+        while ready == false && tryNo <= limitTry {
+            print("timer: \(tryNo)")
             ready = checkEnterSubFilter()
             if ready {
-                return
+                return true
             }
-            usleep(200)
+            sleep(1)
+            tryNo += 1
         }
+        return false
     }
 }
 
@@ -718,7 +736,10 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
     
     func doApplyFromSubFilters(_ filterId: Int, _ appliedSubFilters: Set<Int>, _ selectedSubFilters: Set<Int>, _ rangePrice: RangePrice) -> Observable<(FilterIds, SubFilterIds, Applied, Selected, RangePrice, ItemsTotal)> {
         
-        timer4SubFilterApply()
+        guard timer4SubFilterApply()
+            else {
+                return Observable.empty()
+            }
         
         var enabledFilters = EnabledFilters()
         var enabledSubfilters = EnabledSubfilters()
@@ -781,13 +802,15 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
               var applied = appliedSubFilters
             else { return Observable.empty()}
         
-        timer4SubFilterEnter()
+        guard timer4SubFilterEnter()
+            else { return Observable.empty()}
         
         var enabledFilters = EnabledFilters()
         var enabledSubfilters = EnabledSubfilters()
         var countsItems = CountItems()
         fillEnabledFilters(&enabledFilters)
         fillEnabledSubFilters(&enabledSubfilters)
+        
         
         applyBeforeEnter(&applied,
                          filterId,
@@ -828,8 +851,7 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
                priceByItemId_: PriceByItemId? = nil
         ){
         
-//       DispatchQueue.global(qos: .userInitiated).async {[weak self] in
-//            guard let `self` = self else { return }
+
         if let a = filters_ {
             print("----------- Apply :::: Filters:")
             a.forEach({f in
@@ -840,6 +862,7 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
             print(" ")
             print(" ")
             print(" ")
+            filters_HasSet = true
         }
             
         if let b = subFilters_ {
@@ -852,10 +875,11 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
                 }
                 self.subfiltersByFilter[s.filterId]?.append(s.id)
             })
-            print("----------- Subfilters count: \(self.subFilters.count)    SubfiltersByFilter count: \(self.subFilters.count)")
+            print("----------- Subfilters count: \(self.subFilters.count)    SubfiltersByFilter count: \(self.subfiltersByFilter.count)")
             print(" ")
             print(" ")
             print(" ")
+            subfilters_HasSet = true
         }
         
         
@@ -866,6 +890,7 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
             print(" ")
             print(" ")
             print(" ")
+            subfiltersByItem_HasSet = true
         }
         
         if let e = itemsBySubfilter_ {
@@ -875,6 +900,7 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
             print(" ")
             print(" ")
             print(" ")
+            itemsBySubfilter_HasSet = true
         }
         
         if let f = priceByItemId_ {
@@ -884,8 +910,9 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
             print(" ")
             print(" ")
             print(" ")
+            priceByItemId_HasSet = true
         }
-         //   }
+        
     }
     
     
@@ -897,22 +924,33 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
         print(" ")
         print(" ")
         
-        
+        var tmpItemsBySubfilter = ItemsBySubfilter()
         for (itemId, subfilterIds) in subfiltersByItem {
             for subfilterId in subfilterIds {
-                if itemsBySubfilter[subfilterId] == nil {
-                    itemsBySubfilter[subfilterId] = []
+                if tmpItemsBySubfilter[subfilterId] == nil {
+                    tmpItemsBySubfilter[subfilterId] = []
                 }
-                itemsBySubfilter[subfilterId]?.append(itemId)
+                tmpItemsBySubfilter[subfilterId]?.append(itemId)
             }
         }
+        
+        itemsBySubfilter = tmpItemsBySubfilter
         
         print("----------- Apply :::: ItemsBySubfilter:")
         print("----------- ItemsBySubfilter count: \(self.itemsBySubfilter.count)")
         print(" ")
         print(" ")
         print(" ")
+        
+        
+        subfiltersByItem_HasSet = true
+        itemsBySubfilter_HasSet = true
+        print("DONE")
+        
     }
+    
+    
+    
     
     func dealloc(){
         
@@ -927,6 +965,14 @@ extension FilterApplyLogic: FilterApplyLogicProtocol {
             }
         })
         
+
+        filters_HasSet = false
+        subfilters_HasSet = false
+        subfiltersByItem_HasSet = false
+        itemsBySubfilter_HasSet = false
+        priceByItemId_HasSet = false
+                
+                
         subfiltersByItem.removeAll()
         itemsBySubfilter.removeAll()
         priceByItemId.removeAll()

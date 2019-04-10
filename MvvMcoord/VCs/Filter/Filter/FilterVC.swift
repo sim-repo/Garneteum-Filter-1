@@ -274,7 +274,7 @@ extension FilterVC {
                                     let delay = res.2
                                     DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)){ [weak self] in
                                         guard let `self` = self else {return}
-                                        self.timer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(self.internalWaitControl), userInfo: nil, repeats: false)
+                                        self.timer = Timer.scheduledTimer(timeInterval: waitForFiltersTimeoutInSec, target: self, selector: #selector(self.internalWaitControl), userInfo: nil, repeats: false)
                                         self.startWait()
                                     }
                         },

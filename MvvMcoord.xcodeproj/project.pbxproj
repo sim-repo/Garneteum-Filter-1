@@ -89,6 +89,7 @@
 		163BB46522482B7F0073526A /* PriceByItemPersistent+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163BB46322482B7F0073526A /* PriceByItemPersistent+CoreDataProperties.swift */; };
 		167F2F2F222982BD006D1E1B /* TemporaryGlobalCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167F2F2E222982BD006D1E1B /* TemporaryGlobalCache.swift */; };
 		16A7F3152222A64900047077 /* RangePrice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A7F3142222A64900047077 /* RangePrice.swift */; };
+		16BD068F225E2A0F006C33A4 /* TimeoutPolicies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BD068E225E2A0F006C33A4 /* TimeoutPolicies.swift */; };
 		16BEFA1C224112F500226CD9 /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BEFA1B224112F500226CD9 /* DataService.swift */; };
 		16C6CC6821DFF8BB00F535D0 /* CatalogSquareCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C6CC6721DFF8BB00F535D0 /* CatalogSquareCell.swift */; };
 		16C6CC6A21DFF8CA00F535D0 /* CatalogSquaresCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C6CC6921DFF8CA00F535D0 /* CatalogSquaresCell.swift */; };
@@ -207,6 +208,7 @@
 		163BB46322482B7F0073526A /* PriceByItemPersistent+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PriceByItemPersistent+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		167F2F2E222982BD006D1E1B /* TemporaryGlobalCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryGlobalCache.swift; sourceTree = "<group>"; };
 		16A7F3142222A64900047077 /* RangePrice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RangePrice.swift; sourceTree = "<group>"; };
+		16BD068E225E2A0F006C33A4 /* TimeoutPolicies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeoutPolicies.swift; sourceTree = "<group>"; };
 		16BEFA1B224112F500226CD9 /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
 		16C6CC6721DFF8BB00F535D0 /* CatalogSquareCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogSquareCell.swift; sourceTree = "<group>"; };
 		16C6CC6921DFF8CA00F535D0 /* CatalogSquaresCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogSquaresCell.swift; sourceTree = "<group>"; };
@@ -367,6 +369,7 @@
 				1616B9AC22255C280022A0AD /* Common.swift */,
 				167F2F2E222982BD006D1E1B /* TemporaryGlobalCache.swift */,
 				163BB44F22481DFA0073526A /* FilterCoreData.xcdatamodeld */,
+				16BD068E225E2A0F006C33A4 /* TimeoutPolicies.swift */,
 			);
 			path = MvvMcoord;
 			sourceTree = "<group>";
@@ -850,6 +853,7 @@
 				"${BUILT_PRODUCTS_DIR}/Differentiator/Differentiator.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/RxAtomic/RxAtomic.framework",
 				"${BUILT_PRODUCTS_DIR}/RxBlocking/RxBlocking.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
@@ -866,6 +870,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Differentiator.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxAtomic.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxBlocking.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
@@ -926,6 +931,7 @@
 				16C6CC6821DFF8BB00F535D0 /* CatalogSquareCell.swift in Sources */,
 				1611909221DE231400E3CB93 /* DiscountLabel.swift in Sources */,
 				16140FC9224A09BE003E20BD /* CategoriesPersistent+CoreDataProperties.swift in Sources */,
+				16BD068F225E2A0F006C33A4 /* TimeoutPolicies.swift in Sources */,
 				163BB44B22481A360073526A /* DataService+CategoryApplyData.swift in Sources */,
 				16140FD3224A42D9003E20BD /* DataService+Prefetch.swift in Sources */,
 				1618DDFB221EC78600E96EDC /* PriceApply.swift in Sources */,

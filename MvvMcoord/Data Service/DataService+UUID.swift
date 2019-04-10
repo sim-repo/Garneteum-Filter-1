@@ -24,66 +24,80 @@ extension DataService {
         
         guard let _uids = uids
             else { return }
-        self.dbDeleteData("NewUidPersistent")
-        self.appDelegate.moc.performAndWait {
+        
+        let moc = getMoc()
+        self.dbDeleteData("NewUidPersistent", moc)
+        moc.performAndWait {
             var uidsDB = [NewUidPersistent]()
             for element in _uids {
                // let uidDB = NewUidPersistent(entity: NewUidPersistent.entity(), insertInto: self.appDelegate.moc)
-                let uidDB = NSEntityDescription.insertNewObject(forEntityName: "NewUidPersistent", into: self.appDelegate.moc) as! NewUidPersistent
+                let uidDB = NSEntityDescription.insertNewObject(forEntityName: "NewUidPersistent", into: moc) as! NewUidPersistent
 
                 uidDB.setup(uidModel: element)
                 uidsDB.append(uidDB)
             }
-            self.appDelegate.saveContext()
-            self.compare()
+            save(moc: moc)
+            self.compare(moc)
         }
     }
     
     
     
-    internal func saveLastUIDs(_ uids: [NewUidPersistent]) {
+    internal func saveLastUIDs(_ newUids: [NewUidPersistent], _ moc_ : NSManagedObjectContext? = nil) {
+
+        guard newUids.count > 0
+            else {
+                self.emitCrossFilters(moc_)
+                return
+            }
         
-        appDelegate.moc.performAndWait {
+        let moc = getMoc(moc_)
+        
+        moc.performAndWait {
             var uidsDB = [LastUidPersistent]()
-            for element in uids {
-                let uidDB = LastUidPersistent(entity: LastUidPersistent.entity(), insertInto: self.appDelegate.moc)
+            for element in newUids {
+                let uidDB = LastUidPersistent(entity: LastUidPersistent.entity(), insertInto: moc)
                 uidDB.setup(newUID: element)
                 uidsDB.append(uidDB)
             }
-            self.appDelegate.saveContext()
-            self.checkCrossRefresh()
-            self.clearOldPrefetch()
-            self.clearOldCatalog()
+            self.save(moc: moc)
+            self.emitCrossFilters(moc)
+            self.clearOldPrefetch(moc)
+            self.clearOldCatalog(moc)
         }
     }
     
     
     
-    internal func toRefresh(last: LastUidPersistent, newUid: String){
+    internal func toRefresh(last: LastUidPersistent, newUid: String, _ moc_ : NSManagedObjectContext? = nil){
+        let moc = getMoc(moc_)
         last.needRefresh = true
         last.uid = newUid
-        self.appDelegate.saveContext()
+        save(moc: moc)
     }
     
     
     
-    internal func compare() {
+    internal func compare(_ moc_ : NSManagedObjectContext? = nil) {
         
-        guard let newUids = dbLoadNewUIDs() else { return }
-        guard let lastUids = dbLoadLastUIDs(),
+        let moc = getMoc(moc_)
+        
+        guard let newUids = dbLoadNewUIDs(moc) else { return }
+        guard let lastUids = dbLoadLastUIDs(moc),
             lastUids.count > 0
         else {
-            saveLastUIDs(newUids)
+            saveLastUIDs(newUids, moc)
             return
         }
         
         var needToSave = [NewUidPersistent]()
         
+        
         for new in newUids {
             if new.cross {
                 if let last = lastUids.first(where: {$0.filterId == new.filterId && $0.type == new.type}) {
                     if last.uid != new.uid {
-                        toRefresh(last: last, newUid: new.uid)
+                        toRefresh(last: last, newUid: new.uid, moc) // added moc
                     }
                 } else {
                     needToSave.append(new)
@@ -92,23 +106,24 @@ extension DataService {
             } else {
                 if let last = lastUids.first(where: {$0.categoryId == new.categoryId && $0.type == new.type}) {
                     if last.uid != new.uid {
-                        toRefresh(last: last, newUid: new.uid)
+                        toRefresh(last: last, newUid: new.uid, moc) // added moc
                     }
                 } else {
                     needToSave.append(new)
                 }
             }
         }
-        saveLastUIDs(needToSave)
+        saveLastUIDs(needToSave, moc)
     }
     
     
     
-    internal func dbLoadNewUIDs() -> [NewUidPersistent]?{
+    internal func dbLoadNewUIDs(_ moc_: NSManagedObjectContext? = nil) -> [NewUidPersistent]?{
         
+        let moc = getMoc(moc_)
         var uidDB: [NewUidPersistent]?
         do {
-            uidDB = try self.appDelegate.moc.fetch(NewUidPersistent.fetchRequest())
+            uidDB = try moc.fetch(NewUidPersistent.fetchRequest())
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
@@ -117,11 +132,12 @@ extension DataService {
     
     
     
-    internal func dbLoadLastUIDs() -> [LastUidPersistent]?{
+    internal func dbLoadLastUIDs(_ moc_: NSManagedObjectContext? = nil) -> [LastUidPersistent]?{
         
+        let moc = getMoc(moc_)
         var uidDB: [LastUidPersistent]?
         do {
-            uidDB = try self.appDelegate.moc.fetch(LastUidPersistent.fetchRequest())
+            uidDB = try moc.fetch(LastUidPersistent.fetchRequest())
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }

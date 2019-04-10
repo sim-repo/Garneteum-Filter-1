@@ -154,7 +154,7 @@ class FirebaseTemplate {
                 let itemId = itemIds[nextId]
                 nextId += 1
                 let colorName = colors[colorId]
-                imageByItem[itemId] = "\(catergoryId)_" + colorName + "_\(i)"
+                imageByItem[itemId] = "0\(catergoryId)_" + colorName + "_\(i)"
             }
         }
         return imageByItem

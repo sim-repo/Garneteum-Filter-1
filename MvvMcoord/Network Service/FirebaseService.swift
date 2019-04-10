@@ -102,6 +102,7 @@ class FirebaseService : NetworkFacadeBase {
     
     private func checkedReqLimit(taskIdx: Int, error: Error?) -> (NetTaskStatusEnum, NetError?, Int) {
         if let err = error as NSError? {
+            print(err)
             let cnt = self.reqTry[taskIdx] ?? 0
             if cnt < self.limitTry,
                 let completion = self.activeTasks[taskIdx] {
@@ -163,15 +164,15 @@ extension FirebaseService  {
                 }
             }
         }
-        operationQueues[taskCode]?.addOperation {[weak self] in
-            guard let task = self?.activeTasks[taskIdx] else { return }
+        operationQueues[taskCode]?.addOperation {
+            guard let task = self.activeTasks[taskIdx] else { return }
             task?()
         }
     }
     
     
     private func runCrossFilters(taskCode: Int, taskIdx: Int, filterId: Int, completion: (([FilterModel],[SubfilterModel], NetError?)->Void)? ) {
-        
+        print("filterID \(filterId)")
         self.activeTasks[taskIdx] = {
             functions.httpsCallable("meta").call(["useCache":true, "filterId": filterId,  "method":"getCrossChunk4"]) { [weak self] (result, error) in
                 DispatchQueue.global(qos: .userInitiated).async {
@@ -193,6 +194,8 @@ extension FirebaseService  {
                     guard filters.count > 0,
                         subFilters.count > 0
                     else {
+                        
+                        print("some err crossSave")
                         let (status, err, cnt) = self.checkedReqLimit(taskIdx: taskIdx, error: error)
                         switch status {
                             case .success: break
@@ -203,14 +206,16 @@ extension FirebaseService  {
                         }
                         return
                     }
+                    
+                    print("before crossSave")
                     completion?(filters, subFilters, nil)
                     self.activeTasks[taskIdx] = nil
                 }
             }
         }
         
-        operationQueues[taskCode]?.addOperation {[weak self] in
-            guard let task = self?.activeTasks[taskIdx] else { return }
+        operationQueues[taskCode]?.addOperation {
+            guard let task = self.activeTasks[taskIdx] else { return }
             task?()
         }
     }
@@ -261,7 +266,7 @@ extension FirebaseService  {
         }
         operationQueues[taskCode]?.addOperation {
            guard let task =  self.activeTasks[taskIdx] else { return }
-                    task?()
+           task?()
         }
     }
     
@@ -309,8 +314,8 @@ extension FirebaseService  {
                 }
             }
         }
-        operationQueues[taskCode]?.addOperation {[weak self] in
-            guard let task = self?.activeTasks[taskIdx] else { return }
+        operationQueues[taskCode]?.addOperation {
+            guard let task = self.activeTasks[taskIdx] else { return }
             task?()
         }
     }
@@ -363,8 +368,8 @@ extension FirebaseService  {
             }
         }
         
-        operationQueues[taskCode]?.addOperation {[weak self] in
-            guard let task = self?.activeTasks[taskIdx] else { return }
+        operationQueues[taskCode]?.addOperation {
+            guard let task = self.activeTasks[taskIdx] else { return }
             task?()
         }
     }
@@ -416,8 +421,8 @@ extension FirebaseService  {
             }
         }
         
-        operationQueues[taskCode]?.addOperation {[weak self] in
-            guard let task = self?.activeTasks[taskIdx] else { return }
+        operationQueues[taskCode]?.addOperation {
+            guard let task = self.activeTasks[taskIdx] else { return }
             task?()
         }
     }

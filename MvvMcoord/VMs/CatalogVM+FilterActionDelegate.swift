@@ -1,6 +1,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import Kingfisher
 
 protocol FilterActionDelegate : class {
     func applyFromFilterEvent() -> PublishSubject<Void>
@@ -34,6 +35,7 @@ protocol FilterActionDelegate : class {
     func reloadSubfilterVC() -> PublishSubject<Void>
     func refreshFromSubfilter()
     func refreshFromFilter()
+    func prefetchItemAt(indexPaths: [IndexPath])
 }
 
 
@@ -140,6 +142,21 @@ extension CatalogVM : FilterActionDelegate {
     func back() -> PublishSubject<FilterActionEnum> {
         return outBackEvent
     }
+    
+    func prefetchItemAt(indexPaths: [IndexPath]) {
+        let models = indexPaths.compactMap({self.catalog(at: $0.row)})
+        for model in models {
+            if model.imageView == nil {
+                model.imageView = UIImageView()
+                model.imageView?.kf.setImage(with: URL(string: getCatalogImage(picName: "1010403_orange_0")),
+                                             placeholder: nil,
+                                             options: [],
+                                             progressBlock: nil,
+                                             completionHandler: nil)
+            }
+        }
+    }
+    
     
     func getRangePrice() -> (MinPrice, MaxPrice, MinPrice, MaxPrice) {
         return rangePrice.getRangePrice()

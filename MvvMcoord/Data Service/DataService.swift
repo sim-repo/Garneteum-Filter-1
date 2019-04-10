@@ -149,6 +149,31 @@ class DataService: DataFacadeProtocol {
     }
     
     
+    internal func getMoc(_ moc_: NSManagedObjectContext? = nil) -> NSManagedObjectContext {
+        var moc: NSManagedObjectContext
+        if moc_ == nil {
+            moc =  {
+                let moc = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+                moc.persistentStoreCoordinator = appDelegate.persistentContainer.persistentStoreCoordinator
+                return moc
+            }()
+        } else {
+            moc = moc_!
+        }
+        return moc
+    }
+    
+    
+    internal func save(moc: NSManagedObjectContext) {
+        do {
+            //if moc.hasChanges{
+                try moc.save()
+         //   }
+        } catch let err as NSError {
+            print(err)
+        }
+    }
+    
     
     func getNetError() -> PublishSubject<NetError> {
         return outNetError
@@ -211,19 +236,20 @@ class DataService: DataFacadeProtocol {
 
     
     
-    internal func dbDeleteData(_ entity:String) {
+    internal func dbDeleteData(_ entity:String, _ moc_: NSManagedObjectContext? = nil) {
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
         fetchRequest.includesPendingChanges = false
         fetchRequest.returnsObjectsAsFaults = false
+        
+        let moc = getMoc(moc_)
         do {
-            let results = try appDelegate.moc.fetch(fetchRequest)
+            let results = try moc.fetch(fetchRequest)
             for object in results {
                 guard let objectData = object as? NSManagedObject else { continue }
-                appDelegate.moc.delete(objectData)
-                appDelegate.saveContext()
+                moc.delete(objectData)
             }
-            
+            save(moc: moc)
         } catch let error {
             print("Detele all data in \(entity) error :", error)
         }
@@ -234,9 +260,9 @@ class DataService: DataFacadeProtocol {
 
 extension DataService {
     
-    internal func emitCrossFilters(sql: String){
+    internal func emitCrossFilters(sql: String, _ moc_ : NSManagedObjectContext? = nil){
         
-        if let filtersDB = dbLoadFilter(sql: sql) {
+        if let filtersDB = dbLoadFilter(sql: sql, moc_) {
             let filters = filtersDB.compactMap({$0.getFilterModel()})
             self.applyLogic.setup(filters_: filters)
             self.outCrossFilters.onNext(filters)
@@ -245,9 +271,9 @@ extension DataService {
     
     
     
-    internal func doEmitCrossSubfilters(sql: String){
-        
-        if let subfiltersDB = dbLoadSubfilter(sql: sql) {
+    internal func doEmitCrossSubfilters(sql: String, _ moc_ : NSManagedObjectContext? = nil){
+        let moc = getMoc(moc_)
+        if let subfiltersDB = dbLoadSubfilter(sql: sql, moc) {
             let subfilters = subfiltersDB.compactMap({$0.getSubfilterModel()})
             self.applyLogic.setup(subFilters_: subfilters)
             self.outCrossSubfilters.onNext(subfilters)
@@ -256,9 +282,10 @@ extension DataService {
     
     
     
-    internal func emitCategoryFilters(sql: String){
+    internal func emitCategoryFilters(sql: String, _ moc_ : NSManagedObjectContext? = nil){
         
-        if let filtersDB = dbLoadFilter(sql: sql) {
+        let moc = getMoc(moc_)
+        if let filtersDB = dbLoadFilter(sql: sql, moc) {
             let filters = filtersDB.compactMap({$0.getFilterModel()})
             self.applyLogic.setup(filters_: filters)
             self.outFilters.onNext(filters)
@@ -267,9 +294,10 @@ extension DataService {
     
     
     
-    internal func emitCategorySubfilters(sql: String){
+    internal func emitCategorySubfilters(sql: String, _ moc_ : NSManagedObjectContext? = nil){
         
-        if let subfiltersDB = dbLoadSubfilter(sql: sql) {
+        let moc = getMoc(moc_)
+        if let subfiltersDB = dbLoadSubfilter(sql: sql, moc) {
             let subfilters = subfiltersDB.compactMap({$0.getSubfilterModel()})
             self.applyLogic.setup(subFilters_: subfilters)
             self.outCategorySubfilters.onNext(subfilters)
@@ -278,28 +306,30 @@ extension DataService {
     
     
     
-    internal func setupApplyFromDB(sql: String){
+    internal func setupApplyFromDB(sql: String, _ moc_ : NSManagedObjectContext? = nil){
         
-        if let subfiltersItemsDB = dbLoadSubfiltersItems(sql: sql) {
+        let moc = getMoc(moc_)
+        if let subfiltersItemsDB = dbLoadSubfiltersItems(sql: sql, moc) {
             let (subfiltersByItem, itemsBySubfilter) = SubfilterItemPersistent.getApplyData(subfiltersItemPersistent: subfiltersItemsDB)
             self.applyLogic.setup(subfiltersByItem_: subfiltersByItem)
             self.applyLogic.setup(itemsBySubfilter_: itemsBySubfilter)
         }
-        if let priceByItemDB = dbLoadPriceByItem(sql: sql) {
+        if let priceByItemDB = dbLoadPriceByItem(sql: sql, moc) {
             let priceByItem = PriceByItemPersistent.getPriceByItem(priceByItemPersistent: priceByItemDB)
             self.applyLogic.setup(priceByItemId_: priceByItem)
         }
     }
     
     
-    internal func dbLoadFilter(sql: String) -> [FilterPersistent]? {
+    internal func dbLoadFilter(sql: String, _ moc_ : NSManagedObjectContext? = nil) -> [FilterPersistent]? {
         
+        let moc = getMoc(moc_)
         var db: [FilterPersistent]?
         let request: NSFetchRequest<FilterPersistent> = FilterPersistent.fetchRequest()
         request.includesPendingChanges = false
         request.predicate = NSPredicate(format: sql)
         do {
-            db = try appDelegate.moc.fetch(request)
+            db = try moc.fetch(request)
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }

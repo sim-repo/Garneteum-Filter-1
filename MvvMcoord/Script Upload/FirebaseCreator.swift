@@ -182,6 +182,27 @@ class FirebaseCreator {
                       filters: [.size, .season , .material , .delivery, .decorElements, .pocketType, .sleeveType, .trouserModelPantsCut, .clasp])
     }
     
+    func ЖенскиеФутболки() {
+        uploadFilters(categoryId: 01010201,
+                      totalItems: 2000,
+                      minPrice: 400,
+                      maxPrice: 5300,
+                      biege: 0,
+                      white: 0,
+                      blue: 500,
+                      yellow: 0,
+                      green: 500,
+                      brown: 0,
+                      red: 0,
+                      orange: 500,
+                      pink: 500,
+                      gray: 0,
+                      darkblue: 0,
+                      violet: 0,
+                      black: 0,
+                      filters: [.size, .season , .material , .delivery, .neckline, .decorElements])
+    }
+    
     func run(){
         uploadCrossFilters()
         lastFilterId = ft.getFirstFilterId()
@@ -191,6 +212,8 @@ class FirebaseCreator {
         print("ЖенскиеБрюки OK")
         ЖенскиеРубашки()
         print("ЖенскиеРубашки OK")
+        ЖенскиеФутболки()
+        print("ЖенскиеФутболки OK")
     }
 }
 

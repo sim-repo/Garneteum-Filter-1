@@ -97,7 +97,7 @@ extension DataService {
     }
     
     
-    
+    //MARK: -NetRequest
     internal func crossNetLoad(filterId: FilterId){
         let completion: (([FilterModel]?, [SubfilterModel]?, NetError?) -> Void)? = { [weak self] (filters, subfilters, err) in
             guard let error = err
@@ -106,15 +106,16 @@ extension DataService {
                     return
             }
             self?.fireNetError(netError: error)
+            self?.fixNetError(netError: error)
         }
         networkService.reqLoadCrossFilters(filterId: filterId, completion: completion)
     }
     
     
-    
+    //MARK: -Save
     internal func crossSave(filterId: FilterId, filters: [FilterModel]?, subfilters: [SubfilterModel]?) {
 
-        print("crossSave")
+        print("SAVE: cross filters")
         
         guard let _filters = filters,
             let _subfilters = subfilters

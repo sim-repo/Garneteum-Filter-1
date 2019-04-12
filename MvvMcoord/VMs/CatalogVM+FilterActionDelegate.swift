@@ -36,6 +36,8 @@ protocol FilterActionDelegate : class {
     func refreshFromSubfilter()
     func refreshFromFilter()
     func prefetchItemAt(indexPaths: [IndexPath])
+    func fixEmitStart()
+    func fixGetCriticalError() -> PublishSubject<Void>
 }
 
 
@@ -50,13 +52,13 @@ extension CatalogVM : FilterActionDelegate {
     
     func requestFilters(categoryId: CategoryId) {
         if filters.count == 0 {
-            wait().onNext((.enterFilter, true, defWaitDelay))
+            wait().onNext((.enterFilter, true, defDelayBeforeWaitShownInSec))
         }
         midAppliedSubFilters = appliedSubFilters // crytical! зависит работа applySubfilter
     }
     
     func requestSubFilters(filterId: FilterId) {
-        wait().onNext((.enterSubFilter, true, defWaitDelay))
+        wait().onNext((.enterSubFilter, true, defDelayBeforeWaitShownInSec))
         currEnteredFilterId = filterId
         showCleanSubFilterVC(filterId: filterId)
         DispatchQueue.global(qos: .userInitiated).async {[weak self] in
@@ -143,22 +145,13 @@ extension CatalogVM : FilterActionDelegate {
         return outBackEvent
     }
     
-    func prefetchItemAt(indexPaths: [IndexPath]) {
-        
-        
-        let models = indexPaths.compactMap({self.catalog(at: $0.row)})
-        for model in models {
-            if model.imageView == nil {
-                model.imageView = UIImageView()
-                model.imageView?.kf.setImage(with: URL(string: getCatalogImage(picName: "1010403_orange_0")),
-                                             placeholder: nil,
-                                             options: [],
-                                             progressBlock: nil,
-                                             completionHandler: nil)
-            }
-        }
+    func fixEmitStart() {
+        emitStartEvent()
     }
     
+    func fixGetCriticalError() -> PublishSubject<Void> {
+        return outCriticalError
+    }
     
     func getRangePrice() -> (MinPrice, MaxPrice, MinPrice, MaxPrice) {
         return rangePrice.getRangePrice()
@@ -263,7 +256,7 @@ extension CatalogVM : FilterActionDelegate {
 
                 self.resetFetch() // added
                 self.unapplying.removeAll()
-                self.wait().onNext((.applyFilter, true, self.defWaitDelay))
+                self.wait().onNext((.applyFilter, true, defDelayBeforeWaitShownInSec))
                 self.back().onNext(.closeFilter)
 
                 DispatchQueue.global(qos: .background).async {
@@ -289,7 +282,7 @@ extension CatalogVM : FilterActionDelegate {
                 self.back().onNext(.closeSubFilter)
                 self.canApplyFromSubfilter = false
                 let midApplying = self.midAppliedSubFilters.subtracting(self.unapplying)
-                self.wait().onNext((.applySubFilter, true, self.defWaitDelay))
+                self.wait().onNext((.applySubFilter, true, defDelayBeforeWaitShownInSec))
                 self.unapplying.removeAll()
                 self.cleanupFilterVC()
                 DispatchQueue.global(qos: .background).async {
@@ -317,7 +310,7 @@ extension CatalogVM : FilterActionDelegate {
         removeFilterEvent()
             .subscribe(onNext: {[weak self] filterId in
                 if let `self` = self {
-                    self.wait().onNext((.removeFilter, true, self.defWaitDelay))
+                    self.wait().onNext((.removeFilter, true, defDelayBeforeWaitShownInSec))
                     let midApplying = self.midAppliedSubFilters
                     self.unapplying.removeAll()
                     getDataService().reqRemoveFilter(categoryId: self.categoryId,
@@ -373,12 +366,11 @@ extension CatalogVM : FilterActionDelegate {
             .subscribe(onNext: {[weak self] err in
                 guard let `self` = self else { return }
                 switch err {
-                    case .prefetch_ServerRetError:
+                case .prefetch_ServerRetError, .prefetch_ServerRetEmpty:
                             self.isPrefetchInProgress = false
-                            self.wait().onNext((.prefetchCatalog, false, self.defWaitDelay))
+                            self.wait().onNext((.prefetchCatalog, false, defDelayBeforeWaitShownInSec))
                     return
                     case .catalogStart_ServerRetError: break
-                    case .prefetch_ServerRetEmpty: break
                     case .catalogStart_ServerRetEmpty: break
                     case .categoryApply_ServerRetError: break
                     case .categoryApply_ServerRetEmpty: break
@@ -423,6 +415,16 @@ extension CatalogVM : FilterActionDelegate {
             .disposed(by: bag)
 
 
+        getDataService().getCriticalNetError()
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: {[weak self] err in
+                guard let `self` = self else { return }
+                self.fixGetCriticalError().onNext(Void())
+                
+            })
+            .disposed(by: bag)
+
+        
 
         getDataService().getEnterSubFilterEvent()
             .observeOn(MainScheduler.asyncInstance)

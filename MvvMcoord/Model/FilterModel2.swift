@@ -82,7 +82,7 @@ public class SubfilterModel : ModelProtocol {
             self.title = json["title"].stringValue
             self.enabled = json["enabled"].boolValue
             self.sectionHeader = json["sectionHeader"].stringValue
-            FilterApplyLogic.shared.addSubF(id: id, subFilter: self)
+            //FilterApplyLogic.shared.addSubF(id: id, subFilter: self)
         }
     }
 }

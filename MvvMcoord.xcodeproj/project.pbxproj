@@ -89,13 +89,15 @@
 		163BB46522482B7F0073526A /* PriceByItemPersistent+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163BB46322482B7F0073526A /* PriceByItemPersistent+CoreDataProperties.swift */; };
 		167F2F2F222982BD006D1E1B /* TemporaryGlobalCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167F2F2E222982BD006D1E1B /* TemporaryGlobalCache.swift */; };
 		16A7F3152222A64900047077 /* RangePrice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A7F3142222A64900047077 /* RangePrice.swift */; };
-		16BD068F225E2A0F006C33A4 /* TimeoutPolicies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BD068E225E2A0F006C33A4 /* TimeoutPolicies.swift */; };
+		16BD068F225E2A0F006C33A4 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BD068E225E2A0F006C33A4 /* AppConfig.swift */; };
+		16BD0691225F340E006C33A4 /* DataService+EmergencyMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BD0690225F340E006C33A4 /* DataService+EmergencyMode.swift */; };
 		16BEFA1C224112F500226CD9 /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BEFA1B224112F500226CD9 /* DataService.swift */; };
 		16C6CC6821DFF8BB00F535D0 /* CatalogSquareCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C6CC6721DFF8BB00F535D0 /* CatalogSquareCell.swift */; };
 		16C6CC6A21DFF8CA00F535D0 /* CatalogSquaresCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C6CC6921DFF8CA00F535D0 /* CatalogSquaresCell.swift */; };
 		16C6CC6C21E0026000F535D0 /* Formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C6CC6B21E0026000F535D0 /* Formatter.swift */; };
 		16D58B1021EC724C0025FE15 /* ApplyButton.xib in Resources */ = {isa = PBXBuildFile; fileRef = 16D58B0F21EC724C0025FE15 /* ApplyButton.xib */; };
 		16D58B1221EC725C0025FE15 /* ApplyButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D58B1121EC725C0025FE15 /* ApplyButton.swift */; };
+		16F15DD92260B4A700BC744F /* CatalogVM+Prefetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F15DD82260B4A700BC744F /* CatalogVM+Prefetch.swift */; };
 		4E4A586EF74EBEF14CD71FD2 /* Pods_MvvMcoordTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD693E6BF8BF30274F3558D /* Pods_MvvMcoordTests.framework */; };
 		70782BD21052B1ABA3D97A10 /* Pods_MvvMcoord.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 779FB9AB84C24DE60C170F72 /* Pods_MvvMcoord.framework */; };
 		E46024F98AF1328917E19885 /* Pods_MvvMcoordUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A6BE15C70736BD0B9A932C5 /* Pods_MvvMcoordUITests.framework */; };
@@ -208,13 +210,15 @@
 		163BB46322482B7F0073526A /* PriceByItemPersistent+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PriceByItemPersistent+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		167F2F2E222982BD006D1E1B /* TemporaryGlobalCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryGlobalCache.swift; sourceTree = "<group>"; };
 		16A7F3142222A64900047077 /* RangePrice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RangePrice.swift; sourceTree = "<group>"; };
-		16BD068E225E2A0F006C33A4 /* TimeoutPolicies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeoutPolicies.swift; sourceTree = "<group>"; };
+		16BD068E225E2A0F006C33A4 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
+		16BD0690225F340E006C33A4 /* DataService+EmergencyMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataService+EmergencyMode.swift"; sourceTree = "<group>"; };
 		16BEFA1B224112F500226CD9 /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
 		16C6CC6721DFF8BB00F535D0 /* CatalogSquareCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogSquareCell.swift; sourceTree = "<group>"; };
 		16C6CC6921DFF8CA00F535D0 /* CatalogSquaresCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogSquaresCell.swift; sourceTree = "<group>"; };
 		16C6CC6B21E0026000F535D0 /* Formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatter.swift; sourceTree = "<group>"; };
 		16D58B0F21EC724C0025FE15 /* ApplyButton.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ApplyButton.xib; sourceTree = "<group>"; };
 		16D58B1121EC725C0025FE15 /* ApplyButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplyButton.swift; sourceTree = "<group>"; };
+		16F15DD82260B4A700BC744F /* CatalogVM+Prefetch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CatalogVM+Prefetch.swift"; sourceTree = "<group>"; };
 		2A43DB55ABB791B22B7E0169 /* Pods-MvvMcoordTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MvvMcoordTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MvvMcoordTests/Pods-MvvMcoordTests.debug.xcconfig"; sourceTree = "<group>"; };
 		779FB9AB84C24DE60C170F72 /* Pods_MvvMcoord.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MvvMcoord.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F9AC623B130BF588B5C8453 /* Pods-MvvMcoordUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MvvMcoordUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MvvMcoordUITests/Pods-MvvMcoordUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -369,7 +373,7 @@
 				1616B9AC22255C280022A0AD /* Common.swift */,
 				167F2F2E222982BD006D1E1B /* TemporaryGlobalCache.swift */,
 				163BB44F22481DFA0073526A /* FilterCoreData.xcdatamodeld */,
-				16BD068E225E2A0F006C33A4 /* TimeoutPolicies.swift */,
+				16BD068E225E2A0F006C33A4 /* AppConfig.swift */,
 			);
 			path = MvvMcoord;
 			sourceTree = "<group>";
@@ -404,6 +408,7 @@
 				1609261C21E0EB0400650707 /* BaseVM.swift */,
 				161AC8B121DBBBED0078F020 /* CategoryVM.swift */,
 				1615B26D21DCF9EC00E84801 /* CatalogVM.swift */,
+				16F15DD82260B4A700BC744F /* CatalogVM+Prefetch.swift */,
 				1614E69922197F7A00BBF936 /* CatalogVM+FilterActionDelegate.swift */,
 				1617B56921E34BBF00FFE2DA /* FilterVM.swift */,
 				1617B57621E3F20000FFE2DA /* SubFilterVM.swift */,
@@ -549,6 +554,7 @@
 				16157D9B224925D1008FD683 /* DataService+ApplyLogic.swift */,
 				16140FC4224A05C1003E20BD /* DataService+Catalog.swift */,
 				16140FD2224A42D9003E20BD /* DataService+Prefetch.swift */,
+				16BD0690225F340E006C33A4 /* DataService+EmergencyMode.swift */,
 			);
 			path = "Data Service";
 			sourceTree = "<group>";
@@ -919,6 +925,7 @@
 				162EDC8D22422E9200984EFE /* FilterPersistent+CoreDataProperties.swift in Sources */,
 				163BB45122481DFA0073526A /* FilterCoreData.xcdatamodeld in Sources */,
 				1617B57521E3F1A200FFE2DA /* SubFilterSelectCell.swift in Sources */,
+				16F15DD92260B4A700BC744F /* CatalogVM+Prefetch.swift in Sources */,
 				16140FC8224A09BE003E20BD /* CategoriesPersistent+CoreDataClass.swift in Sources */,
 				16140FC5224A05C1003E20BD /* DataService+Catalog.swift in Sources */,
 				161C8BB1224392ED002B9FD3 /* NewUidPersistent+CoreDataClass.swift in Sources */,
@@ -931,7 +938,7 @@
 				16C6CC6821DFF8BB00F535D0 /* CatalogSquareCell.swift in Sources */,
 				1611909221DE231400E3CB93 /* DiscountLabel.swift in Sources */,
 				16140FC9224A09BE003E20BD /* CategoriesPersistent+CoreDataProperties.swift in Sources */,
-				16BD068F225E2A0F006C33A4 /* TimeoutPolicies.swift in Sources */,
+				16BD068F225E2A0F006C33A4 /* AppConfig.swift in Sources */,
 				163BB44B22481A360073526A /* DataService+CategoryApplyData.swift in Sources */,
 				16140FD3224A42D9003E20BD /* DataService+Prefetch.swift in Sources */,
 				1618DDFB221EC78600E96EDC /* PriceApply.swift in Sources */,
@@ -970,6 +977,7 @@
 				167F2F2F222982BD006D1E1B /* TemporaryGlobalCache.swift in Sources */,
 				16115C96222437C80081AFBF /* NetworkFacadeProtocol.swift in Sources */,
 				16187B172226723C00000FDB /* FilterApplyLogic.swift in Sources */,
+				16BD0691225F340E006C33A4 /* DataService+EmergencyMode.swift in Sources */,
 				161D84CB220A5572008D74F0 /* UploadModel.swift in Sources */,
 				16BEFA1C224112F500226CD9 /* DataService.swift in Sources */,
 				1617B56821E34B5400FFE2DA /* FilterVC.swift in Sources */,

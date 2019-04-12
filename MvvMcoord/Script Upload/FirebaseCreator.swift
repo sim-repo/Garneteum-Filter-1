@@ -77,141 +77,111 @@ class FirebaseCreator {
     
     
     func ЖенскиеПовседневныеПлатья() {
+        let count = 250
+        let sum = count * 13
         uploadFilters(categoryId: 01010101,
-                      totalItems: 6006,
+                      totalItems: sum,
                       minPrice: 1000,
                       maxPrice: 25000,
-                      biege: 462,
-                      white: 462,
-                      blue: 462,
-                      yellow: 462,
-                      green: 462,
-                      brown: 462,
-                      red: 462,
-                      orange: 462,
-                      pink: 462,
-                      gray: 462,
-                      darkblue: 462,
-                      violet: 462,
-                      black: 462,
+                      biege: count,
+                      white: count,
+                      blue: count,
+                      yellow: count,
+                      green: count,
+                      brown: count,
+                      red: count,
+                      orange: count,
+                      pink: count,
+                      gray: count,
+                      darkblue: count,
+                      violet: count,
+                      black: count,
                       filters: [.size, .season , .material , .delivery, .clasp, .neckline, .decorElements, .dressStructuralElements, .sleeveType]
                       )
-//
-//        uploadFilters(categoryId: 01010101,
-//                      totalItems: 52,
-//                      minPrice: 1000,
-//                      maxPrice: 25000,
-//                      biege: 4,
-//                      white: 4,
-//                      blue: 4,
-//                      yellow: 4,
-//                      green: 4,
-//                      brown: 4,
-//                      red: 4,
-//                      orange: 4,
-//                      pink: 4,
-//                      gray: 4,
-//                      darkblue: 4,
-//                      violet: 4,
-//                      black: 4,
-//                      filters: [.season]
-//        )
     }
     
     
     func ЖенскиеБрюки() {
-//        uploadFilters(categoryId: 01010604,
-//                      totalItems: 14,
-//                      minPrice: 800,
-//                      maxPrice: 7700,
-//                      biege: 1,
-//                      white: 1,
-//                      blue: 1,
-//                      yellow: 1,
-//                      green: 1,
-//                      brown: 1,
-//                      red: 1,
-//                      orange: 1,
-//                      pink: 1,
-//                      gray: 1,
-//                      darkblue: 1,
-//                      violet: 1,
-//                      black: 2,
-//                      filters: [.size, .season , .material , .delivery])
-
-     
+        let count = 230
+        let sum = count * 13
         uploadFilters(categoryId: 01010604,
-                      totalItems: 153,
+                      totalItems: sum,
                       minPrice: 800,
                       maxPrice: 7700,
-                      biege: 14,
-                      white: 9,
-                      blue: 26,
-                      yellow: 19,
-                      green: 9,
-                      brown: 17,
-                      red: 10,
-                      orange: 9,
-                      pink: 8,
-                      gray: 9,
-                      darkblue: 8,
-                      violet: 9,
-                      black: 6,
+                      biege: count,
+                      white: count,
+                      blue: count,
+                      yellow: count,
+                      green: count,
+                      brown: count,
+                      red: count,
+                      orange: count,
+                      pink: count,
+                      gray: count,
+                      darkblue: count,
+                      violet: count,
+                      black: count,
                       filters: [.size, .season , .material , .delivery, .clasp, .trouserModel, .decorElements, .pocketType, .warmer, .trouserModelPantsCut, .fitType])
     }
     
     
     func ЖенскиеРубашки() {
+        let count = 330
+        let sum = count * 13
         uploadFilters(categoryId: 01010403,
-                      totalItems: 59,
+                      totalItems: sum,
                       minPrice: 400,
                       maxPrice: 2200,
-                      biege: 14,
-                      white: 9,
-                      blue: 8,
-                      yellow: 7,
-                      green: 4,
-                      brown: 6,
-                      red: 6,
-                      orange: 5,
-                      pink: 0,
-                      gray: 0,
-                      darkblue: 0,
-                      violet: 0,
-                      black: 0,
+                      biege: count,
+                      white: count,
+                      blue: count,
+                      yellow: count,
+                      green: count,
+                      brown: count,
+                      red: count,
+                      orange: count,
+                      pink: count,
+                      gray:count,
+                      darkblue: count,
+                      violet: count,
+                      black: count,
                       filters: [.size, .season , .material , .delivery, .decorElements, .pocketType, .sleeveType, .trouserModelPantsCut, .clasp])
     }
     
     func ЖенскиеФутболки() {
+        let count = 330
+        let sum = count * 8
         uploadFilters(categoryId: 01010201,
-                      totalItems: 2000,
+                      totalItems: sum,
                       minPrice: 400,
                       maxPrice: 5300,
                       biege: 0,
                       white: 0,
-                      blue: 500,
-                      yellow: 0,
-                      green: 500,
+                      blue: count,
+                      yellow: count,
+                      green: count,
                       brown: 0,
-                      red: 0,
-                      orange: 500,
-                      pink: 500,
-                      gray: 0,
-                      darkblue: 0,
+                      red: count,
+                      orange: count,
+                      pink: count,
+                      gray: count,
+                      darkblue: count,
                       violet: 0,
                       black: 0,
                       filters: [.size, .season , .material , .delivery, .neckline, .decorElements])
     }
     
     func run(){
+       // ft.noUpload = true
         uploadCrossFilters()
         lastFilterId = ft.getFirstFilterId()
-        ЖенскиеПовседневныеПлатья()
-        print("ЖенскиеПовседневныеПлатья OK")
-        ЖенскиеБрюки()
-        print("ЖенскиеБрюки OK")
-        ЖенскиеРубашки()
-        print("ЖенскиеРубашки OK")
+//        ЖенскиеПовседневныеПлатья()
+//        print("ЖенскиеПовседневныеПлатья OK")
+//        ЖенскиеБрюки()
+//        print("ЖенскиеБрюки OK")
+//        ЖенскиеРубашки()
+//        print("ЖенскиеРубашки OK")
+//        ft.noUpload = false
         ЖенскиеФутболки()
         print("ЖенскиеФутболки OK")
     }

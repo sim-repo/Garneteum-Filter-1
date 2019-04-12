@@ -68,6 +68,10 @@ class CatalogVM : BaseVM {
     public var currentPage: Int
     public var totalPages: Int
     public var totalItems: Int
+    public var imgLastPrefetchedIdx: Int = 0
+    
+    
+    
     
     // MARK: --------------unit test properties--------------
     public var unitTestSignalOperationComplete = BehaviorSubject<Int>(value: -1)
@@ -97,9 +101,11 @@ class CatalogVM : BaseVM {
     internal var outMidTotal = PublishSubject<Int>()
     internal var outShowWarning = PublishSubject<Void>()
     internal var outReloadSubFilterVCEvent = PublishSubject<Void>()
+    internal var outCriticalError = PublishSubject<Void>()
     
     internal var operationQueues: [Int: OperationQueue] = [:]
-    internal var defWaitDelay = 2
+    
+    internal var indexPathsForPic: [Int:UIImage] = [:]
     
     internal init(categoryId: Int, fetchLimit: Int, totalPages: Int, totalItems: Int){
         self.categoryId = categoryId
@@ -111,7 +117,7 @@ class CatalogVM : BaseVM {
         self.totalPages = totalPages
         super.init()
         addOperation()
-        wait().onNext((.prefetchCatalog, true, defWaitDelay))
+        wait().onNext((.prefetchCatalog, true, defDelayBeforeWaitShownInSec))
         emitStartEvent()
         handlePrefetchEvent()
         handleDelegate()
@@ -207,7 +213,7 @@ class CatalogVM : BaseVM {
     }
 
     
-    private func emitStartEvent(){
+    internal func emitStartEvent(){
         getDataService().screenHandle(dataTaskEnum: .willStartPrefetch, categoryId)
     }
    
@@ -222,23 +228,23 @@ class CatalogVM : BaseVM {
                 self.fullCatalogItemIds = res.1
                 self.setupFetch(itemIds: res.1, fetchLimit: res.2)
                 self.rangePrice.setupRangePrice(minPrice: res.3, maxPrice: res.4)
-                print("handleStartEvent")
                 self.emitPrefetchEvent()
             })
             .disposed(by: bag)
     }
     
     
-    
+    internal func cleanKfMemory() {
+        var appDelegate = UIApplication.shared.delegate as! AppDelegate
+        appDelegate.kfCleanMemoryCache()
+    }
     
     public func emitPrefetchEvent(){
-        print("emitPrefetchEvent")
         guard isPrefetchInProgress == false else {return}
         guard itemIds.count > 0
             else {
                 return
             }
-        
         let nextPage = currentPage + 1
         isPrefetchInProgress = true
         let from =  nextPage * fetchLimit
@@ -250,6 +256,8 @@ class CatalogVM : BaseVM {
                     return
                 }
         currentPage += 1
+        cleanKfMemory()
+        
         let nextItemIds = itemIds[from...to-1]
         getDataService().screenHandle(dataTaskEnum: .willPrefetch, categoryId, Set(nextItemIds))
     }
@@ -267,7 +275,7 @@ class CatalogVM : BaseVM {
             let indexPathsToReload = self.calcIndexPathsToReload(from: res)
             self.outFetchComplete.onNext(indexPathsToReload)
             
-            self.wait().onNext((.prefetchCatalog, false, self.defWaitDelay))
+            self.wait().onNext((.prefetchCatalog, false, defDelayBeforeWaitShownInSec))
             
             self.isPrefetchInProgress = false
         })

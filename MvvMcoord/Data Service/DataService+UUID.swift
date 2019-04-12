@@ -5,7 +5,7 @@ import CoreData
 // MARK: - UUIDS
 extension DataService {
     
-    
+    //MARK: -NetRequest
     internal func loadNewUIDs(){
         let completion: (([UidModel], NetError?) -> Void)? = { [weak self] (uids, err) in
             guard let error = err
@@ -14,24 +14,27 @@ extension DataService {
                     return
             }
             self?.fireNetError(netError: error)
+            self?.fixNetError(netError: error)
         }
         networkService.reqLoadUIDs(completion: completion)
     }
     
     
-    
+    //MARK: -Save
     internal func saveNewUIDs(_ uids: [UidModel]?) {
+        print("SAVE: new uid")
         
         guard let _uids = uids
             else { return }
         
         let moc = getMoc()
-        self.dbDeleteData("NewUidPersistent", moc)
         moc.performAndWait {
+            self.dbDeleteData("NewUidPersistent", moc)
+        
             var uidsDB = [NewUidPersistent]()
             for element in _uids {
-               // let uidDB = NewUidPersistent(entity: NewUidPersistent.entity(), insertInto: self.appDelegate.moc)
-                let uidDB = NSEntityDescription.insertNewObject(forEntityName: "NewUidPersistent", into: moc) as! NewUidPersistent
+                let uidDB = NewUidPersistent(entity: NewUidPersistent.entity(), insertInto: moc)
+                //let uidDB = NSEntityDescription.insertNewObject(forEntityName: "NewUidPersistent", into: moc) as! NewUidPersistent
 
                 uidDB.setup(uidModel: element)
                 uidsDB.append(uidDB)
@@ -44,12 +47,13 @@ extension DataService {
     
     
     internal func saveLastUIDs(_ newUids: [NewUidPersistent], _ moc_ : NSManagedObjectContext? = nil) {
-
+        
         guard newUids.count > 0
             else {
                 self.emitCrossFilters(moc_)
                 return
             }
+        print("SAVE: last uid")
         
         let moc = getMoc(moc_)
         
@@ -143,5 +147,6 @@ extension DataService {
         }
         return uidDB
     }
+    
 }
 

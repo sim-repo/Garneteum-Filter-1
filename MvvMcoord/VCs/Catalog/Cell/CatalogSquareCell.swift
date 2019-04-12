@@ -17,6 +17,7 @@ class CatalogSquareCell : UICollectionViewCell{
         if let `model` = model {
             
             let gsReference = storage.reference(forURL: "gs://filterproject2.appspot.com/\(model.thumbnail).jpg")
+            
             imageView.image = UIImage(named: "no-images")
             gsReference.getData(maxSize: 1 * 640 * 360) {[weak self] data, error in
                 if let error = error {

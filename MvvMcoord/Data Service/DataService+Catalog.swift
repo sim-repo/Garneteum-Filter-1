@@ -7,9 +7,10 @@ import CoreData
 // MARK: - CATALOG 
 extension DataService {
     
-    internal func doEmitCatalogStart(_ categoryId: CategoryId){
+    //MARK: -NetRequest
+    internal func doEmitCatalogStart(_ categoryId: CategoryId, _ moc_: NSManagedObjectContext? = nil){
         
-        let moc = getMoc()
+        let moc = getMoc(moc_)
         
         let res1_ = dbLoadEntity(categoryId, CategoriesPersistent.self, "CategoriesPersistent", 1, moc)
         let res2_ = dbLoadEntity(categoryId, CategoryItemIdsPersistent.self, "CategoryItemIdsPersistent", 0, moc)
@@ -25,6 +26,7 @@ extension DataService {
                             return
                     }
                     self?.fireNetError(netError: error)
+                    self?.fixNetError(netError: error, categoryId)
                 }
                 networkService.reqCatalogStart(categoryId: categoryId, completion: completion)
                 return
@@ -62,13 +64,15 @@ extension DataService {
     }
     
     
-    
     func getCatalogTotalEvent() -> BehaviorSubject<(CategoryId, ItemIds, Int, MinPrice, MaxPrice)> {
         return outCatalogTotal
     }
     
-    
+    //MARK: -Save
     internal func dbSaveCatalog(_ categoryId: CategoryId, _ fetchLimit: Int, _ itemIds: ItemIds, _ minPrice: Int, _ maxPrice: Int) {
+        
+        
+        print("SAVE: catalog")
         
         let moc = getMoc()
 
@@ -125,6 +129,7 @@ extension DataService {
     }
     
     
+  
     
     internal func dbDeleteEntity<T: NSManagedObject>(_ categoryId: CategoryId,
                                                      clazz: T.Type,
@@ -141,4 +146,5 @@ extension DataService {
         }
         save(moc: moc)
     }
+    
 }

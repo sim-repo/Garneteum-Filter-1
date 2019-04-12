@@ -23,7 +23,6 @@ class FirebaseService : NetworkFacadeBase {
     
     
     private var reqTry: [Int:Int] = [:]
-    private let limitTry = 3
 
     
     private func showTime() -> String{
@@ -48,18 +47,9 @@ class FirebaseService : NetworkFacadeBase {
             reqTry[taskId] = 1
         }
         
-        let period = delay == 0 ? 2 : delay
-        
-        if error.domain == FunctionsErrorDomain {
-            let code = FunctionsErrorCode(rawValue: error.code)
-            let message = error.localizedDescription
-            let details = error.userInfo[FunctionsErrorDetailsKey]
-            
-          //  if code == FunctionsErrorCode.resourceExhausted {
-            DispatchQueue.global().asyncAfter(deadline: .now() + .seconds(period), qos: .background) {
+        let period = delay == 0 ? defDelayBeforeRerunTask : delay
+        DispatchQueue.global().asyncAfter(deadline: .now() + .seconds(period), qos: .background) {
                 task?()
-            }
-            print("error:\(String(describing: code)) : \(message) : \(String(describing: details))")
         }
     }
     
@@ -104,7 +94,7 @@ class FirebaseService : NetworkFacadeBase {
         if let err = error as NSError? {
             print(err)
             let cnt = self.reqTry[taskIdx] ?? 0
-            if cnt < self.limitTry,
+            if cnt < netRequestLimitRerunTask,
                 let completion = self.activeTasks[taskIdx] {
                 self.reRunTask(task: completion, taskId: taskIdx, error: err)
                 return (.rerunAfterError, nil, cnt)
@@ -130,6 +120,9 @@ extension FirebaseService  {
     
     
     private func runCheckUUIDS(taskCode: Int, taskIdx: Int, completion: (([UidModel], NetError?)->Void)?) {
+        
+        print("NETWORK: runCheckUUIDS")
+        
         
         let completion = {
             functions.httpsCallable("meta").call(["method":"getUIDs"]) { [weak self] (result, error) in
@@ -171,7 +164,8 @@ extension FirebaseService  {
     
     
     private func runCrossFilters(taskCode: Int, taskIdx: Int, filterId: Int, completion: (([FilterModel],[SubfilterModel], NetError?)->Void)? ) {
-        print("filterID \(filterId)")
+        
+        print("NETWORK: runCrossFilters")
        
         let completion = {
             functions.httpsCallable("meta").call(["useCache":true, "filterId": filterId,  "method":"getCrossChunk4"]) { [weak self] (result, error) in
@@ -223,6 +217,8 @@ extension FirebaseService  {
     
     private func runCategoryFilters(taskCode: Int, taskIdx: Int, categoryId: CategoryId, completion: (([FilterModel], [SubfilterModel], NetError?)->Void)? ){
         
+        print("NETWORK: runCategoryFilters")
+        
         let completion = {
             functions.httpsCallable("meta").call(["useCache":true,
                                                   "categoryId": categoryId,
@@ -270,6 +266,9 @@ extension FirebaseService  {
     
     
     private func runCategoryApply(taskCode: Int, taskIdx: Int, categoryId: CategoryId, completion: ((SubfiltersByItem?, PriceByItemId?, NetError?)->Void)? ){
+        
+        print("NETWORK: runCategoryApply")
+        
         
         let completion = {
             functions.httpsCallable("meta").call(["useCache":true,
@@ -320,6 +319,7 @@ extension FirebaseService  {
     
     
    func runCatalogStart(taskCode: Int, taskIdx: Int, categoryId: CategoryId, completion: ((CategoryId, Int, ItemIds, Int, Int, NetError?)->Void)? ) {
+        print("NETWORK: runCatalogStart")
     
         let completion = {
             functions.httpsCallable("meta").call(["useCache":true,
@@ -372,9 +372,7 @@ extension FirebaseService  {
     
     
     func runPrefetch(taskCode: Int, taskIdx: Int, itemIds: ItemIds, _ completion: (([CatalogModel1], NetError?)->Void)? , _ midCompletion: ((NetError, Int)->Void)?) {
-        print("prefetch")
-        
-        
+        print("NETWORK: prefetch")
         let completion = {
             functions.httpsCallable("meta").call(["useCache": true,
                                                   "itemsIds": itemIds,

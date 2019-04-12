@@ -28,6 +28,8 @@ class NetworkFacadeBase: NetworkFacadeProtocol {
         setupOperationQueue()
     }
     
+    var test = 0
+    
     internal var outNetworkError = PublishSubject<FilterActionEnum>()
 
     internal var operationQueuesDict: [Int: OperationQueue] = [:]

@@ -35,9 +35,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func setupKingfisher(){
         
         let downloader = KingfisherManager.shared.downloader
-        downloader.downloadTimeout = 5 // Download process will timeout after 5 seconds. Default is 15.
+        downloader.downloadTimeout = 15 // Download process will timeout after 5 seconds. Default is 15.
         
         let cache = KingfisherManager.shared.cache
+        
+        ImageCache.default.maxMemoryCost = 1024 * 1024 * 30
+        
         
         // Set max disk cache to 50 mb. Default is no limit.
         cache.maxDiskCacheSize = 50 * 1024 * 1024

@@ -14,7 +14,7 @@ public class CatalogModel  {
     let oldPrice: NSMutableAttributedString
     let votes: Int
     let discount: Int
-    var imageView: UIImageView?
+    var thumbnailURL: String?
     
     init(id: Int, categoryId: CategoryId, name: String, thumbnail: String, stars: Int, newPrice: NSNumber, oldPrice: NSNumber, votes: Int, discount: Int) {
         self.id = id
@@ -26,7 +26,7 @@ public class CatalogModel  {
         self.oldPrice = Formatter.strikePriceFormat(price: oldPrice, localeIdentifier: "ru_RU")!
         self.votes = votes
         self.discount = discount
-       // downloadImage()
+        getThumbnailURL()
     }
     
     convenience init(catalogModel1: CatalogModel1) {
@@ -54,22 +54,22 @@ public class CatalogModel  {
             self.newPrice =  Formatter.priceFormat(price: NSNumber(value: json["newPrice"].intValue), localeIdentifier: "ru_RU")!
             self.oldPrice = Formatter.strikePriceFormat(price: NSNumber(value: json["oldPrice"].intValue), localeIdentifier: "ru_RU")!
             self.discount = json["discount"].intValue
-          //  downloadImage()
+            getThumbnailURL()
     }
 
-//
-//    private func downloadImage(){
-//        let gsReference = storage.reference(forURL: "gs://filterproject2.appspot.com/\(self.thumbnail).jpg")
-//      //  image = UIImage(named: "no-images")
-//        gsReference.getData(maxSize: 1 * 320 * 240) {[weak self] data, error in
-//            if let error = error {
-//                print("Storage: \(error.localizedDescription)")
-//            } else {
-//                self?.image = UIImage(data: data!)
-//            }
-//        }
-//    }
-    
+
+    private func getThumbnailURL(){
+        storage.reference(forURL: getCatalogImage(picName: thumbnail)).downloadURL(completion: {[weak self] (url, error) in
+            if let err = error {
+              //  print("getThumbnailURL: \(err.localizedDescription)")
+            }
+            guard let url = url else {
+                return
+            }
+            self?.thumbnailURL = url.absoluteString
+        })
+    }
+
     
     static func localTitle(categoryId: Int)->Observable<String> {
         guard

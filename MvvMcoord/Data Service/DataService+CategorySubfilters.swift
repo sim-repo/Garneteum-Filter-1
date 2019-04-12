@@ -40,7 +40,7 @@ extension DataService {
     }
     
     
-    
+    //MARK: -NetRequest
     internal func categoryNetLoad(categoryId: FilterId){
         
         let completion: (([FilterModel]?, [SubfilterModel]?, NetError?) -> Void)? = { [weak self] (filters, subfilters, err) in
@@ -50,6 +50,7 @@ extension DataService {
                     return
             }
             self?.fireNetError(netError: error)
+            self?.fixNetError(netError: error, categoryId)
         }
         
         networkService.reqLoadCategoryFilters(categoryId: categoryId, completion: completion)
@@ -67,12 +68,15 @@ extension DataService {
     }
     
     
-    
+    //MARK: -Save
     internal func categorySave(categoryId: CategoryId, filters: [FilterModel]?, subfilters: [SubfilterModel]?) {
         
         guard let _filters = filters,
             let _subfilters = subfilters
             else { return }
+        
+        print("SAVE: category filters")
+        
         
         applyLogic.setup(subFilters_: _subfilters)
         applyLogic.setup(filters_: filters)

@@ -87,7 +87,7 @@ extension Array {
 }
 
 public func getCatalogImage(picName: String)->String {
-    return "https://github.com/sim-repo/catalog/blob/master/\(picName).jpg?raw=true"
+    return "gs://filterproject2.appspot.com/\(picName).jpg"
 }
 
 

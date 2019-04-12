@@ -7,7 +7,7 @@ import Kingfisher
 // MARK: - CATALOG
 extension DataService {
     
-    
+    //MARK: -NetRequest
     internal func doEmitPrefetch(categoryId: CategoryId, itemIds: Set<Int>){
         
         let moc = getMoc()
@@ -24,6 +24,7 @@ extension DataService {
                             return
                     }
                     self?.fireNetError(netError: error)
+                    self?.fixNetError(netError: error, categoryId)
                 }
                 
                 let midCompletion: ((NetError, Int)->Void)? = { [weak self] err, cnt in
@@ -74,8 +75,12 @@ extension DataService {
     
 
     
-    
+    //MARK: -Save
     internal func dbSavePrefetch(_ categoryId: CategoryId, _ netItems: [CatalogModel1], _ dbFoundItems: [CatalogModel]){
+        
+        print("SAVE: pefetch")
+        
+        
         var res = netItems.compactMap({CatalogModel(catalogModel1: $0)})
         res.append(contentsOf: dbFoundItems)
         firePrefetch(res)
@@ -113,4 +118,7 @@ extension DataService {
         }
         return db
     }
+    
+    
+
 }

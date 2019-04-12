@@ -32,6 +32,7 @@ protocol DataFacadeProtocol {
     
     func getCatalogTotalEvent() -> BehaviorSubject<(CategoryId, ItemIds, Int, MinPrice, MaxPrice)>
     func getPrefetchEvent() -> PublishSubject<[CatalogModel]>
+    func getCriticalNetError() -> PublishSubject<NetError>
     func getNetError() -> PublishSubject<NetError>
     func getMidNetError() -> PublishSubject<(NetError,Int)>
     func resetBehaviorSubjects()
@@ -46,6 +47,9 @@ class DataService: DataFacadeProtocol {
     }
     
     public static var shared = DataService()
+    
+    internal var errorCount = 0
+    
     
     internal var operationQueues: [Int: OperationQueue] = [:]
    
@@ -68,6 +72,8 @@ class DataService: DataFacadeProtocol {
     internal var outCatalogTotal = BehaviorSubject<(CategoryId, ItemIds, Int, MinPrice, MaxPrice)>(value: (0,[],20, 0, 0))
     internal var outNetError = PublishSubject<NetError>()
     internal var outMidNetError = PublishSubject<(NetError, Int)>()
+    internal var outCriticalNetError = PublishSubject<NetError>()
+    
     internal let networkService = getNetworkService()
     
     
@@ -183,6 +189,10 @@ class DataService: DataFacadeProtocol {
         return outMidNetError
     }
     
+    func getCriticalNetError() -> PublishSubject<(NetError)> {
+        return outCriticalNetError
+    }
+    
     func getFilters() -> BehaviorSubject<[FilterModel]> {
         return outFilters
     }
@@ -213,6 +223,8 @@ class DataService: DataFacadeProtocol {
     internal func fireMidNetError(netError: NetError, trying: Int){
         getMidNetError().onNext((netError, trying))
     }
+    
+
     
     func reqEnterSubFilter(filterId: FilterId, applied: Applied, rangePrice: RangePrice) {
         

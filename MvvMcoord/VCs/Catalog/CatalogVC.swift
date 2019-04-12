@@ -43,6 +43,7 @@ class CatalogVC: UIViewController {
         handleFetchCompleteEvent()
         bindNavigation()
         bindLayout()
+        bindCriticalError()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -149,8 +150,16 @@ class CatalogVC: UIViewController {
                 self.collectionView.reloadData()
             })
             .disposed(by: bag)
+        
     }
     
+    private func bindCriticalError() {
+        viewModel.fixGetCriticalError()
+        .subscribe(onNext: {[weak self] _ in
+            self?.showAlert(text: "Сетевая ошибка. Пожалуйста, попробуйте выйти и заново зайти в раздел каталога.")
+        })
+        .disposed(by: bag)
+    }
     
     public func bindNavigation() {
         viewModel.outCloseVC
@@ -168,15 +177,14 @@ class CatalogVC: UIViewController {
 extension CatalogVC: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        print("itemCOUNT: \(itemCount)")
-        return itemCount //viewModel.totalItems
+        return itemCount
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell: UICollectionViewCell!
         
-        if isLoadingCell2(for: indexPath) {
+        if isLoadingCell2(for: indexPath, sinceRow: 50) {
             viewModel.emitPrefetchEvent()
             changeCurrPage()
         }
@@ -186,12 +194,12 @@ extension CatalogVC: UICollectionViewDataSource {
                 let cell1 = collectionView.dequeueReusableCell(withReuseIdentifier: "CatalogCellList", for: indexPath) as! CatalogListCell
                 cell1.tag = indexPath.row
                 if isLoadingCell(for: indexPath) {
-                    cell1.configCell(model: nil, indexPath: indexPath)
+                    cell1.configCell(model: nil, indexPath: indexPath, viewModel: viewModel)
                 } else {
                     if let model = viewModel.catalog(at: indexPath.row) {
-                        cell1.configCell(model: model, indexPath: indexPath)
+                       cell1.configCell(model: model, indexPath: indexPath, viewModel: viewModel)
                     } else {
-                        cell1.configCell(model: nil, indexPath: indexPath)
+                        cell1.configCell(model: nil, indexPath: indexPath, viewModel: viewModel)
                     }
                 }
                 cell = cell1
@@ -225,11 +233,32 @@ extension CatalogVC: UICollectionViewDataSource {
         return cell
     }
     
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+        switch cellLayout {
+        case .list:
+            let cell1 = cell as! CatalogListCell
+            cell1.tag = indexPath.row
+            if let model = viewModel.catalog(at: indexPath.row) {
+                 cell1.willAppear(indexPath: indexPath, viewModel: viewModel)
+            }
+        case .square: break
+           
+        case .squares: break
+        }
+    }
+    
 }
 
 extension CatalogVC: UICollectionViewDataSourcePrefetching {
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         viewModel.prefetchItemAt(indexPaths: indexPaths)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+        print("CANCELLING: \(indexPaths)")
     }
 }
 
@@ -259,11 +288,11 @@ private extension CatalogVC {
     }
     
     
-    func isLoadingCell2(for indexPath: IndexPath) -> Bool {
-        if viewModel.currItemsCount() == 0 {
+    func isLoadingCell2(for indexPath: IndexPath, sinceRow: Int) -> Bool {
+        if viewModel.currItemsCount() == 0 || viewModel.currItemsCount() < sinceRow {
             return false
         }
-        return indexPath.row >= viewModel.currItemsCount()-1
+        return indexPath.row >= viewModel.currItemsCount() - sinceRow
     }
     
     
@@ -317,10 +346,10 @@ extension CatalogVC {
         guard waitContainer.alpha == 1.0 else { return }
         UIView.animate(withDuration: 0.7,
                        animations: {[weak self] in
-                        self?.collectionView.alpha = 0.0
+                       self?.collectionView.alpha = 0.0
         },
                        completion: {[weak self] _ in
-                        self?.collectionView.isHidden = true
+                       self?.collectionView.isHidden = true
         })
         waitContainer.isHidden = false
         waitActivityView.startAnimating()
@@ -338,7 +367,9 @@ extension CatalogVC {
     
     private func showAlert(text: String){
         let alert = UIAlertController(title: "Ошибка", message: text, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        let okAction = UIAlertAction(title: "OK", style: .default) { (_) -> Void in
+        }
+        alert.addAction(okAction)
         self.present(alert, animated: true, completion: nil)
     }
     

@@ -14,25 +14,11 @@ class CatalogListCell : UICollectionViewCell{
     
     var viewModel: CatalogVM!
     
-    func configCell(model: CatalogModel?, indexPath: IndexPath){
+    func configCell(model: CatalogModel?, indexPath: IndexPath, viewModel: CatalogVM){
     
         if let `model` = model {
-            
-            if let img = model.imageView?.image {
-                imageView.image = img
-            } else {
-                let gsReference = storage.reference(forURL: "gs://filterproject2.appspot.com/\(model.thumbnail).jpg")
-               // imageView.image = UIImage(named: "no-images")
-                gsReference.getData(maxSize: 1 * 320 * 240) {[weak self] data, error in
-                    if let error = error {
-                        print("Storage: \(error.localizedDescription)")
-                    } else {
-                        if self?.tag == indexPath.row {
-                            self?.imageView.image = UIImage(data: data!)
-                        }
-                    }
-                }
-            }
+            imageView.image = UIImage(named: "no-images")
+           
             discountView.label?.text = "    -" + String(model.discount) + "%"
             itemNameLabel.text = model.name
             newPriceLabel.text = model.newPrice
@@ -45,6 +31,19 @@ class CatalogListCell : UICollectionViewCell{
             newPriceLabel.text = ""
             oldPriceLabel.attributedText = nil
             starsLabel.attributedText = nil
+        }
+    }
+    
+    func willAppear(indexPath: IndexPath, viewModel: CatalogVM){
+        
+        viewModel.downloadImage(indexPath: indexPath) {[weak self] url in
+            self?.imageView.kf.setImage(with: URL(string: url),
+                                        placeholder: nil,
+                                        options: [],
+                                        progressBlock: nil,
+                                        completionHandler: { img, err, cache, url in
+                                            self?.setNeedsDisplay()
+                                        })
         }
     }
 }

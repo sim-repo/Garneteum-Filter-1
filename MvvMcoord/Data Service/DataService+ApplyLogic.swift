@@ -43,7 +43,7 @@ extension DataService {
     }
 
 
-
+    
     func reqApplyFromSubFilter(categoryId: CategoryId, filterId: FilterId, appliedSubFilters: Applied, selectedSubFilters: Selected, rangePrice: RangePrice) {
         
         let completion: ((FilterIds, SubFilterIds, Applied, Selected, RangePrice, ItemsTotal) -> Void)? = { [weak self] filterIds, subfilterIds, applied, selected, rangePrice, itemsTotal in

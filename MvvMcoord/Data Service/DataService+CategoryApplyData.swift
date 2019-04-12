@@ -23,12 +23,15 @@ extension DataService {
     }
     
     
-    
+    //MARK: -Save
     internal func applySave(categoryId: CategoryId, subfiltersByItem: SubfiltersByItem?, priceByItemId: PriceByItemId?) {
         
         guard let _subfiltersByItem = subfiltersByItem,
             let _priceByItemId = priceByItemId
             else { return }
+        
+        print("SAVE: category apply")
+        
         
         self.applyLogic.setupItemsAndSubfilters(subfiltersByItem: _subfiltersByItem)
         self.applyLogic.setup(priceByItemId_: _priceByItemId)
